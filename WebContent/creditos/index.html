@@ -1,0 +1,127 @@
+<html><head><title>Cr�ditos</title>
+
+
+<style type="text/css">
+body {width:100%; height:100%; margin:0px; overflow:hidden;}
+#up {position:absolute; left:460px; top:50px;}
+#down {position:absolute; left:460px; top:320px;}
+#cont {position:relative; left:150px; top:50px; width:400px; height:300px; border:1px solid #000000; overflow:hidden;}
+#text {position:absolute; left:0px; top:0px; width:390px; font-family:tahoma,arial,helvetica,sans-serif; font-size:12px; text-align:justify; padding:5px;}
+.h1{font-family:tahoma,arial,helvetica,sans-serif; font-size:24px; font-weight: bold;}
+.h2{font-family:tahoma,arial,helvetica,sans-serif; font-size:18px; font-weight: bold; text-decoration: underline; }
+.h3{font-family:tahoma,arial,helvetica,sans-serif; font-size:12px; font-weight: bold;}
+</style>
+<script language="JavaScript1.2" type="text/javascript">
+/************************************************************************  
+Script made by Martial Boissonneault � 2001 http://getElementById.com/
+This script may be used and changed freely as long as this msg is intact
+Visit http://getElementById.com/ for more free scripts and tutorials.
+*************************************************************************/
+timerID = null;
+        
+function ScrollUp(speed){
+    if(document.getElementById){
+        if(parseInt(txt.style.top) < 0)
+        txt.style.top = parseInt(txt.style.top) + speed + "px";
+        timerID = setTimeout("ScrollUp("+speed+")",30)
+    }
+}
+
+function ScrollDown(speed){
+    if(document.getElementById){                        
+        if(parseInt(txt.style.top) > cnt.offsetHeight - txt.offsetHeight) 
+        txt.style.top = parseInt(txt.style.top) - speed + "px";
+        // timerID = setTimeout("ScrollDown("+speed+")", 100)
+    }
+}
+
+function ScrollStop(){
+    if(document.getElementById){
+        clearTimeout(timerID);
+    }
+}
+
+function ScrollInit() {
+    if (document.getElementById) {
+        cnt = document.getElementById("cont");
+        txt = document.getElementById("text");
+        txt.style.top = 0;
+    }
+}
+
+onload=ScrollInit;
+</script></head><body>
+
+	<div id="cont">
+    <div style="top: -248px;" id="text">
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+
+				<p align="center">
+				<img src="img/logo.gif">
+				</p>
+
+				<p class="h1" align="center">Proyecto Bonos Web</p>
+
+				<p class="h2" align="center">Team Desarrollo</p>
+				
+				<p class="h3" align="center">
+				<img src="img/denis.jpg"><br>
+				Denis Fuenzalida</p>
+
+				<p class="h3" align="center">
+				<img src="img/nobita.jpg"><br>
+				Luis Latin</p>
+
+				<p class="h2" align="center">Team Dipreca</p>
+
+				<p class="h3" align="center">Ricardo Nesvara Herrera</p>
+				<p class="h3" align="center">Andrea Olave Barba</p>
+				<p class="h3" align="center">...</p>
+
+				<p>&nbsp;</p>
+
+				<p>
+				</p>
+
+				<p>&nbsp;</p>
+
+				<p>&nbsp;</p>
+
+				<p align="center">
+				<img src="img/logo.gif">
+				</p>
+
+				<p align="center">
+				(p) 2006 Denis Fuenzalida + Luis Latin<br>
+				</p>
+
+				<p align="center">
+				[<a href="javascript:history.go(0)">Volver a ver creditos</a>] <br>
+				[<a href="../irInicio.jsp">Volver a la aplicacion</a>] <br>
+				</p>
+
+				<p>&nbsp;</p>
+
+				<p>&nbsp;</p>
+
+				<p>&nbsp;</p>
+
+				<p>&nbsp;</p>
+
+    </div>
+</div>
+
+<script language="javascript">
+				setInterval("ScrollDown(1)", 20);
+</script>
+
+
+</body></html>

@@ -1,0 +1,23 @@
+<html>
+<body onLoad="verCookie()">
+
+<script language="javascript" src="cookies.js"></script>
+
+<form>
+<input type="button" value="agregar" onClick="SetCookie('test','esta es una cookie')">
+<input type="button" value="quitar" onClick="DeleteCookie('test')">
+</form>
+
+<script language="javascript">
+function verCookie(){
+
+  if (GetCookie('test')){
+    alert( GetCookie('test') );
+    DeleteCookie('test');
+  }
+
+}
+</script>
+
+</body>
+</html>

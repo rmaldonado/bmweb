@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+<!-- datasource -->
+<bean id="myDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	<property name="driverClassName">
+	
+		<!-- Hypersonic SQL (HSQLDB) -->
+		<!-- value>org.hsqldb.jdbcDriver</value -->
+
+		<!-- Informix -->
+		<value>com.informix.jdbc.IfxDriver</value>
+		
+	</property>
+	
+
+	<!-- denis + windows + HSQLDB : jdbc:hsqldb:file:/tmp/<path>/<dbname> -->
+	<!-- property name="url"><value>jdbc:hsqldb:file:/trabajo/bmweb/db/db</value></property -->
+
+	<!-- denis + linux + informix -->
+	<!-- property name="url"><value>jdbc:informix-sqli://127.0.0.1:1546/testDB:informixserver=server1;user=informix;password=informix</value></property -->
+ 
+	<!-- dipreca + windows + informix -->
+	<property name="url"><value>jdbc:informix-sqli://172.16.1.10:1546/benmed:informixserver=llr_ip;user=infochi;password=x22er21</value></property>
+	
+	<!-- solo para HSQLDB, no molestan a informix -->
+	<property name="username"><value>sa</value></property>
+	<property name="password"><value></value></property>
+	
+	<!-- verificar conexiones a la base de datos -->
+	<property name="testOnBorrow"><value>true</value></property>
+	<property name="testWhileIdle"><value>true</value></property>
+	<property name="validationQuery"><value>select count(*) from keyword_det where 1=0</value></property>
+	
+	<property name="initialSize"><value>10</value></property>  
+	<property name="maxActive"><value>350</value></property>  
+	<property name="maxIdle"><value>10</value></property> 
+	
+</bean>
+
+
+<!-- dao de los habilitados -->
+<bean id="habilitadoDao" class="bmweb.dao.HabilitadoDao">
+	<property name="dataSource">
+		<ref bean="myDataSource"/>
+	</property>
+</bean>
+
+<!-- dao de las ciudades -->
+<bean id="ciudadDao" class="bmweb.dao.CiudadDao">
+	<property name="dataSource">
+		<ref bean="myDataSource"/>
+	</property>
+</bean>
+
+<!-- dao de los bonos - requiere un PrestadoresDao -->
+<bean id="bonoDao" class="bmweb.dao.BonoDao">
+	<property name="dataSource"><ref bean="myDataSource"/></property>
+	<property name="prestadoresDao"><ref bean="prestadoresDao"/></property>
+	<property name="beneficiariosDao"><ref bean="beneficiariosDao"/></property>
+</bean>
+
+<!-- dao de las prestaciones genericas -->
+<bean id="prestacionesGenericasDao" class="bmweb.dao.PrestacionesGenericasDao">
+	<property name="dataSource">
+		<ref bean="myDataSource"/>
+	</property>
+</bean>
+
+<!-- dao de los prestadores -->
+<bean id="prestadoresDao" class="bmweb.dao.PrestadoresDao">
+	<property name="dataSource">
+		<ref bean="myDataSource"/>
+	</property>
+</bean>
+
+<!-- dao de los prestadores -->
+<bean id="beneficiariosDao" class="bmweb.dao.BeneficiariosDao">
+	<property name="dataSource">
+		<ref bean="myDataSource"/>
+	</property>
+</bean>
+
+<!-- dao de los permisos de usuarios -->
+<bean id="permisosDao" class="bmweb.dao.PermisosDao">
+	<property name="dataSource">
+		<ref bean="myDataSource"/>
+	</property>
+</bean>
+
+<bean id="facturaDao" class="bmweb.dao.FacturaDao">
+
+	<property name="dataSource">
+		<ref bean="myDataSource"/>
+	</property>
+
+	<property name="bonoDao">
+		<ref bean="bonoDao"/>
+	</property>
+
+	<property name="beneficiariosDao">
+		<ref bean="beneficiariosDao"/>
+	</property>
+</bean>
+
+<!-- Managers -->
+
+<bean id="facturaManager" class="bmweb.manager.FacturaManager">
+	<property name="facturaDao">
+		<ref bean="facturaDao"/>
+	</property>
+</bean>
+
+</beans>

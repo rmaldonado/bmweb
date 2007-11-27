@@ -1,0 +1,49 @@
+Campos que falta grabar en bm_bonite:
+
+dom_tippre - OK
+bi_fecate - bono valorado - OK
+bi_cantidad - OK
+vc_valor == bi_cantidad * bi_valcon - OK
+pr_ctapre - OK
+pr_ctagas - si es que tiene - OK
+
+bi_rutseg - rut compa�ia seguros - OK
+bi_apopab - si tiene aporte pabellon - OK
+
+dom_estliq = '00' - OK
+
+dominios:
+bi_incpab - OK
+bi_pencom - OK
+bi_quien - OK
+
+
+
+
+
+
+
+
+
+Usuarios de Prueba
+
+RUT 5422044-X
+CLAVE 2044
+CMC 7-542960-00
+
+RUT 5851940
+CLAVE 5194
+CMC 
+
+Formato archivo CSV
+
+
+1 Codigo de la prestación
+2 Tipo de Prestacion   ( 1=ambulatoria    2=hospitalaria )
+3 Fecha de la atencion (ddmmaaaa)  La fecha en que se efectuó la atención
+4 El pabellón que vienen cobrando si la prestación es cirugía ( 1,2,3,4,....,12)
+5 La cantidad de la prestación (1,2,3....n)
+6 Indicar si se viene cobrando el pabellón si la prestación es cirugía (0=solo la prestación  1=Solo el pbellón 2=ambos)
+7 Indicar si se atendió en sala común o pensionado si la prestación es día cama (0=sala comun 1=pensionadao)
+8 Indicar quién cobra, en caso de cirugía.(1=primer cirujano,2=2do.cirujano,3=3er anestesista,4=arsenalera, 5=todos)
+

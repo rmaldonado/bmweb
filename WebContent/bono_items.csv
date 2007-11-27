@@ -1,0 +1,2 @@
+Numero del Bono Abierto,Codigo Prestacion,1=ambulatoria 2=hospitalaria,fecha atencion ddmmyyyy,cantidad,0=pabellon 1=prestacion 2=ambos,0=sala comun 1=pensionado,"1=primer cirujano,2=2do.cirujano,3=3er Cirujano, 4= anestesista,5=arsenalera, 6=todos"
+222,1202060,2,2052006,1,2,1,1

@@ -1,0 +1,200 @@
+
+.body, p {
+  padding-left: 5px;
+  padding-right: 10px;
+  padding-top: 0px;
+  padding-bottom: 10px;
+  font-family: sans-serif;
+  background-color: #ffffff;
+  font-size: small;
+}
+
+.encabezado {
+  font-size: 12pt;
+  text-align: right;
+  border: 0px;
+  background-color: #ffffff;
+  background-image: url(img/logo.gif);
+  background-repeat: no-repeat;
+  height: 64px;
+}
+
+.encabezado a {
+  font-weight: bold;
+}
+
+h1, h2, h3 {
+  font-family: arial, helvetica, sans-serif;
+  font-weight: normal;
+  color: #4c8203;
+  nomargin: 8px;
+  border-bottom: 1px solid #9cd263;
+  font-size: large;
+}
+
+div {
+  font-family: tahoma, helvetica, sans-serif;
+  padding: 0px 8px 8px 8px;
+  border: 1px solid #b5b5b5;
+  background-color: #f7f7f7;
+  nomargin-bottom: 8px;
+  font-size: small;
+}
+
+div div{
+  border: 0px;
+}
+
+.destacado {
+  padding: 8px;
+  border: 1px solid #d6d6d6;
+  background-color: #ffffff;
+  vertical-align: top;
+}
+
+.alerta {
+  padding: 8px;
+  border: 1px solid #d6d6d6;
+  background-color: #ffffcc;
+  vertical-align: top;
+}
+
+.pie-de-pagina {
+  font-size: x-small;
+  border: 0px;
+  background-color: #ffffff;
+}
+
+ul {
+  margin: 8px;
+}
+
+.input {
+  font-size: regular;
+  border: 1px solid #999999;
+  padding: 1px 2px 1px 2px;
+  background-image: url(img/gradiente-input.gif) top left norepeat;
+}
+
+/* alineamiento de barra de menues */
+.menubar {
+  border: 0px solid #333;
+  background-color: #fff;
+  padding: 0px 0px 0px 100px;
+  width: 700px;
+}
+
+/* separacion entre menues de ambiente usuario */
+.menubar span{
+  padding: 0px 0px 0px 5px;
+}
+
+.menubar .seleccionado {
+  padding: 4px 8px 0px 8px;
+  border: 1px solid #4c8203;
+  background-color: #4c8203;
+  color: #fff;
+  font-size: smaller;
+}
+
+.menubar span a {
+  text-decoration: none;
+  padding: 4px 8px 0px 8px;
+  border: 1px solid #ccc;
+  font-size: smaller;
+  background-color: #ccc;
+  text-decoration: none;
+  color: #000;
+}
+
+.menubar span a:hover {
+  border: 1px solid #9cd263;
+  padding: 4px 8px 0px 8px;
+  background-color: #9cd263;
+  text-decoration: underline;
+  color: #000;
+}
+
+td {
+  vertical-align: top;
+}
+
+#listado, .tabla-borde-delgado{
+  border: 1px solid #3e5e8d;
+  border-collapse: collapse;
+  width: 750px;
+
+  font-family: Verdana, Arial, sans-serif;
+  font-size: small;
+  color: #5a5a5a;
+  font-weight: bold;
+}
+
+.fila-detalle-par td, .fila-detalle-impar td { 
+  background-color: #eee; 
+  border: 1px solid #666; 
+  padding: 2px; 
+  text-align: center; 
+  vertical-align: middle; 
+  font-weight: normal;  
+  color: #000;
+}
+
+.encabezados-tabla td, .encabezados-tabla, table tr .encabezados-tabla { 
+  background-color: #9cd263; 
+  border: 1px solid #666; 
+  padding: 2px; 
+  text-align: center;  
+  padding-left: 6px;  
+  font-size: small; 
+  font-weight: bold;  
+  /* color: #494949; */
+  color: #333;
+}
+
+.fila-detalle-impar td { 
+  background-color: #fff; 
+}
+
+textarea, .input {
+  border:1px solid #333;
+  font-size: regular;
+  margin-left: 4px;
+  background-image: url(img/gradiente-input.gif);
+  background-repeat: no-repeat;
+  
+}
+
+.button {
+  padding: 1px;
+  font-weight: normal;
+  font-size: regular;
+}
+
+.submit {
+  padding: 2px;
+  font-weight: bold;
+  font-size: regular;
+}
+
+.error {
+  background: yellow;
+  padding: 2px;
+  border: 1px solid red;
+  color: red;
+  font-size: small;
+}
+
+select {
+  font-family: tahoma, helvetica, sans-serif;
+  font-size: regular;
+  width: 210px;
+}
+
+#logoutmsg {
+  border: 1px solid #ccc;
+  background-color: #ffc;
+  font-size: small;
+  font-family: tahoma, helvetica, sans-serif;
+  text-align:center;  
+ }

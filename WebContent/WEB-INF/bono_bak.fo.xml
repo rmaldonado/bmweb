@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+
+	<fo:layout-master-set>
+
+		<fo:simple-page-master master-name="first"
+			page-height="28cm"
+			page-width="21.6cm"
+			margin-top="1cm"
+			margin-bottom="2cm"
+			margin-left="2.5cm"
+			margin-right="2.5cm">
+
+			<fo:region-body margin-top="0cm" margin-bottom="1.5cm"/>
+			<fo:region-before extent="3cm"/>
+			<fo:region-after extent="1.5cm"/>
+
+		</fo:simple-page-master>
+
+		<fo:page-sequence-master master-name="basicPSM" >
+			<fo:repeatable-page-master-alternatives>
+				<fo:conditional-page-master-reference master-reference="first"
+					page-position="first" />
+				<fo:conditional-page-master-reference master-reference="rest"
+					page-position="rest" />
+
+				<fo:conditional-page-master-reference master-reference="rest" />
+			</fo:repeatable-page-master-alternatives>
+		</fo:page-sequence-master>
+
+	</fo:layout-master-set>
+	<!-- end: defines page layout -->
+
+	<!-- actual layout -->
+	<fo:page-sequence master-reference="basicPSM">
+
+		<!-- header -->
+		<fo:static-content flow-name="xsl-region-before">
+			<fo:block text-align="end"
+						font-size="8pt"
+						font-family="sans-serif"
+						line-height="14pt" >
+				Direccion de Prevision de Carabineros de Chile - Sistema de Beneficios Medicos<!-- <fo:page-number/> -->
+			</fo:block>
+		</fo:static-content>
+
+		<fo:flow flow-name="xsl-region-body">
+
+		  <!-- LOGO DIPRECA -->
+		  <!--
+		  <fo:block><fo:external-graphic src="url(../bmweb/img/logo.gif)"/></fo:block>
+		  -->
+
+		  <fo:block>
+		  	<!-- Usar la ruta completa al archivo -->
+		  	<fo:external-graphic src="url(__PATH__/img/logo.gif)" width="1.6cm" height="1.2cm"/>
+		  </fo:block>
+
+			<!-- defines text title level 1 - COMENTADO -->
+			<!--
+			<fo:block font-size="18pt"
+						font-family="sans-serif"
+						line-height="24pt"
+						space-after.optimum="15pt"
+						background-color="#ff8020"
+						color="black"
+						text-align="left"
+						padding-top="3pt"
+						font-variant="small-caps">
+				Dipreca
+			</fo:block>
+			-->
+
+			<!-- defines text title level 2-->
+			<fo:block font-size="12pt"
+						font-family="sans-serif"
+						line-height="20pt"
+						space-before.optimum="10pt"
+						space-after.optimum="10pt"
+						text-align="center"
+						padding-top="3pt">
+				Bono de Atencion Medica
+			</fo:block>
+
+
+    <!-- table FECHA EMISION - EMISOR -->
+			<fo:block font-size="10pt"
+								font-family="sans-serif"
+								line-height="15pt"
+								space-after.optimum="3pt"
+								margin-left="3pt"
+								text-align="left">
+
+		    <fo:table table-layout="fixed">
+		      <fo:table-column column-width="35mm"/>
+		      <fo:table-column column-width="50mm"/>
+		      <fo:table-column column-width="35mm"/>
+		      <fo:table-column column-width="50mm"/>
+		      <fo:table-body border-color="black" border-width="0.5pt" border-style="solid">
+
+		        <fo:table-row>
+		          <fo:table-cell font-weight="bold"><fo:block>Fecha de Emision</fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block>__FECHA__</fo:block></fo:table-cell>
+		          <fo:table-cell font-weight="bold"><fo:block>Numero de Bono</fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block>__FOLIO__</fo:block></fo:table-cell>
+		        </fo:table-row>
+		        
+		        <fo:table-row>
+		          <fo:table-cell font-weight="bold"><fo:block>Emisor</fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block>__NOMBRE_HABILITADO__</fo:block></fo:table-cell>
+		          <fo:table-cell font-weight="bold"><fo:block>Rut Emisor</fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block>__RUT_HABILITADO__</fo:block></fo:table-cell>
+		        </fo:table-row>
+
+		        <fo:table-row>
+		          <fo:table-cell font-weight="bold"><fo:block>Codigo Validacion</fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block> __CODIGO_VALIDACION__ </fo:block></fo:table-cell>
+		          <fo:table-cell font-weight="bold"><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		        </fo:table-row>
+
+		      </fo:table-body>
+		    </fo:table>
+
+			</fo:block>
+    <!-- table end -->
+
+    <!-- table PRESTADOR -->
+			<fo:block font-size="10pt"
+								font-family="sans-serif"
+								line-height="15pt"
+								space-after.optimum="3pt"
+								margin-left="3pt"
+								text-align="left">
+
+		    <fo:table table-layout="fixed">
+		      <fo:table-column column-width="35mm"/>
+		      <fo:table-column column-width="50mm"/>
+		      <fo:table-column column-width="35mm"/>
+		      <fo:table-column column-width="50mm"/>
+		      <fo:table-body border-color="black" border-width="0.5pt" border-style="solid">
+
+		        <fo:table-row>
+		          <fo:table-cell font-weight="bold"><fo:block>Prestador</fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block>__NOMBRE_PRESTADOR__</fo:block></fo:table-cell>
+		          <fo:table-cell font-weight="bold"><fo:block>RUT Prestador</fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block>__RUT_PRESTADOR__</fo:block></fo:table-cell>
+		        </fo:table-row>
+		        
+		      </fo:table-body>
+		    </fo:table>
+
+			</fo:block>
+    <!-- table end -->
+
+    <!-- table BENEFICARIO -->
+	<fo:block font-size="10pt"
+						font-family="sans-serif"
+						line-height="15pt"
+						space-after.optimum="3pt"
+						margin-left="3pt"
+						text-align="left">
+
+    <fo:table table-layout="fixed">
+      <fo:table-column column-width="35mm"/>
+      <fo:table-column column-width="50mm"/>
+      <fo:table-column column-width="35mm"/>
+      <fo:table-column column-width="50mm"/>
+      <fo:table-body border-color="black" border-width="0.5pt" border-style="solid">
+
+        <fo:table-row>
+          <fo:table-cell font-weight="bold"><fo:block>Beneficiario</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block>__NOMB__</fo:block></fo:table-cell>
+          <fo:table-cell font-weight="bold"><fo:block>Numero de C.M.C.</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block>__CMCB__</fo:block></fo:table-cell>
+        </fo:table-row>
+        
+        <fo:table-row>
+          <fo:table-cell font-weight="bold"><fo:block>Imponente</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block>__NOMI__</fo:block></fo:table-cell>
+          <fo:table-cell font-weight="bold"><fo:block>Numero de C.M.C.</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block>__CMCI__</fo:block></fo:table-cell>
+        </fo:table-row>
+
+        <fo:table-row>
+          <fo:table-cell font-weight="bold"><fo:block>Nombramiento</fo:block></fo:table-cell>
+		  <fo:table-cell ><fo:block>__CONT__</fo:block></fo:table-cell>
+          <fo:table-cell font-weight="bold"><fo:block></fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+        </fo:table-row>
+
+      </fo:table-body>
+    </fo:table>
+
+	</fo:block>
+    <!-- table end -->
+
+
+	<!-- SEPARACION ENTRE TABLAS -->
+	<fo:block font-size="9pt" font-family="sans-serif" line-height="11pt"
+		space-after.optimum="3pt" text-align="start">
+
+	</fo:block>
+
+    <!-- table DETALLE -->
+			<fo:block font-size="10pt"
+								font-family="sans-serif"
+								line-height="15pt"
+								space-after.optimum="0pt"
+								text-align="center">
+
+		    <fo:table table-layout="fixed">
+		      <fo:table-column column-width="20mm"/>
+		      <fo:table-column column-width="70mm"/>
+		      <fo:table-column column-width="20mm"/>
+		      <fo:table-column column-width="20mm"/>
+		      <fo:table-column column-width="20mm"/>
+		      <fo:table-column column-width="20mm"/>
+		      <fo:table-body border-color="black" border-width="0.5pt" border-style="solid">
+
+		        <fo:table-row font-size="9pt" line-height="11pt" font-weight="bold" 
+		        	text-align="center" vertical-align="middle">
+
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" background-color="#e0e0e0" padding-top="6pt">
+		          	<fo:block>Codigo Prestacion</fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" background-color="#e0e0e0" padding-top="10pt">
+		          	<fo:block>Nombre Prestacion</fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" background-color="#e0e0e0" padding-top="10pt">
+		          	<fo:block>Valor</fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" background-color="#e0e0e0" padding-top="6pt">
+		          	<fo:block>Cargo Dipreca</fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" background-color="#e0e0e0" padding-top="6pt">
+		          	<fo:block>Cargo Seguro</fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" background-color="#e0e0e0" padding-top="10pt">
+		          	<fo:block>Copago</fo:block></fo:table-cell>
+		        </fo:table-row>
+
+
+__DETALLE__
+
+
+<!-- 
+////////////////////////////////////////////////////////
+		        <fo:table-row>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" text-align="right" padding-right="2pt"><fo:block color="white"> .</fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" text-align="left" padding-left="2pt"  ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" text-align="right" padding-right="2pt"><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" text-align="right" padding-right="2pt"><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" text-align="right" padding-right="2pt"><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" text-align="right" padding-right="2pt"><fo:block> </fo:block></fo:table-cell>
+		        </fo:table-row>
+////////////////////////////////////////////////////////
+-->
+		      </fo:table-body>
+		    </fo:table>
+
+			</fo:block>
+    <!-- table end -->
+
+
+    <!-- table TOTALES  -->
+			<fo:block font-size="10pt"
+								font-family="sans-serif"
+								line-height="14pt"
+								space-after.optimum="8pt"
+								text-align="center">
+
+		    <fo:table table-layout="fixed">
+		      <fo:table-column column-width="20mm"/>
+		      <fo:table-column column-width="70mm"/>
+		      <fo:table-column column-width="20mm"/>
+		      <fo:table-column column-width="20mm"/>
+		      <fo:table-column column-width="20mm"/>
+		      <fo:table-column column-width="20mm"/>
+		      <fo:table-body>
+
+		        <fo:table-row>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell text-align="right" padding-right="1pt"><fo:block> Totales $ </fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" text-align="right" padding-right="2pt"><fo:block color="white">.</fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" text-align="right" padding-right="2pt"><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" text-align="right" padding-right="2pt"><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" text-align="right" padding-right="2pt"><fo:block></fo:block></fo:table-cell>
+		        </fo:table-row>
+
+		        <fo:table-row>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell font-size="1pt" line-height="6pt" color="white"><fo:block color="white"> . </fo:block></fo:table-cell>
+		        </fo:table-row>
+
+		        <fo:table-row>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell text-align="right" padding-right="1pt"><fo:block> Valor a Facturar $ </fo:block></fo:table-cell>
+		          <fo:table-cell border-color="black" border-width="0.5pt" border-style="solid" text-align="right" padding-right="2pt"><fo:block color="white">.</fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		        </fo:table-row>
+
+		      </fo:table-body>
+		    </fo:table>
+
+			</fo:block>
+    <!-- table end -->
+
+	<!-- TEXTO VALIDEZ DEL BONO -->
+	<fo:block font-size="8pt" font-family="sans-serif" line-height="9pt"
+		space-after.optimum="50pt" text-align="start">
+
+		<fo:inline font-weight="bold">Fecha de Expiracion:</fo:inline> __FECHA_EXPIRACION__
+	</fo:block>
+
+    <!-- table TOTALES  -->
+			<fo:block font-size="8pt"
+								font-family="sans-serif"
+								line-height="10pt"
+								space-after.optimum="20pt"
+								text-align="center">
+
+		    <fo:table table-layout="fixed">
+		      <fo:table-column column-width="30mm"/>
+		      <fo:table-column column-width="50mm"/>
+		      <fo:table-column column-width="30mm"/>
+		      <fo:table-column column-width="50mm"/>
+		      <fo:table-body>
+
+		        <fo:table-row>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell border-top-color="black" border-top-width="0.5pt" border-top-style="solid" padding-top="4pt">
+		          	<fo:block>Firma del Paciente o Firma y Rut del Representante Legal</fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		          <fo:table-cell border-top-color="black" border-top-width="0.5pt" border-top-style="solid" padding-top="4pt">
+		          	<fo:block>Nombre y Firma del Emisor</fo:block></fo:table-cell>
+		          <fo:table-cell ><fo:block> </fo:block></fo:table-cell>
+		        </fo:table-row>
+
+		      </fo:table-body>
+		    </fo:table>
+
+			</fo:block>
+			<!-- table end -->
+
+
+			<!-- Normal text -->
+			<!--
+			<fo:block font-size="7pt" font-family="sans-serif" line-height="9pt"
+				space-after.optimum="3pt" text-align="start">
+		
+				<fo:inline font-weight="bold">Explicacion de la Columna Pago Directo:</fo:inline>
+				Esta sera variable dependiendo si existe o no convenio con el
+				prestador mencionado, de existir convenio art. 21, esta columna
+				se llamara Copago o Cargo Dipreca y la nota que antecede las firmas...
+			</fo:block>
+			-->
+		
+			<fo:block>
+			  <fo:instream-foreign-object>
+			    <barcode:barcode
+			          xmlns:barcode="http://barcode4j.krysalis.org/ns"
+			          message="__CODIGO_VALIDACION__">
+			      <barcode:code128>
+			        <barcode:height>8mm</barcode:height>
+			      </barcode:code128>
+			    </barcode:barcode>
+			  </fo:instream-foreign-object>
+			</fo:block>
+	
+		</fo:flow>
+	</fo:page-sequence>
+</fo:root>

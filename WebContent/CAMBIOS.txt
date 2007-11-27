@@ -1,0 +1,17 @@
+***********************************************************
+* Log de Cambios bmweb
+***********************************************************
+
+* Version 0.6.1d - 14 de Noviembre
+
+	Actualizacion de cantidad de prestaciones en el bono
+	
+	Busqueda de prestadores para prestaciones del bono,
+	considerando ciudad y tablas de convenio, prestador, etc
+
+* Version 0.6.0d - 5 de Noviembre
+
+	Agregado prototipo de Bono Valorado con pantallas y
+	DAOs con implementacion de demostracion
+  
+

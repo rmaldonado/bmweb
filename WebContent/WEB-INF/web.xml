@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+    <display-name>Dipreca Beneficios Medicos</display-name>
+    <description>
+      Aplicacion Web - Dipreca Beneficios Medicos
+    </description>
+
+    <!-- Definicion de servlets -->
+
+	<!-- Servlet que levanta la primera conexion a la base de datos -->
+
+	<servlet>
+    	<servlet-name>DBServlet</servlet-name>
+		<servlet-class>bmweb.servlets.DBServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+    <servlet>
+        <servlet-name>HabilitadoServlet</servlet-name>
+        <servlet-class>bmweb.servlets.HabilitadoServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+	    <servlet-name>BonoServlet</servlet-name>
+	    <servlet-class>bmweb.servlets.BonoServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>BonoValoradoServlet</servlet-name>
+		<servlet-class>bmweb.servlets.BonoValoradoServlet</servlet-class>
+	</servlet>
+
+    <servlet>
+	    <servlet-name>InicioServlet</servlet-name>
+	    <servlet-class>bmweb.servlets.InicioServlet</servlet-class>
+	</servlet>
+
+    <servlet>
+	    <servlet-name>LoginServlet</servlet-name>
+	    <servlet-class>bmweb.servlets.LoginServlet</servlet-class>
+	</servlet>
+
+    <servlet>
+	    <servlet-name>LogoutServlet</servlet-name>
+	    <servlet-class>bmweb.servlets.LogoutServlet</servlet-class>
+	</servlet>
+
+    <servlet>
+	    <servlet-name>TestBonoServlet</servlet-name>
+	    <servlet-class>bmweb.servlets.TestBonoServlet</servlet-class>
+	</servlet>
+
+    <servlet>
+	    <servlet-name>BonoPDFServlet</servlet-name>
+	    <servlet-class>bmweb.servlets.BonoPDFServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>BonoValoradoPDFServlet</servlet-name>
+		<servlet-class>bmweb.servlets.BonoValoradoPDFServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>DetallarBonoServlet</servlet-name>
+		<servlet-class>bmweb.servlets.DetallarBonoServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>FacturaServlet</servlet-name>
+		<servlet-class>bmweb.servlets.FacturaServlet</servlet-class>
+	</servlet>
+		
+	<servlet>
+		<servlet-name>DetallarBonosMasivoServlet</servlet-name>
+		<servlet-class>bmweb.servlets.DetallarBonosMasivoServlet</servlet-class>
+	</servlet>
+
+	
+	<!-- *** Mapping de servlets *********************************** -->    
+
+    <servlet-mapping>
+	    <servlet-name>HabilitadoServlet</servlet-name>
+	    <url-pattern>/Habilitados</url-pattern>
+	</servlet-mapping>
+
+    <servlet-mapping>
+	    <servlet-name>BonoServlet</servlet-name>
+	    <url-pattern>/Bonos</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>BonoValoradoServlet</servlet-name>
+		<url-pattern>/BonoValorado</url-pattern>
+	</servlet-mapping>
+
+    <servlet-mapping>
+	    <servlet-name>InicioServlet</servlet-name>
+	    <url-pattern>/Inicio</url-pattern>
+	</servlet-mapping>
+
+    <servlet-mapping>
+	    <servlet-name>LoginServlet</servlet-name>
+	    <url-pattern>/Login</url-pattern>
+	</servlet-mapping>
+
+    <servlet-mapping>
+	    <servlet-name>LogoutServlet</servlet-name>
+	    <url-pattern>/Logout</url-pattern>
+	</servlet-mapping>
+
+    <servlet-mapping>
+	    <servlet-name>BonoPDFServlet</servlet-name>
+	    <url-pattern>/BonoPDF.pdf</url-pattern>
+	</servlet-mapping>
+
+    <servlet-mapping>
+	    <servlet-name>BonoValoradoPDFServlet</servlet-name>
+	    <url-pattern>/BonoValoradoPDF.pdf</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+	    <servlet-name>FacturaServlet</servlet-name>
+	    <url-pattern>/Factura</url-pattern>
+	</servlet-mapping>
+	
+    <servlet-mapping>
+	    <servlet-name>TestBonoServlet</servlet-name>
+	    <url-pattern>/TestBono</url-pattern>
+	</servlet-mapping>
+
+    <servlet-mapping>
+	    <servlet-name>DetallarBonoServlet</servlet-name>
+	    <url-pattern>/DetallarBonos</url-pattern>
+	</servlet-mapping>
+
+    <servlet-mapping>
+	    <servlet-name>DetallarBonosMasivoServlet</servlet-name>
+	    <url-pattern>/DetallarBonosMasivo</url-pattern>
+	</servlet-mapping>
+	
+</web-app>
