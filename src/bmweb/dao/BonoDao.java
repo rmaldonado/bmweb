@@ -22,6 +22,7 @@ import bmweb.dto.BonoDTO;
 import bmweb.dto.BonoItemDTO;
 import bmweb.dto.BonoWItemDTO;
 import bmweb.dto.RolbeneDTO;
+import bmweb.servlets.DBServlet;
 import bmweb.util.Constantes;
 import bmweb.util.QueryLogger;
 import bmweb.util.QueryUtil;
@@ -127,21 +128,31 @@ public class BonoDao implements IBonoDao {
 
 		// Si esta iniciado ok, incremento y retorno el valor
 		if (init) {
-			_folio++;
+			_folio += DBServlet.getTotalServers();
 			return _folio;
 		}
 
 		try {
+			/*
+			 * max = 123
+			 * totalservers = 10
+			 * servernumber = 3
+			 * 
+			 * 10 * int (123 / 10) = 120
+			 * 
+			 * folios = 123, 133, 143, 153 ... 120 + (10*n)
+			 */
+			
 			JdbcTemplate jt = new JdbcTemplate(dataSource);
-			_folio = 1 + jt.queryForInt("select max(bo_folio) from bm_bono where dom_tipbon = '" + BonoDTO.TIPOBONO_WEB + "'");
+			int max = jt.queryForInt("select max(bo_folio) from bm_bono where dom_tipbon = '" + BonoDTO.TIPOBONO_WEB + "'");
+			_folio = DBServlet.getServerNumber() + DBServlet.getTotalServers()*((int)(max*1.0/DBServlet.getTotalServers())); 
 			init = true;
 			return _folio;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			init = true;
-			_folio = 1;
-			return 1;
+			_folio = DBServlet.getServerNumber();
+			return _folio;
 		}
 
 	}
