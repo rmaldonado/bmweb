@@ -134,18 +134,20 @@ public class BonoDao implements IBonoDao {
 
 		try {
 			/*
-			 * max = 123
+			 * max = 125
 			 * totalservers = 10
 			 * servernumber = 3
 			 * 
-			 * 10 * int (123 / 10) = 120
-			 * 
-			 * folios = 123, 133, 143, 153 ... 120 + (10*n)
+			 * 10 * int (125 / 10) = 120
+			 * 120 + totalservers = 130
+			 * folios = 133, 143, 153 ... 120 + 10 + (10*n)
 			 */
 			
 			JdbcTemplate jt = new JdbcTemplate(dataSource);
 			int max = jt.queryForInt("select max(bo_folio) from bm_bono where dom_tipbon = '" + BonoDTO.TIPOBONO_WEB + "'");
-			_folio = DBServlet.getServerNumber() + DBServlet.getTotalServers()*((int)(max*1.0/DBServlet.getTotalServers())); 
+			_folio = DBServlet.getTotalServers()*((int)(max*1.0/DBServlet.getTotalServers())) 
+					 + DBServlet.getTotalServers()
+					 + DBServlet.getServerNumber();
 			init = true;
 			return _folio;
 		} catch (Exception e) {
