@@ -17,7 +17,6 @@
 	<servlet>
     	<servlet-name>DBServlet</servlet-name>
 		<servlet-class>bmweb.servlets.DBServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
 		
 		<init-param>
 			<param-name>totalServers</param-name>
@@ -27,6 +26,9 @@
 			<param-name>serverNumber</param-name>
 			<param-value>1</param-value>
 		</init-param>
+
+		<load-on-startup>1</load-on-startup>
+
 	</servlet>
 	
     <servlet>
