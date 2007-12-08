@@ -1,6 +1,6 @@
 	<div class="pie-de-pagina">
 	
-	BMWeb versi&oacute;n 1.0.1 - Ultima Modificaci&oacute;n: 19 de Julio 2006
+	BMWeb versi&oacute;n 1.1.0 - Ultima Modificaci&oacute;n: 7 de Diciembre de 2007
 	</div>
 	<span style="text-align:right"><a href="creditos/" style="color:#fff;font-size:8px">creditos</a>
 
