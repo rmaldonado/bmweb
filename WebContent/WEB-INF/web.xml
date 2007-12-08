@@ -91,6 +91,12 @@
 		<servlet-class>bmweb.servlets.DetallarBonosMasivoServlet</servlet-class>
 	</servlet>
 
+	<!-- reportes  -->
+	<servlet>
+		<servlet-name>ReportesServlet</servlet-name>
+		<servlet-class>bmweb.servlets.ReportesServlet</servlet-class>
+	</servlet>
+
 	
 	<!-- *** Mapping de servlets *********************************** -->    
 
@@ -152,6 +158,12 @@
     <servlet-mapping>
 	    <servlet-name>DetallarBonosMasivoServlet</servlet-name>
 	    <url-pattern>/DetallarBonosMasivo</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Reportes  -->
+    <servlet-mapping>
+		<servlet-name>ReportesServlet</servlet-name>
+	    <url-pattern>/Reportes</url-pattern>
 	</servlet-mapping>
 	
 </web-app>

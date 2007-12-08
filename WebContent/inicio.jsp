@@ -26,7 +26,8 @@ paginas.add( new String[]{"/BONOS.VALIDARCODIGOBONO", "Bonos?accion=validarCodig
 paginas.add( new String[]{"/DETALLARBONOSMASIVO", "detalleBonosMasivo.jsp", "Carga de Detalle Masivo de Bonos" }  );
 // facturas
 paginas.add( new String[]{"/FACTURA", "Factura", "Administrador de Facturas" }  );
-
+// reportes
+paginas.add( new String[]{"/REPORTES", "Reportes", "Reportes Estad&iacute;sticos de Bonos Web" }  );
 
 
 HttpSession sesion = request.getSession();
