@@ -5,12 +5,26 @@
 
 
   SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+  SimpleDateFormat sdf_yyyy = new SimpleDateFormat("yyyy");
 
   List filasReporte = new ArrayList();
 
   if (request.getAttribute("filasReporte") != null){
 	  filasReporte = (List) request.getAttribute("filasReporte");
   }
+
+  // deteccion de parametros para filtros
+  boolean mostrarFiltros = false;
+  if ("1".equals(request.getParameter("mostrarFiltros"))) { mostrarFiltros = true; }
+  
+  String opfecha = "";
+  if (request.getParameter("opfecha") != null) { opfecha = request.getParameter("opfecha"); }
+
+  String fechaDesde = "01/01/" + sdf_yyyy.format(new Date());
+  if (request.getParameter("fechaDesde") != null) { fechaDesde = request.getParameter("fechaDesde"); }
+
+  String fechaHasta = "31/12/" + sdf_yyyy.format(new Date());
+  if (request.getParameter("fechaHasta") != null) { fechaHasta = request.getParameter("fechaHasta"); }
 
   // coloco el titulo de la pagina
   request.setAttribute("titulo", "Reportes");
@@ -20,6 +34,133 @@
 <div>
 
 	<h1>Reporte Estadístico</h1>
+
+	<table class="tabla-borde-delgado" id="filtro-min" style="<%= (mostrarFiltros)? "display:none":"" %>">
+		<tr class="encabezados-tabla">
+			<td style="text-align:right">
+				<a href="javascript:mostrar_filtros()" title="Mostrar opciones de b&uacute;squeda">
+				Mostrar opciones de b&uacute;squeda</a>
+			</td>
+		</tr>
+	</table>
+
+	<table class="tabla-borde-delgado" id="filtro-max" style="<%= (mostrarFiltros)? "":"display:none" %>">
+	<form name="formulario" method="post" action="Reportes">
+		<input type="hidden" name="mostrarFiltros" value="<%= (mostrarFiltros)? "1":"0" %>">
+		<input type="hidden" name="accion" value="listado">
+		<input type="hidden" name="inicio" value="">
+		<input type="hidden" name="dpp" value="">
+		
+		<tr class="encabezados-tabla">
+			<td colspan="2">
+				
+			</td>
+			<td>
+				<span style="width:100%;text-align:right">
+				<a href="javascript:ocultar_filtros()" title="Ocultar">Ocultar opciones de b&uacute;squeda</a>
+				</span>
+			</td>
+		</tr>
+
+		<tr class="fila-detalle-impar">
+			<td>Reparticiones a incluir</td>
+			<td style="text-align:left">
+				<input type="checkbox" name="rep0" value="0"> Todas <br>
+				<input type="checkbox" name="rep1" value="1"> Carabineros <br>
+				<input type="checkbox" name="rep2" value="2"> Investigaciones <br>
+				<input type="checkbox" name="rep3" value="3"> Gendarmer&iacute;a <br>
+				<input type="checkbox" name="rep4" value="4"> Mutualidad Carabineros <br>
+				<input type="checkbox" name="rep5" value="5"> Funcionarios Dipreca <br>
+				<input type="checkbox" name="rep6" value="6"> Pensionados <br>
+				<input type="checkbox" name="rep7" value="7"> Montepiados
+			</td>
+
+			<!-- rowspan tantas filas como tenga el filtro -->
+			<td rowspan="5" style="text-align:center; vertical-align:middle">
+				<input type="button" value="Buscar datos" class="submit" 
+				onClick="document.formulario.accion.value='listado';document.formulario.submit()"
+				title="Muestra el listado de Habilitados usando los criterios de b&uacute;squeda"
+				style="width:120px">
+				<br>
+				<br>
+				<input type="reset" class="button" value="Restaurar Valores" 
+				title="Volver a los valores anteriores de los criterios de b&uacute;squeda"
+				style="width:120px">
+				<br>
+				<input type="button" class="button" value="Nueva B&uacute;squeda" onclick="limpiar_filtros()" 
+				title="Limpiar los valores de los criterios de b&uacute;squeda"
+				style="width:120px">
+			</td>
+		</tr>
+		
+		<tr class="fila-detalle-par">
+			<td>Rango de Fechas</td>
+			<td style="text-align:left">
+			<%
+			String estiloDivCalendario = "";
+			if ("no".equals(opfecha)) estiloDivCalendario = "display:none";
+			if ("".equals(opfecha)) estiloDivCalendario = "display:none";
+			%>
+				<select name="opfecha" onChange="mostrarCalendario()">
+				<option value="no"    <%= "no".equals(opfecha)?"selected":"" %>>No filtrar por Fecha</option>
+				<option value="entre" <%= "entre".equals(opfecha)?"selected":"" %>>Entre estas Fechas</option>
+				</select>
+				
+				<br>
+
+				<!-- fecha desde -->
+				<span id="div-calendario" style="<%= estiloDivCalendario %>">
+				<span id="span-fecha-desde"><%= fechaDesde %></span>
+				<input type="hidden" id="fechaDesde" name="fechaDesde" size="10" class="input" value="<%= fechaDesde %>">
+				
+				<img src="img/calendar.gif" id="f_trigger_c1"
+				     style="cursor: pointer; border: 1px solid green;"
+				     title="Seleccion de fecha"
+				     onmouseover="this.style.background='green';"
+				     onmouseout="this.style.background=''" />
+				<script type="text/javascript">
+				    Calendar.setup({
+				        displayArea    :    "span-fecha-desde",
+				        inputField     :    "fechaDesde",
+				        daFormat       :    "%d/%m/%Y",
+				        ifFormat       :    "%d/%m/%Y",
+				        button         :    "f_trigger_c1",
+				        align          :    "Tl",
+				        weekNumbers    :    false,
+				        singleClick    :    true
+				    });
+				</script>
+				
+				-
+
+				<!-- fecha hasta -->
+				<span id="span-fecha-hasta"><%= fechaHasta %></span>
+				<input type="hidden" id="fechaHasta" name="fechaHasta" size="10" class="input" value="<%= fechaHasta %>">
+				
+				<img src="img/calendar.gif" id="f_trigger_c2"
+				     style="cursor: pointer; border: 1px solid green;"
+				     title="Seleccion de fecha"
+				     onmouseover="this.style.background='green';"
+				     onmouseout="this.style.background=''" />
+				<script type="text/javascript">
+				    Calendar.setup({
+				        displayArea    :    "span-fecha-hasta",
+				        inputField     :    "fechaHasta",
+				        daFormat       :    "%d/%m/%Y",
+				        ifFormat       :    "%d/%m/%Y",
+				        button         :    "f_trigger_c2",
+				        align          :    "Tl",
+				        weekNumbers    :    false,
+				        singleClick    :    true
+				    });
+				</script>
+				
+				</span></td>
+		</tr>
+		
+	</table>
+
+	<br>
 
 	<table id="listado">
 
@@ -63,11 +204,68 @@
 
 	<script language="javascript">
 
+	  function mostrar_filtros(){
+	  
+	  	if (document.formulario.mostrarFiltros){
+		  	document.formulario.mostrarFiltros.value = "1";
+		}
+	  
+	    if (document.getElementById("filtro-min")){
+	    	document.getElementById("filtro-min").style.display = "none";
+	    }
+	  
+	    if (document.getElementById("filtro-max")){
+	    	document.getElementById("filtro-max").style.display = "";
+	    }
+	  
+	  }
+	  
+	  function ocultar_filtros(){
+
+	  	if (document.formulario.mostrarFiltros){
+		  	document.formulario.mostrarFiltros.value = "0";
+		}
+	  
+	    if (document.getElementById("filtro-max")){
+	    	document.getElementById("filtro-max").style.display = "none";
+	    }
+	  
+	    if (document.getElementById("filtro-min")){
+	    	document.getElementById("filtro-min").style.display = "";
+	    }
+	  
+	  }
+	  
+	  function limpiar_filtros(){
+	  
+	  	// TODO: Hacer validaciones con if (document.formulario.campo) ...	  	
+	  	document.formulario.opfecha.selectedIndex = 0;
+		document.formulario.opemisor.selectedIndex = 0;
+		document.formulario.emisor.value = "";
+		
+		// oculto las fechas
+		document.getElementById("div-calendario").style.display = "none";
+		
+	  }
+	  
+	  function mostrarCalendario(){
+	  
+	    if (document.formulario.opfecha.selectedIndex > 0){
+	  
+		    if (document.getElementById("div-calendario")){
+		    	document.getElementById("div-calendario").style.display = "";
+		    }
+	    } else {
+		    if (document.getElementById("div-calendario")){
+		    	document.getElementById("div-calendario").style.display = "none";
+		    }
+	    }
+	  }
+
 	  // En esta pÃ¡gina, si viene la cookie "update", simplemente se consume la cookie
 	  // Si no se encuentra la cookie "update", se fuerza un refresco de la pagina
-	  if (!GetCookie('update')){ document.formulario.submit(); } else { DeleteCookie('update'); }
+	  // if (!GetCookie('update')){ document.formulario.submit(); } else { DeleteCookie('update'); }
 
 	</script>
-
 <jsp:include page="pie.jsp" flush="true"/>
 

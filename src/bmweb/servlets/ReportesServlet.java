@@ -38,7 +38,7 @@ public class ReportesServlet extends ServletSeguro {
 		reportesDao = (IReportesDao) appCtx.getBean("reportesDao");
 	}
 	
-	protected String getNombrePermiso() { return "reportes"; } // TODO OJO - Uso el mismo permiso para los bonos valorados y no valorados
+	protected String getNombrePermiso() { return "reportes"; }
 	
 	/**
 	 * Implementacion de la logica de este servlet
@@ -60,7 +60,7 @@ public class ReportesServlet extends ServletSeguro {
 			UsuarioWeb uw = getUsuarioWeb(request);
 			Map params = ParamsUtil.fixParams(request.getParameterMap());
 			
-			List filas = reportesDao.ejecutarReporte("");
+			List filas = reportesDao.ejecutarReporte("", params, uw);
 			
 			request.setAttribute("filasReporte", filas);
 			redirigir(request, response, "reportes.jsp");
