@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,8 @@ public class ReportesDao implements IReportesDao {
 	public List ejecutarReporte(String reporteId, Map params, UsuarioWeb uw){
 		
 		List resultado = new ArrayList();
-				
+		
+		/*
 		Map fila = new HashMap();
 		fila.put("especialidad", "XXXXXXXXX");
 		fila.put("reparticion", new Integer(1));
@@ -50,10 +52,65 @@ public class ReportesDao implements IReportesDao {
 		fila.put("sexo", "F");
 		fila.put("subtotal", new Integer(42));
 		resultado.add(fila);
+		*/
 		
 		ReporteGenericoMappingQuery rgmp = new ReporteGenericoMappingQuery(dataSource, params, uw);
 		List res2 = rgmp.execute();
-		resultado.addAll(res2);
+		
+		// El gran cuadro con todos los datos del reporte
+		Map cuadroReporte = new HashMap();
+
+		// Para cada fila del reporte
+		// (especialidad, reparticion[1-5], imp_carga[00-05], sexo[MF], subtotal)
+
+		Iterator iFilaReporte = res2.iterator();
+		while (iFilaReporte.hasNext()){
+			Map filaQuery = (Map) iFilaReporte.next();
+			
+			String especialidad = (String) filaQuery.get("especialidad");
+			
+			// La fila del gran cuadro asociada a cada especialidad
+			Map mapaReporte;
+			if (cuadroReporte.containsKey(especialidad)){ mapaReporte = (Map) cuadroReporte.get(especialidad); }
+			else { mapaReporte = new HashMap(); }
+			
+			// Acumulo el valor en la posicion
+			// {reparticion}.{imp_carga}.{sexo}
+			
+			String impCarga = (String) filaQuery.get("imp_carga");
+			int intImpCarga;
+			if ("00".equals(impCarga)){ intImpCarga = 0; }
+			else { intImpCarga = 1; }
+			
+			String llave = (Integer) filaQuery.get("reparticion") + "." +
+							intImpCarga + "." +
+							(String) filaQuery.get("sexo");
+			
+			System.out.println("***" + llave);
+			
+			// Si ya había registrado un subtotal con ese nombre, lo aumento
+			if (mapaReporte.containsKey(llave)){
+				int valorAnterior = ((Integer)mapaReporte.get(llave)).intValue();				
+				int subtotal = ((Integer) filaQuery.get("subtotal")).intValue();
+				mapaReporte.put(llave, new Integer(valorAnterior+subtotal));
+			} else {
+				// Si no habia valor registrado, uso el del subtotal actual del reporte
+				mapaReporte.put(llave, (Integer)filaQuery.get("subtotal"));
+			}
+			
+			// Truco: En el mapaReporte, cololo la especialidad, asi solo utilizo los valores
+			mapaReporte.put("especialidad", especialidad);
+			
+			// Coloco todo el mapa, que representa una fila, en el gran cuadro
+			cuadroReporte.put("especialidad", mapaReporte);
+			
+		}
+		
+		// Recupero una Hash asociado a la especialidad
+		
+		resultado.addAll( cuadroReporte.values() );
+		
+		// resultado.addAll(res2);
 		
 		return resultado;
 	}

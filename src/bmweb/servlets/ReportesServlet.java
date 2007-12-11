@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.ApplicationContext;
 
+import bmweb.dao.ICiudadDao;
 import bmweb.dao.IReportesDao;
 import bmweb.util.ParamsUtil;
 import bmweb.util.UsuarioWeb;
@@ -25,16 +26,17 @@ import bmweb.util.UsuarioWeb;
  */
 
 public class ReportesServlet extends ServletSeguro {
-	
-	private IReportesDao reportesDao;
 
 	private ApplicationContext appCtx;
-	private int _codigoSantiago = -1;
+	
+	private IReportesDao reportesDao;
+	private ICiudadDao ciudadDao;
 	
 	public void init() throws ServletException {
 		super.init();
 		appCtx = DBServlet.getApplicationContext();
 		
+		ciudadDao = (ICiudadDao) appCtx.getBean("ciudadDao");
 		reportesDao = (IReportesDao) appCtx.getBean("reportesDao");
 	}
 	
@@ -46,6 +48,7 @@ public class ReportesServlet extends ServletSeguro {
 	protected void ejecutarLogica(HttpServletRequest request,
 			HttpServletResponse response) {
 			
+		
 			// Ejecuto un reporte
 			reporte(request, response);
 
@@ -61,8 +64,12 @@ public class ReportesServlet extends ServletSeguro {
 			Map params = ParamsUtil.fixParams(request.getParameterMap());
 			
 			List filas = reportesDao.ejecutarReporte("", params, uw);
-			
+
 			request.setAttribute("filasReporte", filas);
+
+			request.setAttribute("ciudades", ciudadDao.mapa());
+			request.setAttribute("listaCiudades", ciudadDao.lista());
+
 			redirigir(request, response, "reportes.jsp");
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,14 +1,27 @@
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="bmweb.dto.*" %>
 <%@ page import="bmweb.util.*" %>
-<%
 
+<!-- Agregar filtro por ciudaddes -->
+<!-- Filtro por RUT del prestador -->
+
+<%
 
   SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
   SimpleDateFormat sdf_yyyy = new SimpleDateFormat("yyyy");
+  
+  HashMap mapaCiudades = new HashMap();
+  if (request.getAttribute("ciudades") != null){
+  	mapaCiudades = (HashMap) request.getAttribute("ciudades");
+  }
+  
+  List listaCiudades = new ArrayList();
+  if (request.getAttribute("listaCiudades") != null){
+  	listaCiudades = (List) request.getAttribute("listaCiudades");
+  }
 
   List filasReporte = new ArrayList();
-
   if (request.getAttribute("filasReporte") != null){
 	  filasReporte = (List) request.getAttribute("filasReporte");
   }
@@ -65,6 +78,7 @@
 		<tr class="fila-detalle-impar">
 			<td>Reparticiones a incluir</td>
 			<td style="text-align:left">
+				<!--
 				<input type="checkbox" name="rep0" value="0"> Todas <br>
 				<input type="checkbox" name="rep1" value="1"> Carabineros <br>
 				<input type="checkbox" name="rep2" value="2"> Investigaciones <br>
@@ -73,6 +87,16 @@
 				<input type="checkbox" name="rep5" value="5"> Funcionarios Dipreca <br>
 				<input type="checkbox" name="rep6" value="6"> Pensionados <br>
 				<input type="checkbox" name="rep7" value="7"> Montepiados
+				-->
+				<select name="reparticiones" size="4" multiple="true">
+					<option value="1">Carabineros</option>
+					<option value="2">Investigaciones</option>
+					<option value="3">Gendarmer&iacute;a</option>
+					<option value="4">Mutualidad Carabineros</option>
+					<option value="5">Funcionarios Dipreca</option>
+					<option value="6">Pensionados</option>
+					<option value="7">Montepiados</option>
+				</select>
 			</td>
 
 			<!-- rowspan tantas filas como tenga el filtro -->
@@ -158,6 +182,29 @@
 				</span></td>
 		</tr>
 		
+		<tr class="fila-detalle-impar">
+			<td>Ciudad:</td>
+			<td style="text-align:left">
+				<select name="dom_ciudad">
+				<option value="">No filtrar por Ciudad</option>
+			<%
+				for (int i=0; i<listaCiudades.size(); i++){
+				CiudadDTO c = (CiudadDTO) listaCiudades.get(i);
+				String nombreCiudad = c.getNombre();
+				String codigoCiudad = "" + c.getCodigo();
+				
+				String selected = "";
+				//if (ciudad.equals(codigoCiudad)){ selected = "selected"; }
+				
+			%>
+				<option value="<%= codigoCiudad  %>" <%= selected  %>><%= nombreCiudad %></option>
+			<%
+				}
+			%>
+				</select>		
+
+			</td>		
+		</tr>
 	</table>
 
 	<br>
@@ -165,33 +212,109 @@
 	<table id="listado">
 
 		<tr class="encabezados-tabla">
-			<td>Especialidad</td>
-			<td>Repartici&oacute;n</td>
-			<td>Imponente</td>
-			<td>Sexo</td>
-			<td>Subtotal</td>
+			<td rowspan="3"><br>Especialidades</td>
+			<td rowspan="2" colspan="2">Total General</td>
+
+			<td colspan="4">Total por sexo</td>
+			<td colspan="4">Carabineros</td>
+			<td colspan="4">Investigaciones</td>
+			<td colspan="4">Gendarmer&iacute;a</td>
+			<td colspan="4">Dipreca</td>
+			<td colspan="4">Pensionados</td>
+			<td colspan="4">Montepios</td>
 		</tr>
+		
+		<tr class="encabezados-tabla">
+			<!-- total -->
+			<td colspan="2"><small>Imponentes</small></td>
+			<td colspan="2"><small>Cargas</small></td>
+
+			<!-- carabineros -->
+			<td colspan="2"><small>Imponentes</small></td>
+			<td colspan="2"><small>Cargas</small></td>
+
+			<!-- investigaciones -->
+			<td colspan="2"><small>Imponentes</small></td>
+			<td colspan="2"><small>Cargas</small></td>
+
+			<!-- gendarmeria -->
+			<td colspan="2"><small>Imponentes</small></td>
+			<td colspan="2"><small>Cargas</small></td>
+
+			<!-- dipreca -->
+			<td colspan="2"><small>Imponentes</small></td>
+			<td colspan="2"><small>Cargas</small></td>
+
+			<!-- pensionados -->
+			<td colspan="2"><small>Imponentes</small></td>
+			<td colspan="2"><small>Cargas</small></td>
+
+			<!-- montepios -->
+			<td colspan="2"><small>Imponentes</small></td>
+			<td colspan="2"><small>Cargas</small></td>
+		</tr>
+
+		<tr class="encabezados-tabla">
+			<td>Total</td><td>%</td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+		</tr>
+
 <%
 		int numFila = 1;
 		for (Iterator it = filasReporte.iterator(); it.hasNext();) {
-		    HashMap fila = (HashMap) it.next();
+		    Map fila = (Map) it.next();
 
 		    // Determino un string que se alterna para cambiar la grafica de las filas
 		    String clase= (numFila%2 == 0)? "fila-detalle-par":"fila-detalle-impar";
 		    numFila++;
 		    
 		    String especialidad = (String) fila.get("especialidad");
-		    Integer reparticion = (Integer) fila.get("reparticion");
-		    String imp_carga = (String) fila.get("imp_carga");
-		    String sexo = (String) fila.get("sexo");
-		    Integer subtotal = (Integer) fila.get("subtotal");		    
+		    		    		    
 %>
 		<tr class="<%=clase%>">
 			<td><%= especialidad %></td>
-			<td><%= reparticion %></td>
-			<td><%= imp_carga %></td>
-			<td><%= sexo %></td>
-			<td><%= subtotal %></td>
+
+			<!-- TODO -->
+			<td>xxx</td>
+			<td>xxx</td>
+			<td>xxx</td>
+			<td>xxx</td>
+			<td>xxx</td>
+			<td>xxx</td>
+
+<%			
+		    for (int reparticion = 1; reparticion <=6; reparticion++){
+		    	for (int impCarga = 0; impCarga <=1; impCarga++) {
+		    		for (int iSex = 0; iSex <= 1; iSex++){
+		    			
+		    			String sexo = (iSex==0)? "M" : "F";
+		    			String llave = reparticion + "." + impCarga + "." + sexo;
+		    			
+		    			String valor = "...";
+		    			if (fila.containsKey(llave)){ valor = fila.get(llave).toString(); }
+%>
+			<td><!-- <%= llave %> --><%= valor %></td>
+
+<%		    			
+		    		}
+		    	}
+		    }
+%>			
+
 		</tr>
 		
 <%
@@ -267,5 +390,12 @@
 	  // if (!GetCookie('update')){ document.formulario.submit(); } else { DeleteCookie('update'); }
 
 	</script>
+	
+<!-- 
+especialidad                    reparticion  imp_carga  sexo  subtotal  
+------------------------------  -----------  ---------  ----  --------  
+CONS.ESPEC.TRAUMATOLOGIA        2            02         M     1         
+ -->
+	
 <jsp:include page="pie.jsp" flush="true"/>
 
