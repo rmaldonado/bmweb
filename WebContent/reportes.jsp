@@ -39,6 +39,9 @@
   String fechaHasta = "31/12/" + sdf_yyyy.format(new Date());
   if (request.getParameter("fechaHasta") != null) { fechaHasta = request.getParameter("fechaHasta"); }
 
+  String domCiudad = "";
+  if (request.getParameter("dom_ciudad") != null) { domCiudad = request.getParameter("dom_ciudad"); }
+  
   // coloco el titulo de la pagina
   request.setAttribute("titulo", "Reportes");
 %>
@@ -194,7 +197,7 @@
 				String codigoCiudad = "" + c.getCodigo();
 				
 				String selected = "";
-				//if (ciudad.equals(codigoCiudad)){ selected = "selected"; }
+				if (domCiudad.equals(codigoCiudad)){ selected = "selected"; }
 				
 			%>
 				<option value="<%= codigoCiudad  %>" <%= selected  %>><%= nombreCiudad %></option>
@@ -288,15 +291,15 @@
 		<tr class="<%=clase%>">
 			<td><%= especialidad %></td>
 
-			<!-- TODO -->
-			<td>xxx</td>
-			<td>xxx</td>
-			<td>xxx</td>
-			<td>xxx</td>
-			<td>xxx</td>
-			<td>xxx</td>
+<%
 
-<%			
+			StringBuffer bufferLinea = new StringBuffer();
+			int totalEspecialidad = 0;
+			int totalImponentesMasc = 0;
+			int totalImponentesFem = 0;
+			int totalCargasMasc = 0;
+			int totalCargasFem = 0;
+
 		    for (int reparticion = 1; reparticion <=6; reparticion++){
 		    	for (int impCarga = 0; impCarga <=1; impCarga++) {
 		    		for (int iSex = 0; iSex <= 1; iSex++){
@@ -304,17 +307,55 @@
 		    			String sexo = (iSex==0)? "M" : "F";
 		    			String llave = reparticion + "." + impCarga + "." + sexo;
 		    			
-		    			String valor = "...";
+		    			String valor = "0";
 		    			if (fila.containsKey(llave)){ valor = fila.get(llave).toString(); }
-%>
-			<td><!-- <%= llave %> --><%= valor %></td>
+		    			
+		    			int intValor = (new Integer(valor)).intValue();
+		    			
+		    			totalEspecialidad += intValor;
+		    			
+		    			// total imponentes masculinos x especialidad
+		    			if ((impCarga==0) && (iSex==0)){ totalImponentesMasc += intValor; }
+		    			
+		    			// total imponentes femeninos x especialidad
+		    			if ((impCarga==0) && (iSex==1)){ totalImponentesFem += intValor; }
+		    			
+		    			// total cargas masculinos x especialidad
+		    			if ((impCarga==1) && (iSex==0)){ totalCargasMasc += intValor; }
+		    			
+		    			// total cargas femeninos x especialidad
+		    			if ((impCarga==1) && (iSex==1)){ totalCargasFem += intValor; }
+		    			
+		    			bufferLinea.append("\t\t\t<td><!-- ");
+		    			bufferLinea.append(llave);
+		    			bufferLinea.append("-->");
+		    			bufferLinea.append(valor);
+		    			bufferLinea.append("</td>\n");
 
-<%		    			
 		    		}
 		    	}
 		    }
 %>			
+			<!-- total especialidad -->
+			<td><%= totalEspecialidad %></td>
+			
+			<!-- porcentaje del total x especialidad -->
+			<td>xxx</td>
+			
+			<!-- total imponentes masculinos x especialidad -->
+			<td><%= totalImponentesMasc %></td>
+			
+			<!-- total imponentes femeninos x especialidad -->
+			<td><%= totalImponentesFem %></td>
+			
+			<!-- total cargas masculinos x especialidad -->
+			<td><%= totalCargasMasc %></td>
+			
+			<!-- total cargas femeninos x especialidad -->
+			<td><%= totalCargasFem %></td>
 
+<%= bufferLinea.toString() %>
+			
 		</tr>
 		
 <%

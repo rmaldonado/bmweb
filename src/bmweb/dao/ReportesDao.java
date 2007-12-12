@@ -185,9 +185,15 @@ public class ReportesDao implements IReportesDao {
 					"  and b.be_carne[5] in ('0','1','2','3','4','5','6','7','8','9') " +
 					"  and b.be_carne[6] in ('0','1','2','3','4','5','6','7','8','9') " +
 					"  and b.be_carne[7] in ('0','1','2','3','4','5','6','7','8','9') " +
-					"  and b.be_carne[8] in ('0','1','2','3','4','5','6','7','8','9') " +
+					"  and b.be_carne[8] in ('0','1','2','3','4','5','6','7','8','9') ";
+			
+				if ("entre".equals((String)params.get("opfecha"))){
+					query += "" +
 					"  and bo_fecemi between TO_DATE('" + fechaDesde + "', '%d/%m/%Y')" +
-					"    and TO_DATE('" + fechaHasta + "', '%d/%m/%Y')" +
+					"    and TO_DATE('" + fechaHasta + "', '%d/%m/%Y')";
+				}
+				
+				query += "" +
 					"group by 1,2,3,4 " +
 					"order by 1,2,3,4 ";
 
