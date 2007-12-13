@@ -82,3 +82,33 @@ function CampoEsNoNulo(campo){
     return true;
   }
 }
+
+// Calculo del DV de RUT de mañungo:
+// http://www.dcc.uchile.cl/~mortega/ortega.cl/validarrut/javascript.html
+
+function calcDV(T){var M=0,S=1;for(;T;T=Math.floor(T/10))
+S=(S+T%10*(9-M++%6))%11;return S?S-1:'k';}
+ 
+function CampoEsRut(campo) {
+
+    var digitos = "012345789";
+	var largo = campo.value.length;	
+	if ( largo < 2 ) {		
+		alert("El campo no es un RUT completo");		
+		campo.value = '';		
+		return false;	
+	}
+		
+	var rut = campo.value.substring(0, largo - 2); // sin el '-' ni el dv
+	var dv = campo.value.charAt(largo-1);
+
+	var dvr = calcDV(rut);
+
+	if ( dvr != dv.toLowerCase() ) {		
+		alert("El RUT ingresado es incorrecto");
+		campo.value = '';	
+		return false	
+	}
+
+	return true;
+}

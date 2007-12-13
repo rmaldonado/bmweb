@@ -18,6 +18,7 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.object.MappingSqlQuery;
 
+import bmweb.dto.BonoDTO;
 import bmweb.util.QueryLogger;
 import bmweb.util.UsuarioWeb;
 
@@ -193,6 +194,19 @@ public class ReportesDao implements IReportesDao {
 					"    and TO_DATE('" + fechaHasta + "', '%d/%m/%Y')";
 				}
 				
+				// Si el estado del bono es uno de estos: 'A', 'P', lo incluyo en la query
+				if (BonoDTO.ESTADOBONO_ANULADO.equals((String)params.get("estadoBono")) ||
+					BonoDTO.ESTADOBONO_IMPRESO.equals((String)params.get("estadoBono"))){
+					String paramEstadoBono = (String)params.get("estadoBono");
+					query += "  and b.dom_estbon = '" + paramEstadoBono + "' ";
+				}
+				
+				// Si viene el rut del prestador, filtro por el
+				if ("si".equals((String)params.get("opPrestador"))){
+						String paramRutPrestador = (String)params.get("prestador");
+						query += "  and b.pb_rut = '" + paramRutPrestador + "'";
+				}
+			
 				query += "" +
 					"group by 1,2,3,4 " +
 					"order by 1,2,3,4 ";

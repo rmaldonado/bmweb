@@ -42,6 +42,12 @@
   String domCiudad = "";
   if (request.getParameter("dom_ciudad") != null) { domCiudad = request.getParameter("dom_ciudad"); }
   
+  String opPrestador = "";
+  if (request.getParameter("opPrestador") != null) { opPrestador = request.getParameter("opPrestador"); }
+  
+  String prestador = "";
+  if (request.getParameter("prestador") != null) { prestador = request.getParameter("prestador"); }
+  
   // coloco el titulo de la pagina
   request.setAttribute("titulo", "Reportes");
 %>
@@ -186,7 +192,7 @@
 		</tr>
 		
 		<tr class="fila-detalle-impar">
-			<td>Ciudad:</td>
+			<td>Ciudad</td>
 			<td style="text-align:left">
 				<select name="dom_ciudad">
 				<option value="">No filtrar por Ciudad</option>
@@ -208,6 +214,28 @@
 
 			</td>		
 		</tr>
+		
+		<tr class="fila-detalle-par">
+			<td>RUT del prestador</td>
+			<td style="text-align:left">
+			<%
+			String estiloDivRutPrestador = "";
+			if ("no".equals(opPrestador) || "".equals(opPrestador)) estiloDivRutPrestador = "display:none";
+			%>
+				<select name="opPrestador" onChange="mostrarRutPrestador()">
+				<option value="no" <%= "no".equals(opPrestador)?"selected":"" %>>No filtrar</option>
+				<option value="si" <%= "si".equals(opPrestador)?"selected":"" %>>Filtrar por este RUT</option>
+				</select>
+				
+				<br>
+
+				<!-- fecha desde -->
+				<span id="div-opPrestador" style="<%= estiloDivRutPrestador %>">
+				<input type="text" name="prestador" size="12" value="<%= prestador %>" onBlur="CampoEsRut(this)">				
+				</span>
+			</td>
+		</tr>
+		
 	</table>
 
 	<br>
@@ -422,6 +450,19 @@
 	    } else {
 		    if (document.getElementById("div-calendario")){
 		    	document.getElementById("div-calendario").style.display = "none";
+		    }
+	    }
+	  }
+	  
+	  function mostrarRutPrestador(){
+	    if (document.formulario.opPrestador.selectedIndex > 0){
+	  
+		    if (document.getElementById("div-opPrestador")){
+		    	document.getElementById("div-opPrestador").style.display = "";
+		    }
+	    } else {
+		    if (document.getElementById("div-opPrestador")){
+		    	document.getElementById("div-opPrestador").style.display = "none";
 		    }
 	    }
 	  }
