@@ -50,6 +50,32 @@
   
   // coloco el titulo de la pagina
   request.setAttribute("titulo", "Reportes");
+  
+  // Calculo del gran total de bonos del reporte
+  int granTotal = 0;
+  for (Iterator it = filasReporte.iterator(); it.hasNext();) {
+    Map fila = (Map) it.next();
+    
+    for (int reparticion = 1; reparticion <=6; reparticion++){
+    	for (int impCarga = 0; impCarga <=1; impCarga++) {
+    		for (int iSex = 0; iSex <= 1; iSex++){
+    			
+    			String sexo = (iSex==0)? "M" : "F";
+    			String llave = reparticion + "." + impCarga + "." + sexo;
+    			
+    			String valor = "0";
+    			if (fila.containsKey(llave)){ valor = fila.get(llave).toString(); }
+    			
+    			int intValor = (new Integer(valor)).intValue();
+    			granTotal += intValor;
+    		}
+    	}
+    }
+
+  }
+
+  
+  
 %>
 <jsp:include page="cabecera.jsp" flush="true"/>
 
@@ -359,16 +385,21 @@
 		    			bufferLinea.append("-->");
 		    			bufferLinea.append(valor);
 		    			bufferLinea.append("</td>\n");
+		    			
 
 		    		}
 		    	}
 		    }
+		    
+			double porcentaje = (int)((totalEspecialidad*1000.0)/granTotal);
+			porcentaje = porcentaje/10.0;
+
 %>			
 			<!-- total especialidad -->
 			<td><%= totalEspecialidad %></td>
 			
 			<!-- porcentaje del total x especialidad -->
-			<td>xxx</td>
+			<td><%= porcentaje %>%</td>
 			
 			<!-- total imponentes masculinos x especialidad -->
 			<td><%= totalImponentesMasc %></td>

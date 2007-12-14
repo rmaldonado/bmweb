@@ -99,11 +99,11 @@ public class ReportesDao implements IReportesDao {
 				mapaReporte.put(llave, (Integer)filaQuery.get("subtotal"));
 			}
 			
-			// Truco: En el mapaReporte, cololo la especialidad, asi solo utilizo los valores
+			// Truco: En el mapaReporte, coloco la especialidad, asi solo utilizo los valores
 			mapaReporte.put("especialidad", especialidad);
 			
 			// Coloco todo el mapa, que representa una fila, en el gran cuadro
-			cuadroReporte.put("especialidad", mapaReporte);
+			cuadroReporte.put(especialidad, mapaReporte);
 			
 		}
 		
@@ -154,15 +154,16 @@ public class ReportesDao implements IReportesDao {
 			
 			super();
 			
-			SimpleDateFormat sdf_yyyy = new SimpleDateFormat("yyyy");
+			// Por omisión, se buscan los bonos emitidos en el dia de hoy 
+			SimpleDateFormat sdf_ahora = new SimpleDateFormat("dd/MM/yyyy");
 			Date ahora = new Date();
 			
 			String fechaDesde;
-			if (!params.containsKey("fechaDesde")){ fechaDesde = "01/01/" + sdf_yyyy.format(ahora); }
+			if (!params.containsKey("fechaDesde")){ fechaDesde = sdf_ahora.format(ahora); }
 			else { fechaDesde = (String) params.get("fechaDesde"); }
 			
 			String fechaHasta;
-			if (!params.containsKey("fechaHasta")){ fechaHasta = "31/12/" + sdf_yyyy.format(ahora); }
+			if (!params.containsKey("fechaHasta")){ fechaHasta = sdf_ahora.format(ahora); }
 			else { fechaHasta = (String) params.get("fechaHasta"); }
 			
 			String query = "" +
@@ -188,7 +189,8 @@ public class ReportesDao implements IReportesDao {
 					"  and b.be_carne[7] in ('0','1','2','3','4','5','6','7','8','9') " +
 					"  and b.be_carne[8] in ('0','1','2','3','4','5','6','7','8','9') ";
 			
-				if ("entre".equals((String)params.get("opfecha"))){
+				// Si no viene la opfecha o viene con 'entre'
+				if ( (!params.containsKey("opfecha")) || "entre".equals((String)params.get("opfecha"))){
 					query += "" +
 					"  and bo_fecemi between TO_DATE('" + fechaDesde + "', '%d/%m/%Y')" +
 					"    and TO_DATE('" + fechaHasta + "', '%d/%m/%Y')";
@@ -225,7 +227,15 @@ public class ReportesDao implements IReportesDao {
 		protected Object mapRow(ResultSet rs, int rowNumber) throws SQLException {
 			HashMap fila = new HashMap();
 			fila.put("especialidad", rs.getString("especialidad"));
-			fila.put("reparticion", new Integer(rs.getString("reparticion")));
+			
+			try {
+				fila.put("reparticion", new Integer(rs.getString("reparticion")));
+			} catch (Exception e) {
+				// 2007.12.13
+				// A veces puede venir un 'X' o una 'Y' en la repartición, reemplazo por Cero
+				fila.put("reparticion", new Integer(0));
+			}
+			
 			fila.put("imp_carga", rs.getString("imp_carga"));
 			fila.put("sexo", rs.getString("sexo"));
 			fila.put("subtotal", new Integer(rs.getString("subtotal")));
