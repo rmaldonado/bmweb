@@ -3,10 +3,11 @@
 <%@ page import="bmweb.dto.*" %>
 <%@ page import="bmweb.util.*" %>
 
-<!-- Agregar filtro por ciudaddes -->
-<!-- Filtro por RUT del prestador -->
-
 <%
+  boolean salidaExcel = false;
+  if ("excel".equals(request.getParameter("salida"))){
+  	salidaExcel = true;
+  }
 
   SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
   SimpleDateFormat sdf_yyyy = new SimpleDateFormat("yyyy");
@@ -77,6 +78,10 @@
   
   
 %>
+<%
+  if (!salidaExcel) {
+%>
+
 <jsp:include page="cabecera.jsp" flush="true"/>
 
 <div>
@@ -98,6 +103,8 @@
 		<input type="hidden" name="accion" value="listado">
 		<input type="hidden" name="inicio" value="">
 		<input type="hidden" name="dpp" value="">
+
+		<input type="hidden" name="salida" value="">
 		
 		<tr class="encabezados-tabla">
 			<td colspan="2">
@@ -255,7 +262,7 @@
 				
 				<br>
 
-				<!-- fecha desde -->
+				<!-- filtro rut prestador -->
 				<span id="div-opPrestador" style="<%= estiloDivRutPrestador %>">
 				<input type="text" name="prestador" size="12" value="<%= prestador %>" onBlur="CampoEsRut(this)">				
 				</span>
@@ -265,7 +272,10 @@
 	</table>
 
 	<br>
-
+<%
+  // fin if (!salidaExcel)
+  }
+%>
 	<table id="listado">
 
 		<tr class="encabezados-tabla">
@@ -380,9 +390,11 @@
 		    			// total cargas femeninos x especialidad
 		    			if ((impCarga==1) && (iSex==1)){ totalCargasFem += intValor; }
 		    			
-		    			bufferLinea.append("\t\t\t<td><!-- ");
-		    			bufferLinea.append(llave);
-		    			bufferLinea.append("-->");
+		    			bufferLinea.append("\t\t\t<td>");
+		    			// DEBUG
+		    			//bufferLinea.append("<!-- ");
+		    			//bufferLinea.append(llave);
+		    			//bufferLinea.append("-->");
 		    			bufferLinea.append(valor);
 		    			bufferLinea.append("</td>\n");
 		    			
@@ -421,6 +433,9 @@
 		}
 %>
 	</table>
+<%
+  if (!salidaExcel) {
+%>
 
 	</div>
 	
@@ -504,6 +519,11 @@
 
 	</script>
 	
+	<!-- boton salida a excel -->
+		<input type="button" onClick="document.formulario.salida.value='excel';document.formulario.submit();document.formulario.salida.value='';"
+		class="submit" value="Exportar como archivo Excel">
+
+	
 <!-- 
 especialidad                    reparticion  imp_carga  sexo  subtotal  
 ------------------------------  -----------  ---------  ----  --------  
@@ -512,3 +532,7 @@ CONS.ESPEC.TRAUMATOLOGIA        2            02         M     1
 	
 <jsp:include page="pie.jsp" flush="true"/>
 
+<%
+// fin if (!salidaExcel)
+}
+%>

@@ -69,6 +69,12 @@ public class ReportesServlet extends ServletSeguro {
 
 			request.setAttribute("ciudades", ciudadDao.mapa());
 			request.setAttribute("listaCiudades", ciudadDao.lista());
+			
+			// Si me indican que la salida sera en formato excel, agrego estos headers a la salida
+			if ("excel".equals(request.getParameter("salida"))){
+		        response.setContentType("application/vnd.ms-excel");
+		        response.setHeader("Content-Disposition", "attachment; filename=\"reporte.xls\"");
+			}
 
 			redirigir(request, response, "reportes.jsp");
 		} catch (Exception e) {
