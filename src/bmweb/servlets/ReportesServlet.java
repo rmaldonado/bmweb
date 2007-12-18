@@ -1,4 +1,5 @@
 package bmweb.servlets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +64,13 @@ public class ReportesServlet extends ServletSeguro {
 			UsuarioWeb uw = getUsuarioWeb(request);
 			Map params = ParamsUtil.fixParams(request.getParameterMap());
 			
-			List filas = reportesDao.ejecutarReporte("", params, uw);
+			List filas;
+			
+			if ("listado".equals(request.getParameter("accion"))){
+				filas = reportesDao.ejecutarReporte("", params, uw);
+			} else {
+				filas = new ArrayList();
+			}
 
 			request.setAttribute("filasReporte", filas);
 

@@ -87,7 +87,7 @@ public class ReportesDao implements IReportesDao {
 							intImpCarga + "." +
 							(String) filaQuery.get("sexo");
 			
-			System.out.println("***" + llave);
+			// System.out.println("***" + llave);
 			
 			// Si ya había registrado un subtotal con ese nombre, lo aumento
 			if (mapaReporte.containsKey(llave)){

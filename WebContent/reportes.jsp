@@ -144,8 +144,7 @@
 			<!-- rowspan tantas filas como tenga el filtro -->
 			<td rowspan="5" style="text-align:center; vertical-align:middle">
 				<input type="button" value="Buscar datos" class="submit" 
-				onClick="document.formulario.accion.value='listado';document.formulario.submit()"
-				title="Muestra el listado de Habilitados usando los criterios de b&uacute;squeda"
+				onClick="document.formulario.accion.value='listado';agregar(300);document.formulario.submit()"
 				style="width:120px">
 				<br>
 				<br>
