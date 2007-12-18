@@ -79,8 +79,10 @@
   
 %>
 <%
-  if (!salidaExcel) {
+  if (salidaExcel) {
 %>
+<html><body>
+<% } else { %>
 
 <jsp:include page="cabecera.jsp" flush="true"/>
 
@@ -533,5 +535,7 @@ CONS.ESPEC.TRAUMATOLOGIA        2            02         M     1
 
 <%
 // fin if (!salidaExcel)
-}
+} else {
 %>
+</body></html>
+<% } %>
