@@ -22,6 +22,11 @@
   	listaCiudades = (List) request.getAttribute("listaCiudades");
   }
 
+  List listaJurisdicciones = new ArrayList();
+  if (request.getAttribute("listaJurisdicciones") != null){
+  	listaCiudades = (List) request.getAttribute("listaJurisdicciones");
+  }
+
   List filasReporte = new ArrayList();
   if (request.getAttribute("filasReporte") != null){
 	  filasReporte = (List) request.getAttribute("filasReporte");
@@ -42,6 +47,9 @@
 
   String domCiudad = "";
   if (request.getParameter("dom_ciudad") != null) { domCiudad = request.getParameter("dom_ciudad"); }
+  
+  String domJurisdiccion = "";
+  if (request.getParameter("dom_jurisdiccion") != null) { domCiudad = request.getParameter("dom_jurisdiccion"); }
   
   String opPrestador = "";
   if (request.getParameter("opPrestador") != null) { opPrestador = request.getParameter("opPrestador"); }
@@ -88,7 +96,7 @@
 
 <div>
 
-	<h1>Reporte Estadístico</h1>
+	<h1>Reporte Estadístico de Bonos</h1>
 
 	<table class="tabla-borde-delgado" id="filtro-min" style="<%= (mostrarFiltros)? "display:none":"" %>">
 		<tr class="encabezados-tabla">
@@ -144,7 +152,7 @@
 			</td>
 
 			<!-- rowspan tantas filas como tenga el filtro -->
-			<td rowspan="5" style="text-align:center; vertical-align:middle">
+			<td rowspan="6" style="text-align:center; vertical-align:middle">
 				<input type="button" value="Buscar datos" class="submit" 
 				onClick="document.formulario.accion.value='listado';agregar(300);document.formulario.submit()"
 				style="width:120px">
@@ -268,6 +276,30 @@
 				<input type="text" name="prestador" size="12" value="<%= prestador %>" onBlur="CampoEsRut(this)">				
 				</span>
 			</td>
+		</tr>
+
+		<tr class="fila-detalle-impar">
+			<td>Jurisdicción</td>
+			<td style="text-align:left">
+				<select name="dom_jurisdiccion">
+				<option value="0">No filtrar por Jurisdicción</option>
+			<%
+				for (int i=0; i<listaCiudades.size(); i++){
+				CiudadDTO c = (CiudadDTO) listaCiudades.get(i);
+				String nombreJurisdiccion = c.getNombre();
+				String codigoJurisdiccion = "" + c.getCodigo();
+				
+				String selected = "";
+				if (domCiudad.equals(codigoJurisdiccion)){ selected = "selected"; }
+				
+			%>
+				<option value="<%= codigoJurisdiccion  %>" <%= selected  %>><%= nombreJurisdiccion %></option>
+			<%
+				}
+			%>
+				</select>		
+
+			</td>		
 		</tr>
 		
 	</table>

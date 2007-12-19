@@ -32,6 +32,8 @@ import bmweb.util.ReflectionFiller;
 public class CiudadDao implements ICiudadDao {
 	
 	private static List listaCiudades = null;
+	private static List listaJurisdicciones = null;
+	
 	private static HashMap mapaCiudades = null;
 	private DataSource dataSource;
 	
@@ -54,7 +56,7 @@ public class CiudadDao implements ICiudadDao {
 		listaCiudades = (List) ht.execute( new CiudadesHibernateCallback() );
 		*/
 		
-		CiudadesMappingQuery buscador = new CiudadesMappingQuery(dataSource);
+		CiudadesMappingQuery buscador = new CiudadesMappingQuery(dataSource, "CIUDAD");
 		List listaCiudades = buscador.execute();
 		
 		return listaCiudades;
@@ -84,6 +86,22 @@ public class CiudadDao implements ICiudadDao {
 	}
 
 	/**
+	 * Lista de jurisdicciones
+	 */
+	
+	public List listaJurisdicciones(){
+	
+		if (listaJurisdicciones != null) return listaJurisdicciones;
+		else {			
+			CiudadesMappingQuery buscador = new CiudadesMappingQuery(dataSource, "JURISD");
+			listaJurisdicciones = buscador.execute();
+			return listaJurisdicciones;
+		}
+
+	}
+	
+	
+	/**
 	 * Clase interior
 	 * @author denis.fuenzalida
 	 *
@@ -91,10 +109,10 @@ public class CiudadDao implements ICiudadDao {
 	
 	class CiudadesMappingQuery extends MappingSqlQuery {
 		
-		public CiudadesMappingQuery(DataSource ds) {
+		public CiudadesMappingQuery(DataSource ds, String dominio) {
 			
 			super();
-			String query = "select distinct * from keyword_det where key_sist='BENMED' and key_word='CIUDAD' order by key_descr";
+			String query = "select distinct * from keyword_det where key_sist='BENMED' and key_word='" + dominio + "' order by key_descr";
 			setDataSource(ds);
 			setSql(query);
 			compile();
