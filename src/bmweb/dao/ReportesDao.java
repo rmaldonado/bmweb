@@ -139,8 +139,8 @@ public class ReportesDao implements IReportesDao {
 					" be_carne[1,1] reparticion, " +
 					" be_carne[10,11] imp_carga, " +
 					" sexo, " + 
-					" count(b.bo_serial) subtotal, " +
-					" key_descr[1,10] jurisdiccion" +
+					" count(b.bo_serial) subtotal " +
+					// " key_descr[1,10] jurisdiccion" +
 					" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, " +
 					" bm_habilitado f, keyword_det k " +
 					" where b.bo_serial = a.bo_serial " +
@@ -189,8 +189,8 @@ public class ReportesDao implements IReportesDao {
 				}
 			
 				query += "" +
-					"group by 1,2,3,4,5 " +
-					"order by 1,2,3,4,5";
+					"group by 1,2,3,4 " +
+					"order by 1,2,3,4 ";
 
 			// Conversión de fechas usando
 			// TO_DATE ('2002-12-31 23:59:59' , '%Y-%m-%d %H:%M:%S' )

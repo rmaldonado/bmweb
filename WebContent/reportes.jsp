@@ -10,6 +10,7 @@
   }
 
   SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+  SimpleDateFormat sdfReporte = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
   SimpleDateFormat sdf_yyyy = new SimpleDateFormat("yyyy");
   
   HashMap mapaCiudades = new HashMap();
@@ -310,6 +311,20 @@
   }
 %>
 	<table id="listado">
+
+<% if (salidaExcel){ %>
+
+    <tr><td colspan="32"><b>Reporte estadístico de Bonos Web</b> (generado en <%= sdfReporte.format(new Date()) %>)</td></tr>
+    <tr><td colspan="32">Filtros Utilizados:<br>
+    
+    <% if (!"".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><% } %>
+   
+    <br>
+    </td></tr>
+
+<% } %>
+
+
 
 		<tr class="encabezados-tabla">
 			<td rowspan="3"><br>Especialidades</td>
