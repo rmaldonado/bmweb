@@ -310,7 +310,7 @@
   // fin if (!salidaExcel)
   }
 %>
-	<table id="listado">
+	<table id="listado" <% if (salidaExcel){ %>border="1"<% } %>>
 
 <% if (salidaExcel){ %>
 
