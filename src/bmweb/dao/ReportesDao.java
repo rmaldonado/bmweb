@@ -163,7 +163,7 @@ public class ReportesDao implements IReportesDao {
 			
 				// Si no viene la jurisdiccion
 				if ( (params.containsKey("dom_jurisdiccion")) && (!"0".equals((String)params.get("dom_jurisdiccion")))){
-					query += "  and f.ha_jurisd = " + params.get("jurisdiccion");
+					query += "  and f.ha_jurisd = " + params.get("dom_jurisdiccion");
 				} else {
 					query += "  and f.ha_jurisd <> 0 ";
 				}
