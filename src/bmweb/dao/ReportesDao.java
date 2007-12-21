@@ -144,8 +144,17 @@ public class ReportesDao implements IReportesDao {
 					" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, " +
 					" bm_habilitado f, keyword_det k " +
 					" where b.bo_serial = a.bo_serial " +
-					"  and c.pr_codigo = a.pr_codigo " +
-					"  and c.pr_codigo between 0101005 and 0101099 " +
+					"  and c.pr_codigo = a.pr_codigo ";
+			
+			if ("si".equals((String)params.get("opPrestacion"))){
+				query += "" +
+					"  and c.pr_codigo = " + (String)params.get("prestacion") + " ";				
+			} else {
+				query += "" +
+				"  and c.pr_codigo between 0101005 and 0101099 ";
+			}
+					
+			query += "" +
 					"  and d.rut_bene = e.rut_bene " +
 					"  and d.cod_repart = b.be_carne[1,1] " +
 					"  and d.nro_impo   = b.be_carne[3,8] " +

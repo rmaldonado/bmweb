@@ -51,7 +51,7 @@ function DeleteCookie (name) {
 
 function CampoEsNumero(campo){
   if (isNaN(campo.value)){
-    campo.focus();
+    campo.value = '';
     alert("El campo no es un numero valido");
   	return false;
   } else { 
@@ -65,7 +65,7 @@ function CampoEsNumeroEnRango(campo, minimo, maximo){
     if (minimo <= campo.value && campo.value <= maximo){
       return true;
     } else {
-      campo.focus();
+      campo.value = '';
       alert("El campo no es un numero en el rango valido");
       return false;
     }
@@ -75,7 +75,6 @@ function CampoEsNumeroEnRango(campo, minimo, maximo){
 function CampoEsNoNulo(campo){
 
   if (campo.value == ''){
-    campo.focus();
     alert("El campo no debe estar vacio");
     return false;
   } else {

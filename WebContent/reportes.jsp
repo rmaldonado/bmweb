@@ -57,6 +57,15 @@
   
   String prestador = "";
   if (request.getParameter("prestador") != null) { prestador = request.getParameter("prestador"); }
+
+  String opPrestacion = "";
+  if (request.getParameter("opPrestacion") != null) { opPrestador = request.getParameter("opPrestacion"); }
+  
+  String prestacion = "";
+  if (request.getParameter("prestacion") != null) { prestador = request.getParameter("prestacion"); }
+
+  String estadoBono = "";
+  if (request.getParameter("estadoBono") != null) { estadoBono = request.getParameter("estadoBono"); }
   
   // coloco el titulo de la pagina
   request.setAttribute("titulo", "Reportes");
@@ -302,6 +311,39 @@
 
 			</td>		
 		</tr>
+
+		<tr class="fila-detalle-par">
+			<td>Código de Prestación</td>
+			<td style="text-align:left">
+			<%
+			String estiloDivPrestacion = "";
+			if ("no".equals(opPrestacion) || "".equals(opPrestacion)) estiloDivPrestacion = "display:none";
+			%>
+				<select name="opPrestacion" onChange="mostrarPrestacion()">
+				<option value="no" <%= "no".equals(opPrestador)?"selected":"" %>>No filtrar</option>
+				<option value="si" <%= "si".equals(opPrestador)?"selected":"" %>>Filtrar por este código de prestación</option>
+				</select>
+				
+				<br>
+
+				<!-- filtro rut prestador -->
+				<span id="div-opPrestacion" style="<%= estiloDivPrestacion %>">
+				<input type="text" name="prestacion" size="12" value="<%= prestacion %>" onBlur="CampoEsNumeroEnRango(this, 101001, 999999)">				
+				</span>
+			</td>
+		</tr>
+
+		<tr class="fila-detalle-impar">
+			<td>Estado del Bono</td>
+			<td style="text-align:left">
+				<select name="estadoBono">
+				<option value="">No filtrar por Estado</option>
+				<option value="A" <%= ("A".equals(estadoBono))?"selected":"" %>>Bonos Anulados</option>
+				<option value="P" <%= ("P".equals(estadoBono))?"selected":"" %>>Bonos Liquidados</option>
+				</select>		
+
+			</td>		
+		</tr>
 		
 	</table>
 
@@ -317,9 +359,21 @@
     <tr><td colspan="32"><b>Reporte estadístico de Bonos Web</b> (generado en <%= sdfReporte.format(new Date()) %>)</td></tr>
     <tr><td colspan="32">Filtros Utilizados:<br>
     
-    <% if (!"".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><% } %>
+    <!-- Reparticiones a incluir -->
+    
+    <!-- Rango de Fechas -->
+    <% if (!"".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><% } %><br>
+    
+    <!-- Ciudad -->
    
-    <br>
+    <!-- RUT del prestador -->
+    <% if ("si".equals(opPrestador)){ %>Rut del Prestador: <%= prestador %> <%  }%>
+    
+    <!-- Jurisdicción -->
+    
+    <!-- Código de Prestación -->
+    
+    <!-- Estado del Bono -->
     </td></tr>
 
 <% } %>
@@ -560,6 +614,21 @@
 		    }
 	    }
 	  }
+	  
+	  function mostrarPrestacion(){
+	    if (document.formulario.opPrestacion.selectedIndex > 0){
+	  
+		    if (document.getElementById("div-opPrestacion")){
+		    	document.getElementById("div-opPrestacion").style.display = "";
+		    }
+	    } else {
+		    if (document.getElementById("div-opPrestacion")){
+		    	document.getElementById("div-opPrestacion").style.display = "none";
+		    }
+	    }
+	  }
+	  
+	  
 
 	  // En esta pÃ¡gina, si viene la cookie "update", simplemente se consume la cookie
 	  // Si no se encuentra la cookie "update", se fuerza un refresco de la pagina
