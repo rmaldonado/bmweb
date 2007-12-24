@@ -144,6 +144,7 @@ public class ReportesDao implements IReportesDao {
 					" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, " +
 					" bm_habilitado f, keyword_det k " +
 					" where b.bo_serial = a.bo_serial " +
+					"  and b.dom_tipbon='W' " +
 					"  and c.pr_codigo = a.pr_codigo ";
 			
 			if ("si".equals((String)params.get("opPrestacion"))){
@@ -171,7 +172,7 @@ public class ReportesDao implements IReportesDao {
 					"  and key_sist='BENMED' and key_word ='JURISD' ";
 			
 				// Si no viene la jurisdiccion
-				if ( (params.containsKey("dom_jurisdiccion")) && (!"0".equals((String)params.get("dom_jurisdiccion")))){
+				if ( (params.containsKey("dom_jurisdiccion")) && (!"".equals((String)params.get("dom_jurisdiccion")))){
 					query += "  and f.ha_jurisd = " + params.get("dom_jurisdiccion");
 				} else {
 					query += "  and f.ha_jurisd <> 0 ";

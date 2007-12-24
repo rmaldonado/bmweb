@@ -18,6 +18,11 @@
   	mapaCiudades = (HashMap) request.getAttribute("ciudades");
   }
   
+  HashMap mapaJurisdicciones = new HashMap();
+  if (request.getAttribute("jurisdicciones") != null){
+	  mapaJurisdicciones = (HashMap) request.getAttribute("jurisdicciones");
+  }
+  
   List listaCiudades = new ArrayList();
   if (request.getAttribute("listaCiudades") != null){
   	listaCiudades = (List) request.getAttribute("listaCiudades");
@@ -25,7 +30,7 @@
 
   List listaJurisdicciones = new ArrayList();
   if (request.getAttribute("listaJurisdicciones") != null){
-  	listaCiudades = (List) request.getAttribute("listaJurisdicciones");
+	  listaJurisdicciones = (List) request.getAttribute("listaJurisdicciones");
   }
 
   List filasReporte = new ArrayList();
@@ -50,7 +55,7 @@
   if (request.getParameter("dom_ciudad") != null) { domCiudad = request.getParameter("dom_ciudad"); }
   
   String domJurisdiccion = "";
-  if (request.getParameter("dom_jurisdiccion") != null) { domCiudad = request.getParameter("dom_jurisdiccion"); }
+  if (request.getParameter("dom_jurisdiccion") != null) { domJurisdiccion = request.getParameter("dom_jurisdiccion"); }
   
   String opPrestador = "";
   if (request.getParameter("opPrestador") != null) { opPrestador = request.getParameter("opPrestador"); }
@@ -292,10 +297,10 @@
 			<td>Jurisdicción</td>
 			<td style="text-align:left">
 				<select name="dom_jurisdiccion">
-				<option value="0">No filtrar por Jurisdicción</option>
+				<option value="">No filtrar por Jurisdicción</option>
 			<%
-				for (int i=0; i<listaCiudades.size(); i++){
-				CiudadDTO c = (CiudadDTO) listaCiudades.get(i);
+				for (int i=0; i<listaJurisdicciones.size(); i++){
+				CiudadDTO c = (CiudadDTO) listaJurisdicciones.get(i);
 				String nombreJurisdiccion = c.getNombre();
 				String codigoJurisdiccion = "" + c.getCodigo();
 				
@@ -365,11 +370,13 @@
     <% if (!"".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><% } %><br>
     
     <!-- Ciudad -->
+    <% if (!"".equals(domCiudad)){ String nombreCiudad = (String) mapaCiudades.get(new Integer(domCiudad)); %>Ciudad: <%= nombreCiudad %><br><% } %>
    
     <!-- RUT del prestador -->
     <% if ("si".equals(opPrestador)){ %>Rut del Prestador: <%= prestador %> <%  }%>
     
     <!-- Jurisdicción -->
+    <% if (!"".equals(domJurisdiccion)){ String nombreJurisdiccion = (String) mapaJurisdicciones.get(new Integer(domJurisdiccion)); %>Jurisdicción: <%= nombreJurisdiccion %><br><% } %>
     
     <!-- Código de Prestación -->
     

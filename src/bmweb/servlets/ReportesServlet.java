@@ -75,8 +75,9 @@ public class ReportesServlet extends ServletSeguro {
 			request.setAttribute("filasReporte", filas);
 
 			request.setAttribute("ciudades", ciudadDao.mapa());
-			request.setAttribute("listaJurisdicciones", ciudadDao.listaJurisdicciones());
 			request.setAttribute("listaCiudades", ciudadDao.lista());
+			request.setAttribute("jurisdicciones", ciudadDao.mapaJurisdicciones());
+			request.setAttribute("listaJurisdicciones", ciudadDao.listaJurisdicciones());
 			
 			// Si me indican que la salida sera en formato excel, agrego estos headers a la salida
 			if ("excel".equals(request.getParameter("salida"))){
