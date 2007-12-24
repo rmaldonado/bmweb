@@ -35,6 +35,7 @@ public class CiudadDao implements ICiudadDao {
 	private static List listaJurisdicciones = null;
 	
 	private static HashMap mapaCiudades = null;
+	private static HashMap mapaJurisdicciones = null;
 	private DataSource dataSource;
 	
 	private static String[] mapaColumnas = new String[] {
@@ -78,6 +79,29 @@ public class CiudadDao implements ICiudadDao {
 			}
 	
 			return mapaCiudades;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new HashMap();
+		}
+	}
+
+	public HashMap mapaJurisdicciones(){
+		
+		if (mapaJurisdicciones != null) return mapaJurisdicciones;
+		
+		try {
+			mapaJurisdicciones = new HashMap();
+			
+			// Obtengo la lista de las ciudades y con ella lleno el HashMap
+			List lasJurisdicciones = listaJurisdicciones();
+			
+			for (int i = 0; lasJurisdicciones != null && i<lasJurisdicciones.size(); i++){
+			    CiudadDTO j = (CiudadDTO) lasJurisdicciones.get(i);
+			    mapaJurisdicciones.put( new Integer(j.getCodigo()) , j.getNombre() );
+			}
+	
+			return mapaJurisdicciones;
 
 		} catch (Exception e) {
 			e.printStackTrace();

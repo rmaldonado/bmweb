@@ -16,4 +16,6 @@ public interface ICiudadDao {
 	public abstract HashMap mapa();
 	
 	public abstract List listaJurisdicciones();
+	
+	public abstract HashMap mapaJurisdicciones();
 }
