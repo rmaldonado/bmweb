@@ -171,36 +171,62 @@ public class ReportesDao implements IReportesDao {
 					"  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd " +
 					"  and key_sist='BENMED' and key_word ='JURISD' ";
 			
-				// Si no viene la jurisdiccion
-				if ( (params.containsKey("dom_jurisdiccion")) && (!"".equals((String)params.get("dom_jurisdiccion")))){
-					query += "  and f.ha_jurisd = " + params.get("dom_jurisdiccion");
-				} else {
-					query += "  and f.ha_jurisd <> 0 ";
-				}
-			
-				// Si no viene la opfecha o viene con 'entre'
-				if ( (!params.containsKey("opfecha")) || "entre".equals((String)params.get("opfecha"))){
-					query += "" +
-					"  and bo_fecemi between TO_DATE('" + fechaDesde + "', '%d/%m/%Y')" +
-					"    and TO_DATE('" + fechaHasta + "', '%d/%m/%Y')";
+			// Si viene la reparticion
+			if (params.containsKey("reparticiones")){
+				String[] reps = (String[]) params.get("reparticiones");
+				String lasReps = "";
+				String coma = "";
+				for (int i=0; null != reps && i<reps.length; i++){
+					lasReps = lasReps + coma + "'" + reps[i] + "'";
+					coma = ", ";
 				}
 				
-				// Si el estado del bono es uno de estos: 'A', 'P', lo incluyo en la query
-				if (BonoDTO.ESTADOBONO_ANULADO.equals((String)params.get("estadoBono")) ||
-					BonoDTO.ESTADOBONO_IMPRESO.equals((String)params.get("estadoBono"))){
-					String paramEstadoBono = (String)params.get("estadoBono");
-					query += "  and b.dom_estbon = '" + paramEstadoBono + "' ";
+				if (null != reps){
+					query += "  and d.cod_repart in (" + lasReps + ") "; 
 				}
-				
-				// Si viene el rut del prestador, filtro por el
-				if ("si".equals((String)params.get("opPrestador"))){
-						String paramRutPrestador = (String)params.get("prestador");
-						query += "  and b.pb_rut = '" + paramRutPrestador + "'";
-				}
-			
+
+			}
+		
+			// CJRA: ciudad - jurisdiccion - region - agencia
+			if ("C".equals((String)params.get("CJRA"))){
+				query += "  and f.dom_ciudad = " + params.get("dom_ciudad") + " ";
+			}
+		
+			if ("J".equals((String)params.get("CJRA"))){
+				query += "  and f.ha_jurisd = " + params.get("dom_jurisdiccion") + " ";
+			}
+		
+			if ("R".equals((String)params.get("CJRA"))){
+				query += "  and f.ha_region = " + params.get("dom_region") + " ";
+			}
+		
+			if ("A".equals((String)params.get("CJRA"))){
+				query += "  and f.ha_agencia = " + params.get("dom_agencia") + " ";
+			}
+		
+			// Si no viene la opfecha o viene con 'entre'
+			if ( (!params.containsKey("opfecha")) || "entre".equals((String)params.get("opfecha"))){
 				query += "" +
-					"group by 1,2,3,4 " +
-					"order by 1,2,3,4 ";
+				"  and bo_fecemi between TO_DATE('" + fechaDesde + "', '%d/%m/%Y')" +
+				"    and TO_DATE('" + fechaHasta + "', '%d/%m/%Y')";
+			}
+			
+			// Si el estado del bono es uno de estos: 'A', 'P', lo incluyo en la query
+			if (BonoDTO.ESTADOBONO_ANULADO.equals((String)params.get("estadoBono")) ||
+				BonoDTO.ESTADOBONO_IMPRESO.equals((String)params.get("estadoBono"))){
+				String paramEstadoBono = (String)params.get("estadoBono");
+				query += "  and b.dom_estbon = '" + paramEstadoBono + "' ";
+			}
+			
+			// Si viene el rut del prestador, filtro por el
+			if ("si".equals((String)params.get("opPrestador"))){
+					String paramRutPrestador = (String)params.get("prestador");
+					query += "  and b.pb_rut = '" + paramRutPrestador + "'";
+			}
+		
+			query += "" +
+				"group by 1,2,3,4 " +
+				"order by 1,2,3,4 ";
 
 			// Conversión de fechas usando
 			// TO_DATE ('2002-12-31 23:59:59' , '%Y-%m-%d %H:%M:%S' )

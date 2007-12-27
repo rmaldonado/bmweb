@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -33,9 +34,14 @@ public class CiudadDao implements ICiudadDao {
 	
 	private static List listaCiudades = null;
 	private static List listaJurisdicciones = null;
+	private static List listaRegiones = null;
+	private static List listaAgencias = null;
 	
-	private static HashMap mapaCiudades = null;
-	private static HashMap mapaJurisdicciones = null;
+	private static Map mapaCiudades = null;
+	private static Map mapaJurisdicciones = null;
+	private static Map mapaRegiones = null;
+	private static Map mapaAgencias = null;
+	
 	private DataSource dataSource;
 	
 	private static String[] mapaColumnas = new String[] {
@@ -52,63 +58,22 @@ public class CiudadDao implements ICiudadDao {
 		// si la tengo en el cache la uso, en caso contrario busco
 		if (listaCiudades != null) return listaCiudades;
 
-		/*
-		HibernateTemplate ht = getHibernateTemplate();
-		listaCiudades = (List) ht.execute( new CiudadesHibernateCallback() );
-		*/
-		
 		CiudadesMappingQuery buscador = new CiudadesMappingQuery(dataSource, "CIUDAD");
 		List listaCiudades = buscador.execute();
 		
 		return listaCiudades;
 	}
 
-	public HashMap mapa(){
+	public Map mapa(){
 		
-		if (mapaCiudades != null) return mapaCiudades;
-		
-		try {
-			mapaCiudades = new HashMap();
-			
-			// Obtengo la lista de las ciudades y con ella lleno el HashMap
-			List lasCiudades = lista();
-			
-			for (int i = 0; lasCiudades != null && i<lasCiudades.size(); i++){
-			    CiudadDTO c = (CiudadDTO) lasCiudades.get(i);
-			    mapaCiudades.put( new Integer(c.getCodigo()) , c.getNombre() );
-			}
-	
+		if (mapaCiudades != null) return mapaCiudades;		
+		else {
+			mapaCiudades = listaToMapa(lista());
 			return mapaCiudades;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new HashMap();
 		}
 	}
 
-	public HashMap mapaJurisdicciones(){
-		
-		if (mapaJurisdicciones != null) return mapaJurisdicciones;
-		
-		try {
-			mapaJurisdicciones = new HashMap();
-			
-			// Obtengo la lista de las ciudades y con ella lleno el HashMap
-			List lasJurisdicciones = listaJurisdicciones();
-			
-			for (int i = 0; lasJurisdicciones != null && i<lasJurisdicciones.size(); i++){
-			    CiudadDTO j = (CiudadDTO) lasJurisdicciones.get(i);
-			    mapaJurisdicciones.put( new Integer(j.getCodigo()) , j.getNombre() );
-			}
 	
-			return mapaJurisdicciones;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new HashMap();
-		}
-	}
-
 	/**
 	 * Lista de jurisdicciones
 	 */
@@ -124,6 +89,80 @@ public class CiudadDao implements ICiudadDao {
 
 	}
 	
+	public Map mapaJurisdicciones(){
+		
+		if (mapaJurisdicciones != null) return mapaJurisdicciones;
+		else {
+			mapaJurisdicciones = listaToMapa(listaJurisdicciones());
+			return mapaJurisdicciones;
+		}
+		
+	}
+
+	
+	public List listaRegiones(){
+		
+		if (listaRegiones != null) return listaRegiones;
+		else {			
+			CiudadesMappingQuery buscador = new CiudadesMappingQuery(dataSource, "REGION");
+			listaRegiones = buscador.execute();
+			return listaRegiones;
+		}
+		
+	}
+	
+	public Map mapaRegiones(){
+		
+		if (mapaRegiones != null) return mapaRegiones;
+		else {
+			mapaRegiones = listaToMapa(listaRegiones());
+			return mapaRegiones;
+		}
+		
+	}
+	
+	public List listaAgencias(){
+		
+		if (listaAgencias != null) return listaAgencias;
+		else {			
+			CiudadesMappingQuery buscador = new CiudadesMappingQuery(dataSource, "AGENCIA");
+			listaAgencias = buscador.execute();
+			return listaAgencias;
+		}
+		
+	}
+	
+	public Map mapaAgencias(){
+		
+		if (mapaAgencias != null) return mapaAgencias;
+		else {
+			mapaAgencias = listaToMapa(listaRegiones());
+			return mapaAgencias;
+		}
+		
+	}
+	
+	
+	
+	private Map listaToMapa(List lista){
+		
+		
+		try {
+			Map res = new HashMap();
+			
+			for (int i = 0; null != lista && i<lista.size(); i++){
+			    CiudadDTO j = (CiudadDTO) lista.get(i);
+			    res.put( new Integer(j.getCodigo()) , j.getNombre() );
+			}
+	
+			return res;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new HashMap();
+		}
+	}
+
 	
 	/**
 	 * Clase interior

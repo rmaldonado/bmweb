@@ -61,8 +61,20 @@ public class ReportesServlet extends ServletSeguro {
 	 */
 	private void reporte(HttpServletRequest request, HttpServletResponse response) {
 		try {
+			String[] reparticiones = (String[]) request.getParameterMap().get("reparticiones");
 			UsuarioWeb uw = getUsuarioWeb(request);
 			Map params = ParamsUtil.fixParams(request.getParameterMap());
+			
+			// Convierto las reparticiones a una lista separada por comas
+			String lasReparticiones = "";
+			for(int i=0; null != reparticiones && i < reparticiones.length; i++){
+				lasReparticiones = lasReparticiones + reparticiones[i] + ",";
+			}
+			
+			params.put("reparticiones", reparticiones);
+			
+			// Conservo la lista de reparticiones
+			request.setAttribute("reparticiones", lasReparticiones);
 			
 			List filas;
 			
@@ -74,10 +86,17 @@ public class ReportesServlet extends ServletSeguro {
 
 			request.setAttribute("filasReporte", filas);
 
-			request.setAttribute("ciudades", ciudadDao.mapa());
 			request.setAttribute("listaCiudades", ciudadDao.lista());
-			request.setAttribute("jurisdicciones", ciudadDao.mapaJurisdicciones());
+			request.setAttribute("ciudades", ciudadDao.mapa());
+
 			request.setAttribute("listaJurisdicciones", ciudadDao.listaJurisdicciones());
+			request.setAttribute("jurisdicciones", ciudadDao.mapaJurisdicciones());
+			
+			request.setAttribute("listaRegiones", ciudadDao.listaRegiones());
+			request.setAttribute("regiones", ciudadDao.mapaRegiones());
+			
+			request.setAttribute("listaAgencias", ciudadDao.listaAgencias());
+			request.setAttribute("agencias", ciudadDao.mapaAgencias());
 			
 			// Si me indican que la salida sera en formato excel, agrego estos headers a la salida
 			if ("excel".equals(request.getParameter("salida"))){

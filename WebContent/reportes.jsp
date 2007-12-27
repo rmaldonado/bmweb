@@ -13,14 +13,24 @@
   SimpleDateFormat sdfReporte = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
   SimpleDateFormat sdf_yyyy = new SimpleDateFormat("yyyy");
   
-  HashMap mapaCiudades = new HashMap();
+  Map mapaCiudades = new HashMap();
   if (request.getAttribute("ciudades") != null){
-  	mapaCiudades = (HashMap) request.getAttribute("ciudades");
+  	mapaCiudades = (Map) request.getAttribute("ciudades");
   }
   
-  HashMap mapaJurisdicciones = new HashMap();
+  Map mapaJurisdicciones = new HashMap();
   if (request.getAttribute("jurisdicciones") != null){
-	  mapaJurisdicciones = (HashMap) request.getAttribute("jurisdicciones");
+	  mapaJurisdicciones = (Map) request.getAttribute("jurisdicciones");
+  }
+  
+  Map mapaRegiones = new HashMap();
+  if (request.getAttribute("regiones") != null){
+	  mapaRegiones = (Map) request.getAttribute("regiones");
+  }
+  
+  Map mapaAgencias = new HashMap();
+  if (request.getAttribute("agencias") != null){
+	  mapaAgencias = (Map) request.getAttribute("agencias");
   }
   
   List listaCiudades = new ArrayList();
@@ -33,6 +43,17 @@
 	  listaJurisdicciones = (List) request.getAttribute("listaJurisdicciones");
   }
 
+  List listaRegiones = new ArrayList();
+  if (request.getAttribute("listaRegiones") != null){
+	  listaRegiones = (List) request.getAttribute("listaRegiones");
+  }
+
+  List listaAgencias = new ArrayList();
+  if (request.getAttribute("listaAgencias") != null){
+	  listaAgencias = (List) request.getAttribute("listaAgencias");
+  }
+
+  
   List filasReporte = new ArrayList();
   if (request.getAttribute("filasReporte") != null){
 	  filasReporte = (List) request.getAttribute("filasReporte");
@@ -57,6 +78,12 @@
   String domJurisdiccion = "";
   if (request.getParameter("dom_jurisdiccion") != null) { domJurisdiccion = request.getParameter("dom_jurisdiccion"); }
   
+  String domRegion = "";
+  if (request.getParameter("dom_region") != null) { domRegion = request.getParameter("dom_region"); }
+  
+  String domAgencia = "";
+  if (request.getParameter("dom_agencia") != null) { domAgencia = request.getParameter("dom_agencia"); }
+  
   String opPrestador = "";
   if (request.getParameter("opPrestador") != null) { opPrestador = request.getParameter("opPrestador"); }
   
@@ -71,6 +98,12 @@
 
   String estadoBono = "";
   if (request.getParameter("estadoBono") != null) { estadoBono = request.getParameter("estadoBono"); }
+  
+  String reparticiones = "";
+  if (request.getAttribute("reparticiones") != null) { reparticiones = (String) request.getAttribute("reparticiones"); }
+  
+  String CJRA = "";
+  if (request.getParameter("CJRA") != null) { CJRA = (String) request.getParameter("CJRA"); }
   
   // coloco el titulo de la pagina
   request.setAttribute("titulo", "Reportes");
@@ -145,29 +178,23 @@
 		<tr class="fila-detalle-impar">
 			<td>Reparticiones a incluir</td>
 			<td style="text-align:left">
-				<!--
-				<input type="checkbox" name="rep0" value="0"> Todas <br>
-				<input type="checkbox" name="rep1" value="1"> Carabineros <br>
-				<input type="checkbox" name="rep2" value="2"> Investigaciones <br>
-				<input type="checkbox" name="rep3" value="3"> Gendarmer&iacute;a <br>
-				<input type="checkbox" name="rep4" value="4"> Mutualidad Carabineros <br>
-				<input type="checkbox" name="rep5" value="5"> Funcionarios Dipreca <br>
-				<input type="checkbox" name="rep6" value="6"> Pensionados <br>
-				<input type="checkbox" name="rep7" value="7"> Montepiados
-				-->
 				<select name="reparticiones" size="4" multiple="true">
-					<option value="1">Carabineros</option>
-					<option value="2">Investigaciones</option>
-					<option value="3">Gendarmer&iacute;a</option>
-					<option value="4">Mutualidad Carabineros</option>
-					<option value="5">Funcionarios Dipreca</option>
-					<option value="6">Pensionados</option>
-					<option value="7">Montepiados</option>
+				<!-- reps:<%= reparticiones %> -->
+				<%
+				String [] reps = new String[]{ null, "Carabineros", "Investigaciones", "Gendarmería", 
+											"Mutualidad Carabineros", "Funcionarios Dipreca", "Pensionados", "Montepiados" };
+				
+				for (int i=1; i<reps.length; i++){
+					String selected = "";
+					if (reparticiones.indexOf(i +",") > -1){ selected = "selected"; }
+				%>
+					<option value="<%= i %>" <%=selected %>><%= reps[i] %></option>
+				<% } %>				
 				</select>
 			</td>
 
 			<!-- rowspan tantas filas como tenga el filtro -->
-			<td rowspan="6" style="text-align:center; vertical-align:middle">
+			<td rowspan="11" style="text-align:center; vertical-align:middle">
 				<input type="button" value="Buscar datos" class="submit" 
 				onClick="document.formulario.accion.value='listado';agregar(300);document.formulario.submit()"
 				style="width:120px">
@@ -247,32 +274,8 @@
 				
 				</span></td>
 		</tr>
-		
+				
 		<tr class="fila-detalle-impar">
-			<td>Ciudad</td>
-			<td style="text-align:left">
-				<select name="dom_ciudad">
-				<option value="">No filtrar por Ciudad</option>
-			<%
-				for (int i=0; i<listaCiudades.size(); i++){
-				CiudadDTO c = (CiudadDTO) listaCiudades.get(i);
-				String nombreCiudad = c.getNombre();
-				String codigoCiudad = "" + c.getCodigo();
-				
-				String selected = "";
-				if (domCiudad.equals(codigoCiudad)){ selected = "selected"; }
-				
-			%>
-				<option value="<%= codigoCiudad  %>" <%= selected  %>><%= nombreCiudad %></option>
-			<%
-				}
-			%>
-				</select>		
-
-			</td>		
-		</tr>
-		
-		<tr class="fila-detalle-par">
 			<td>RUT del prestador</td>
 			<td style="text-align:left">
 			<%
@@ -293,11 +296,49 @@
 			</td>
 		</tr>
 
-		<tr class="fila-detalle-impar">
+		<tr class="fila-detalle-par">
+			<td>Ciudad / Jurisdicción / Región / Agencia</td>
+			<td style="text-align:left">
+			
+				<select name="CJRA" onChange="mostrarCJRA()">
+				<option value="">No filtrar</option>
+				<option value="C" <%= "C".equals(CJRA)?"selected":"" %>>Filtrar por Ciudad</option>
+				<option value="J" <%= "J".equals(CJRA)?"selected":"" %>>Filtrar por Jurisdicción</option>
+				<option value="R" <%= "R".equals(CJRA)?"selected":"" %>>Filtrar por Región</option>
+				<option value="A" <%= "A".equals(CJRA)?"selected":"" %>>Filtrar por Agencia</option>
+				</select>
+			</td>
+		</tr>
+
+
+		<tr id="fila-C" class="fila-detalle-impar" style="<%= "C".equals(CJRA)?"":"display:none" %>">
+			<td>Ciudad</td>
+			<td style="text-align:left">
+				<select name="dom_ciudad">
+			<%
+				for (int i=0; i<listaCiudades.size(); i++){
+				CiudadDTO c = (CiudadDTO) listaCiudades.get(i);
+				String nombreCiudad = c.getNombre();
+				String codigoCiudad = "" + c.getCodigo();
+				
+				String selected = "";
+				if (domCiudad.equals(codigoCiudad)){ selected = "selected"; }
+				
+			%>
+				<option value="<%= codigoCiudad  %>" <%= selected  %>><%= nombreCiudad %></option>
+			<%
+				}
+			%>
+				</select>		
+
+			</td>		
+		</tr>
+
+
+		<tr id="fila-J" class="fila-detalle-impar" style="<%= "J".equals(CJRA)?"":"display:none" %>">
 			<td>Jurisdicción</td>
 			<td style="text-align:left">
 				<select name="dom_jurisdiccion">
-				<option value="">No filtrar por Jurisdicción</option>
 			<%
 				for (int i=0; i<listaJurisdicciones.size(); i++){
 				CiudadDTO c = (CiudadDTO) listaJurisdicciones.get(i);
@@ -305,10 +346,56 @@
 				String codigoJurisdiccion = "" + c.getCodigo();
 				
 				String selected = "";
-				if (domCiudad.equals(codigoJurisdiccion)){ selected = "selected"; }
+				if (domJurisdiccion.equals(codigoJurisdiccion)){ selected = "selected"; }
 				
 			%>
 				<option value="<%= codigoJurisdiccion  %>" <%= selected  %>><%= nombreJurisdiccion %></option>
+			<%
+				}
+			%>
+				</select>		
+
+			</td>		
+		</tr>
+
+		<tr id="fila-R" class="fila-detalle-impar" style="<%= "R".equals(CJRA)?"":"display:none" %>">
+			<td>Región</td>
+			<td style="text-align:left">
+				<select name="dom_region">
+			<%
+				for (int i=0; i<listaRegiones.size(); i++){
+				CiudadDTO c = (CiudadDTO) listaRegiones.get(i);
+				String nombreRegion = c.getNombre();
+				String codigoRegion = "" + c.getCodigo();
+				
+				String selected = "";
+				if (domRegion.equals(codigoRegion)){ selected = "selected"; }
+				
+			%>
+				<option value="<%= codigoRegion  %>" <%= selected  %>><%= nombreRegion %></option>
+			<%
+				}
+			%>
+				</select>		
+
+			</td>		
+		</tr>
+
+		<tr id="fila-A" class="fila-detalle-impar" style="<%= "A".equals(CJRA)?"":"display:none" %>">
+			<td>Agencia</td>
+			<td style="text-align:left">
+				<select name="dom_agencia">
+			<%
+				for (int i=0; i<listaAgencias.size(); i++){
+				CiudadDTO c = (CiudadDTO) listaAgencias.get(i);
+				String nombreAgencia = c.getNombre();
+				String codigoAgencia = "" + c.getCodigo();
+				
+				String selected = "";
+				if (domAgencia.equals(codigoAgencia)){ selected = "selected"; }
+				
+			%>
+				<option value="<%= codigoAgencia  %>" <%= selected  %>><%= nombreAgencia %></option>
 			<%
 				}
 			%>
@@ -364,7 +451,7 @@
     <tr><td colspan="32"><b>Reporte estadístico de Bonos Web</b> (generado en <%= sdfReporte.format(new Date()) %>)</td></tr>
     <tr><td colspan="32">Filtros Utilizados:<br>
     
-    <!-- Reparticiones a incluir -->
+    <!-- TODO: Reparticiones a incluir -->
     
     <!-- Rango de Fechas -->
     <% if (!"".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><% } %><br>
@@ -373,14 +460,18 @@
     <% if (!"".equals(domCiudad)){ String nombreCiudad = (String) mapaCiudades.get(new Integer(domCiudad)); %>Ciudad: <%= nombreCiudad %><br><% } %>
    
     <!-- RUT del prestador -->
-    <% if ("si".equals(opPrestador)){ %>Rut del Prestador: <%= prestador %> <%  }%>
+    <% if ("si".equals(opPrestador)){ %>Rut del Prestador: <%= prestador %><br><%  }%>
     
     <!-- Jurisdicción -->
     <% if (!"".equals(domJurisdiccion)){ String nombreJurisdiccion = (String) mapaJurisdicciones.get(new Integer(domJurisdiccion)); %>Jurisdicción: <%= nombreJurisdiccion %><br><% } %>
     
     <!-- Código de Prestación -->
+    <% if ("si".equals(request.getParameter("opPrestacion"))){ %>Código de Prestación: <%= request.getParameter("prestacion") %><br><% } %>
     
     <!-- Estado del Bono -->
+    <% if (BonoDTO.ESTADOBONO_ANULADO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Anulado<br><% } %>
+    <% if (BonoDTO.ESTADOBONO_IMPRESO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Impreso<br><% } %>
+    
     </td></tr>
 
 <% } %>
@@ -636,7 +727,20 @@
 	  }
 	  
 	  
-
+	  function mostrarCJRA(){
+		    document.getElementById("fila-C").style.display = "none";
+		    document.getElementById("fila-J").style.display = "none";
+		    document.getElementById("fila-R").style.display = "none";
+		    document.getElementById("fila-A").style.display = "none";
+		    
+		    var filaVisible = "fila-" + document.formulario.CJRA.options[document.formulario.CJRA.selectedIndex].value;
+		    
+		    if (document.getElementById(filaVisible)){
+		      document.getElementById(filaVisible).style.display = "";
+		    }
+		    
+	  }
+	  
 	  // En esta pÃ¡gina, si viene la cookie "update", simplemente se consume la cookie
 	  // Si no se encuentra la cookie "update", se fuerza un refresco de la pagina
 	  // if (!GetCookie('update')){ document.formulario.submit(); } else { DeleteCookie('update'); }
@@ -647,6 +751,9 @@
 		<input type="button" onClick="document.formulario.salida.value='excel';document.formulario.submit();document.formulario.salida.value='';"
 		class="submit" value="Exportar como archivo Excel">
 
+	<p>
+	<a href="http://www.primopdf.com"><img src="img/primopdf.gif" target="blank" border="0"></a><br>
+	<small>Para imprimir archivos en formato PDF, use el software gratuito PrimoPDF</small> 
 	
 <!-- 
 especialidad                    reparticion  imp_carga  sexo  subtotal  
