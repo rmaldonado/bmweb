@@ -3,6 +3,7 @@
 <%@ page import="bmweb.dto.*" %>
 <%@ page import="bmweb.util.*" %>
 
+
 <%
   boolean salidaExcel = false;
   if ("excel".equals(request.getParameter("salida"))){
@@ -144,7 +145,7 @@
 
 <div>
 
-	<h1>Reporte Estadístico de Bonos</h1>
+	<h1>Reporte Estadístico de Bonos nuevo</h1>
 
 	<table class="tabla-borde-delgado" id="filtro-min" style="<%= (mostrarFiltros)? "display:none":"" %>">
 		<tr class="encabezados-tabla">
