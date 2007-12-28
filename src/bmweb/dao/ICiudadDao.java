@@ -23,5 +23,8 @@ public interface ICiudadDao {
 	public abstract List listaAgencias();	
 	public abstract Map mapaAgencias();
 	
+	public abstract List listaReparticiones();	
+	public abstract Map mapaReparticiones();
+	
 	
 }

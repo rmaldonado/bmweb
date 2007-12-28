@@ -74,7 +74,7 @@ public class ReportesServlet extends ServletSeguro {
 			params.put("reparticiones", reparticiones);
 			
 			// Conservo la lista de reparticiones
-			request.setAttribute("reparticiones", lasReparticiones);
+			request.setAttribute("lasReparticiones", lasReparticiones);
 			
 			List filas;
 			
@@ -97,6 +97,9 @@ public class ReportesServlet extends ServletSeguro {
 			
 			request.setAttribute("listaAgencias", ciudadDao.listaAgencias());
 			request.setAttribute("agencias", ciudadDao.mapaAgencias());
+			
+			request.setAttribute("listaReparticiones", ciudadDao.listaReparticiones());
+			request.setAttribute("reparticiones", ciudadDao.mapaReparticiones());
 			
 			// Si me indican que la salida sera en formato excel, agrego estos headers a la salida
 			if ("excel".equals(request.getParameter("salida"))){

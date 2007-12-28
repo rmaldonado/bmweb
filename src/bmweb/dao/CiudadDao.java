@@ -14,6 +14,7 @@
 package bmweb.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,11 +37,13 @@ public class CiudadDao implements ICiudadDao {
 	private static List listaJurisdicciones = null;
 	private static List listaRegiones = null;
 	private static List listaAgencias = null;
+	private static List listaReparticiones = null;
 	
 	private static Map mapaCiudades = null;
 	private static Map mapaJurisdicciones = null;
 	private static Map mapaRegiones = null;
 	private static Map mapaAgencias = null;
+	private static Map mapaReparticiones = null;
 	
 	private DataSource dataSource;
 	
@@ -142,6 +145,37 @@ public class CiudadDao implements ICiudadDao {
 		
 	}
 	
+	
+	public List listaReparticiones(){
+		
+		if ( listaReparticiones != null ) return listaReparticiones;
+		else {
+			listaReparticiones = new ArrayList();
+			listaReparticiones.add(new CiudadDTO(1,  "Carabineros"));
+			listaReparticiones.add(new CiudadDTO(2,  "Gendarmería"));
+			listaReparticiones.add(new CiudadDTO(3,  "Investigaciones"));
+			listaReparticiones.add(new CiudadDTO(4,  "Mutualidad"));
+			listaReparticiones.add(new CiudadDTO(5,  "Funcionarios Dipreca"));
+			listaReparticiones.add(new CiudadDTO(7,  "Pensionados"));
+			listaReparticiones.add(new CiudadDTO(8,  "Montepiados"));
+			listaReparticiones.add(new CiudadDTO(9,  "Investigaciones-2"));
+			listaReparticiones.add(new CiudadDTO(10, "Exonerados-X"));
+			listaReparticiones.add(new CiudadDTO(11, "Exonerados-Y"));
+			
+			return listaReparticiones;
+		}
+		
+	}
+	
+	public Map mapaReparticiones(){
+
+		if (mapaReparticiones!= null) return mapaReparticiones;
+		else {
+			mapaReparticiones = listaToMapa(listaReparticiones());
+			return mapaReparticiones;
+		}
+		
+	}
 	
 	
 	private Map listaToMapa(List lista){

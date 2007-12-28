@@ -246,9 +246,12 @@ public class ReportesDao implements IReportesDao {
 			try {
 				fila.put("reparticion", new Integer(rs.getString("reparticion")));
 			} catch (Exception e) {
-				// 2007.12.13
-				// A veces puede venir un 'X' o una 'Y' en la repartición, reemplazo por Cero
-				fila.put("reparticion", new Integer(0));
+				// 2007.12.27
+				// A veces puede venir un 'X' o una 'Y' en la repartición, reemplazo por 10 y 11 respectivamente
+				
+				String reparticion = rs.getString("reparticion");
+				if ("X".equalsIgnoreCase(reparticion)){ fila.put("reparticion", new Integer(10)); }
+				if ("Y".equalsIgnoreCase(reparticion)){ fila.put("reparticion", new Integer(11)); }
 			}
 			
 			fila.put("imp_carga", rs.getString("imp_carga"));

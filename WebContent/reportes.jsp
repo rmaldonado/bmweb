@@ -3,7 +3,6 @@
 <%@ page import="bmweb.dto.*" %>
 <%@ page import="bmweb.util.*" %>
 
-
 <%
   boolean salidaExcel = false;
   if ("excel".equals(request.getParameter("salida"))){
@@ -34,6 +33,11 @@
 	  mapaAgencias = (Map) request.getAttribute("agencias");
   }
   
+  Map mapaReparticiones = new HashMap();
+  if (request.getAttribute("reparticiones") != null){
+	  mapaReparticiones = (Map) request.getAttribute("reparticiones");
+  }
+  
   List listaCiudades = new ArrayList();
   if (request.getAttribute("listaCiudades") != null){
   	listaCiudades = (List) request.getAttribute("listaCiudades");
@@ -52,6 +56,11 @@
   List listaAgencias = new ArrayList();
   if (request.getAttribute("listaAgencias") != null){
 	  listaAgencias = (List) request.getAttribute("listaAgencias");
+  }
+
+  List listaReparticiones = new ArrayList();
+  if (request.getAttribute("listaReparticiones") != null){
+	  listaReparticiones = (List) request.getAttribute("listaReparticiones");
   }
 
   
@@ -92,16 +101,16 @@
   if (request.getParameter("prestador") != null) { prestador = request.getParameter("prestador"); }
 
   String opPrestacion = "";
-  if (request.getParameter("opPrestacion") != null) { opPrestador = request.getParameter("opPrestacion"); }
+  if (request.getParameter("opPrestacion") != null) { opPrestacion = request.getParameter("opPrestacion"); }
   
   String prestacion = "";
-  if (request.getParameter("prestacion") != null) { prestador = request.getParameter("prestacion"); }
+  if (request.getParameter("prestacion") != null) { prestacion = request.getParameter("prestacion"); }
 
   String estadoBono = "";
   if (request.getParameter("estadoBono") != null) { estadoBono = request.getParameter("estadoBono"); }
   
-  String reparticiones = "";
-  if (request.getAttribute("reparticiones") != null) { reparticiones = (String) request.getAttribute("reparticiones"); }
+  String lasReparticiones = "";
+  if (request.getAttribute("lasReparticiones") != null) { lasReparticiones = (String) request.getAttribute("lasReparticiones"); }
   
   String CJRA = "";
   if (request.getParameter("CJRA") != null) { CJRA = (String) request.getParameter("CJRA"); }
@@ -114,9 +123,12 @@
   for (Iterator it = filasReporte.iterator(); it.hasNext();) {
     Map fila = (Map) it.next();
     
-    for (int reparticion = 1; reparticion <=6; reparticion++){
+    for (int r  = 0; r < listaReparticiones.size(); r++){
     	for (int impCarga = 0; impCarga <=1; impCarga++) {
     		for (int iSex = 0; iSex <= 1; iSex++){
+    			
+    			CiudadDTO repart = (CiudadDTO) listaReparticiones.get(r);
+    			int reparticion = repart.getCodigo();
     			
     			String sexo = (iSex==0)? "M" : "F";
     			String llave = reparticion + "." + impCarga + "." + sexo;
@@ -145,7 +157,7 @@
 
 <div>
 
-	<h1>Reporte Estadístico de Bonos nuevo</h1>
+	<h1>Reporte Estadístico de Bonos</h1>
 
 	<table class="tabla-borde-delgado" id="filtro-min" style="<%= (mostrarFiltros)? "display:none":"" %>">
 		<tr class="encabezados-tabla">
@@ -180,16 +192,16 @@
 			<td>Reparticiones a incluir</td>
 			<td style="text-align:left">
 				<select name="reparticiones" size="4" multiple="true">
-				<!-- reps:<%= reparticiones %> -->
+				<!-- reps:<%= lasReparticiones %> -->
 				<%
-				String [] reps = new String[]{ null, "Carabineros", "Investigaciones", "Gendarmería", 
-											"Mutualidad Carabineros", "Funcionarios Dipreca", "Pensionados", "Montepiados" };
 				
-				for (int i=1; i<reps.length; i++){
+				for (int i=0; i<listaReparticiones.size(); i++){
 					String selected = "";
-					if (reparticiones.indexOf(i +",") > -1){ selected = "selected"; }
+					CiudadDTO rep = (CiudadDTO)listaReparticiones.get(i);
+					int iRep = rep.getCodigo();
+					if (lasReparticiones.indexOf(iRep +",") > -1){ selected = "selected"; }
 				%>
-					<option value="<%= i %>" <%=selected %>><%= reps[i] %></option>
+					<option value="<%= iRep %>" <%=selected %>><%= rep.getNombre() %></option>
 				<% } %>				
 				</select>
 			</td>
@@ -280,19 +292,19 @@
 			<td>RUT del prestador</td>
 			<td style="text-align:left">
 			<%
-			String estiloDivRutPrestador = "";
-			if ("no".equals(opPrestador) || "".equals(opPrestador)) estiloDivRutPrestador = "display:none";
+			String estiloDivRutPrestador = "display:none";
+			if ("si".equals(opPrestador)) estiloDivRutPrestador = "";
 			%>
 				<select name="opPrestador" onChange="mostrarRutPrestador()">
-				<option value="no" <%= "no".equals(opPrestador)?"selected":"" %>>No filtrar</option>
-				<option value="si" <%= "si".equals(opPrestador)?"selected":"" %>>Filtrar por este RUT</option>
+				<option value="no" <%= ("no".equals(opPrestador))?"selected":"" %>>No filtrar</option>
+				<option value="si" <%= ("si".equals(opPrestador))?"selected":"" %>>Filtrar por este RUT</option>
 				</select>
 				
 				<br>
 
 				<!-- filtro rut prestador -->
 				<span id="div-opPrestador" style="<%= estiloDivRutPrestador %>">
-				<input type="text" name="prestador" size="12" value="<%= prestador %>" onBlur="CampoEsRut(this)">				
+				<input type="text" name="prestador" size="12" value="<%= prestador %>" onBlur="if(!CampoEsRut(this)){document.formulario.opPrestador.selectedIndex=0;mostrarRutPrestador();}">				
 				</span>
 			</td>
 		</tr>
@@ -409,19 +421,19 @@
 			<td>Código de Prestación</td>
 			<td style="text-align:left">
 			<%
-			String estiloDivPrestacion = "";
-			if ("no".equals(opPrestacion) || "".equals(opPrestacion)) estiloDivPrestacion = "display:none";
+			String estiloDivPrestacion = "display:none";
+			if ("si".equals(opPrestacion)) estiloDivPrestacion = "";
 			%>
 				<select name="opPrestacion" onChange="mostrarPrestacion()">
-				<option value="no" <%= "no".equals(opPrestador)?"selected":"" %>>No filtrar</option>
-				<option value="si" <%= "si".equals(opPrestador)?"selected":"" %>>Filtrar por este código de prestación</option>
+				<option value="no" <%= "no".equals(opPrestacion)?"selected":"" %>>No filtrar</option>
+				<option value="si" <%= "si".equals(opPrestacion)?"selected":"" %>>Filtrar por este código de prestación</option>
 				</select>
 				
 				<br>
 
 				<!-- filtro rut prestador -->
 				<span id="div-opPrestacion" style="<%= estiloDivPrestacion %>">
-				<input type="text" name="prestacion" size="12" value="<%= prestacion %>" onBlur="CampoEsNumeroEnRango(this, 101001, 999999)">				
+				<input type="text" name="prestacion" size="12" value="<%= prestacion %>" onBlur="if(!CampoEsNumeroEnRango(this, 101001, 999999)){document.formulario.opPrestacion.selectedIndex=0;mostrarPrestacion();}">				
 				</span>
 			</td>
 		</tr>
@@ -565,9 +577,12 @@
 			int totalCargasMasc = 0;
 			int totalCargasFem = 0;
 
-		    for (int reparticion = 1; reparticion <=6; reparticion++){
+		    for (int r=0; r<listaReparticiones.size(); r++){
 		    	for (int impCarga = 0; impCarga <=1; impCarga++) {
 		    		for (int iSex = 0; iSex <= 1; iSex++){
+		    			
+		    			CiudadDTO rep = (CiudadDTO) listaReparticiones.get(r);
+		    			int reparticion = rep.getCodigo();
 		    			
 		    			String sexo = (iSex==0)? "M" : "F";
 		    			String llave = reparticion + "." + impCarga + "." + sexo;
