@@ -496,12 +496,12 @@
 			<td rowspan="2" colspan="2">Total General</td>
 
 			<td colspan="4">Total por sexo</td>
-			<td colspan="4">Carabineros</td>
-			<td colspan="4">Investigaciones</td>
-			<td colspan="4">Gendarmer&iacute;a</td>
-			<td colspan="4">Dipreca</td>
-			<td colspan="4">Pensionados</td>
-			<td colspan="4">Montepios</td>
+			
+			<% for (int i=0; i<listaReparticiones.size(); i++){
+				CiudadDTO rep = (CiudadDTO) listaReparticiones.get(i);
+			%>
+			<td colspan="4"><%= rep.getNombre() %></td>			
+			<% } %>
 		</tr>
 		
 		<tr class="encabezados-tabla">
@@ -509,48 +509,29 @@
 			<td colspan="2"><small>Imponentes</small></td>
 			<td colspan="2"><small>Cargas</small></td>
 
-			<!-- carabineros -->
+			<% for (int i=0; i<listaReparticiones.size(); i++){
+				CiudadDTO rep = (CiudadDTO) listaReparticiones.get(i);
+			%>
+			<!-- <%= rep.getNombre() %> -->
 			<td colspan="2"><small>Imponentes</small></td>
 			<td colspan="2"><small>Cargas</small></td>
+			<% } %>
 
-			<!-- investigaciones -->
-			<td colspan="2"><small>Imponentes</small></td>
-			<td colspan="2"><small>Cargas</small></td>
-
-			<!-- gendarmeria -->
-			<td colspan="2"><small>Imponentes</small></td>
-			<td colspan="2"><small>Cargas</small></td>
-
-			<!-- dipreca -->
-			<td colspan="2"><small>Imponentes</small></td>
-			<td colspan="2"><small>Cargas</small></td>
-
-			<!-- pensionados -->
-			<td colspan="2"><small>Imponentes</small></td>
-			<td colspan="2"><small>Cargas</small></td>
-
-			<!-- montepios -->
-			<td colspan="2"><small>Imponentes</small></td>
-			<td colspan="2"><small>Cargas</small></td>
 		</tr>
 
 		<tr class="encabezados-tabla">
 			<td>Total</td><td>%</td>
 			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
 			
+
+			<% for (int i=0; i<listaReparticiones.size(); i++){
+				CiudadDTO rep = (CiudadDTO) listaReparticiones.get(i);
+			%>
+			<!-- <%= rep.getNombre() %> -->
 			<td><small>Masc.</small></td><td><small>Fem.</small></td>
 			<td><small>Masc.</small></td><td><small>Fem.</small></td>
-			<td><small>Masc.</small></td><td><small>Fem.</small></td>
-			<td><small>Masc.</small></td><td><small>Fem.</small></td>
-			<td><small>Masc.</small></td><td><small>Fem.</small></td>
-			<td><small>Masc.</small></td><td><small>Fem.</small></td>
-			<td><small>Masc.</small></td><td><small>Fem.</small></td>
-			<td><small>Masc.</small></td><td><small>Fem.</small></td>
-			<td><small>Masc.</small></td><td><small>Fem.</small></td>
-			<td><small>Masc.</small></td><td><small>Fem.</small></td>
-			<td><small>Masc.</small></td><td><small>Fem.</small></td>
-			<td><small>Masc.</small></td><td><small>Fem.</small></td>
-			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<% } %>
 		</tr>
 
 <%
