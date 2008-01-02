@@ -167,9 +167,9 @@ public class ReportesDao implements IReportesDao {
 					"  and b.be_carne[5] in ('0','1','2','3','4','5','6','7','8','9') " +
 					"  and b.be_carne[6] in ('0','1','2','3','4','5','6','7','8','9') " +
 					"  and b.be_carne[7] in ('0','1','2','3','4','5','6','7','8','9') " +
-					"  and b.be_carne[8] in ('0','1','2','3','4','5','6','7','8','9') " +
-					"  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd " +
-					"  and key_sist='BENMED' and key_word ='JURISD' ";
+					"  and b.be_carne[8] in ('0','1','2','3','4','5','6','7','8','9') "; 
+				//	"  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd " 
+				//"  and key_sist='BENMED' and key_word ='JURISD' ";
 			
 			// Si viene la reparticion
 			if (params.containsKey("reparticiones")){
@@ -189,19 +189,27 @@ public class ReportesDao implements IReportesDao {
 		
 			// CJRA: ciudad - jurisdiccion - region - agencia
 			if ("C".equals((String)params.get("CJRA"))){
-				query += "  and f.dom_ciudad = " + params.get("dom_ciudad") + " ";
+				query +="  and key_sist='BENMED' and key_word ='CIUDAD' "
+					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.dom_ciudad "
+				      + "  and f.dom_ciudad = " + params.get("dom_ciudad") + " ";
 			}
 		
 			if ("J".equals((String)params.get("CJRA"))){
-				query += "  and f.ha_jurisd = " + params.get("dom_jurisdiccion") + " ";
+				query +="  and key_sist='BENMED' and key_word ='JURISD' "
+					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd "
+					  + "  and f.ha_jurisd = " + params.get("dom_jurisdiccion") + " ";
 			}
 		
 			if ("R".equals((String)params.get("CJRA"))){
-				query += "  and f.ha_region = " + params.get("dom_region") + " ";
+				query +="  and key_sist='BENMED' and key_word ='REGION' "
+					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_region "
+					  + "  and f.ha_region = " + params.get("dom_region") + " ";
 			}
 		
 			if ("A".equals((String)params.get("CJRA"))){
-				query += "  and f.ha_agencia = " + params.get("dom_agencia") + " ";
+				query +="  and key_sist='BENMED' and key_word ='AGENCIA' " 
+					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_agencia "
+					  + "  and f.ha_agencia = " + params.get("dom_agencia") + " ";
 			}
 		
 			// Si no viene la opfecha o viene con 'entre'
@@ -212,12 +220,16 @@ public class ReportesDao implements IReportesDao {
 			}
 			
 			// Si el estado del bono es uno de estos: 'A', 'P', lo incluyo en la query
-			if (BonoDTO.ESTADOBONO_ANULADO.equals((String)params.get("estadoBono")) ||
-				BonoDTO.ESTADOBONO_IMPRESO.equals((String)params.get("estadoBono"))){
+			//if (BonoDTO.ESTADOBONO_ANULADO.equals((String)params.get("estadoBono")) ||
+			//	BonoDTO.ESTADOBONO_IMPRESO.equals((String)params.get("estadoBono"))){
+			if (BonoDTO.ESTADOBONO_ANULADO.equals((String)params.get("estadoBono"))){
 				String paramEstadoBono = (String)params.get("estadoBono");
 				query += "  and b.dom_estbon = '" + paramEstadoBono + "' ";
 			}
-			
+			if (BonoDTO.ESTADOBONO_IMPRESO.equals((String)params.get("estadoBono"))){
+				String paramEstadoBono = (String)params.get("estadoBono");
+				query += "  and (b.dp_serial is not null and b.dp_serial > 0) ";
+			}
 			// Si viene el rut del prestador, filtro por el
 			if ("si".equals((String)params.get("opPrestador"))){
 					String paramRutPrestador = (String)params.get("prestador");
