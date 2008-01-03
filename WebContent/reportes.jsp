@@ -117,6 +117,7 @@
   
   // coloco el titulo de la pagina
   request.setAttribute("titulo", "Reportes");
+
   
   // Calculo del gran total de bonos del reporte
   int granTotal = 0;
@@ -486,16 +487,16 @@
     <% if (!"".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><br><% } %>
     
     <!-- Ciudad -->
-    <% if ("C".equals(CJRA)){ CiudadDTO dtoCiudad = (CiudadDTO) mapaCiudades.get(new Integer(domCiudad)); %>Ciudad: <%= dtoCiudad.getNombre() %><br><% } %>
+    <% if ("C".equals(CJRA)){ String nombreCiudad = (String) mapaCiudades.get(new Integer(domCiudad)); %>Ciudad: <%= nombreCiudad %><br><% } %>
 
     <!-- Jurisdicción -->
-    <% if ("J".equals(CJRA)){ CiudadDTO dtoJurisdiccion = (CiudadDTO) mapaJurisdicciones.get(new Integer(domJurisdiccion)); %>Jurisdicción: <%= dtoJurisdiccion.getNombre() %><br><% } %>
+    <% if ("J".equals(CJRA)){ String nombreJurisdiccion = (String) mapaJurisdicciones.get(new Integer(domJurisdiccion)); %>Jurisdicción: <%= nombreJurisdiccion %><br><% } %>
    
     <!-- Region -->
-    <% if ("R".equals(CJRA)){ CiudadDTO dtoRegion = (CiudadDTO) mapaRegiones.get(new Integer(domRegion)); %>Región: <%= dtoRegion.getNombre() %><br><% } %>
+    <% if ("R".equals(CJRA)){ String nombreRegion = (String) mapaRegiones.get(new Integer(domRegion)); %>Región: <%= nombreRegion %><br><% } %>
    
     <!-- Agencia -->
-    <% if ("A".equals(CJRA)){ CiudadDTO dtoAgencia = (CiudadDTO) mapaAgencias.get(new Integer(domAgencia)); %>Agencia: <%= dtoAgencia.getNombre() %><br><% } %>
+    <% if ("A".equals(CJRA)){ String nombreAgencia = (String) mapaAgencias.get(new Integer(domAgencia)); %>Agencia: <%= nombreAgencia %><br><% } %>
    
     <!-- RUT del prestador -->
     <% if ("si".equals(opPrestador)){ %>Rut del Prestador: <%= prestador %><br><%  }%>

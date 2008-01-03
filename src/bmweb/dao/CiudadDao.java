@@ -139,7 +139,7 @@ public class CiudadDao implements ICiudadDao {
 		
 		if (mapaAgencias != null) return mapaAgencias;
 		else {
-			mapaAgencias = listaToMapa(listaRegiones());
+			mapaAgencias = listaToMapa(listaAgencias());
 			return mapaAgencias;
 		}
 		
