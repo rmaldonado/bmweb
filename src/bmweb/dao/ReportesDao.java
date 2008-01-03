@@ -141,11 +141,57 @@ public class ReportesDao implements IReportesDao {
 					" sexo, " + 
 					" count(b.bo_serial) subtotal " +
 					// " key_descr[1,10] jurisdiccion" +
-					" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, " +
-					" bm_habilitado f, keyword_det k " +
+					" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e " +
+//					" bm_habilitado f, keyword_det k " +
 					" where b.bo_serial = a.bo_serial " +
 					"  and b.dom_tipbon='W' " +
 					"  and c.pr_codigo = a.pr_codigo ";
+// parche Luis LAtin para cuando no filtre por Jurisdiccion o Region o Ciudad o Agencia //
+			if ("C".equals((String)params.get("CJRA"))||
+			    "J".equals((String)params.get("CJRA"))||
+			    "R".equals((String)params.get("CJRA"))||
+			    "A".equals((String)params.get("CJRA")))
+			{
+				query ="" +
+				" select pr_nombre[1,30] especialidad, " +
+				" be_carne[1,1] reparticion, " +
+				" be_carne[10,11] imp_carga, " +
+				" sexo, " + 
+				" count(b.bo_serial) subtotal " +
+				// " key_descr[1,10] jurisdiccion" +
+				" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, " +
+				" bm_habilitado f, keyword_det k " +
+				" where b.bo_serial = a.bo_serial " +
+				"  and b.dom_tipbon='W' " +
+				"  and c.pr_codigo = a.pr_codigo ";
+				
+			}
+// fin parche Luis LAtin CJRA //
+			
+			// CJRA: ciudad - jurisdiccion - region - agencia
+			if ("C".equals((String)params.get("CJRA"))){
+				query +="  and key_sist='BENMED' and key_word ='CIUDAD' "
+					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.dom_ciudad "
+				      + "  and f.dom_ciudad = " + params.get("dom_ciudad") + " ";
+			}
+		
+			if ("J".equals((String)params.get("CJRA"))){
+				query +="  and key_sist='BENMED' and key_word ='JURISD' "
+					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd "
+					  + "  and f.ha_jurisd = " + params.get("dom_jurisdiccion") + " ";
+			}
+		
+			if ("R".equals((String)params.get("CJRA"))){
+				query +="  and key_sist='BENMED' and key_word ='REGION' "
+					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_region "
+					  + "  and f.ha_region = " + params.get("dom_region") + " ";
+			}
+		
+			if ("A".equals((String)params.get("CJRA"))){
+				query +="  and key_sist='BENMED' and key_word ='AGENCIA' " 
+					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_agencia "
+					  + "  and f.ha_agencia = " + params.get("dom_agencia") + " ";
+			}
 			
 			if ("si".equals((String)params.get("opPrestacion"))){
 				query += "" +
@@ -187,30 +233,6 @@ public class ReportesDao implements IReportesDao {
 
 			}
 		
-			// CJRA: ciudad - jurisdiccion - region - agencia
-			if ("C".equals((String)params.get("CJRA"))){
-				query +="  and key_sist='BENMED' and key_word ='CIUDAD' "
-					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.dom_ciudad "
-				      + "  and f.dom_ciudad = " + params.get("dom_ciudad") + " ";
-			}
-		
-			if ("J".equals((String)params.get("CJRA"))){
-				query +="  and key_sist='BENMED' and key_word ='JURISD' "
-					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd "
-					  + "  and f.ha_jurisd = " + params.get("dom_jurisdiccion") + " ";
-			}
-		
-			if ("R".equals((String)params.get("CJRA"))){
-				query +="  and key_sist='BENMED' and key_word ='REGION' "
-					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_region "
-					  + "  and f.ha_region = " + params.get("dom_region") + " ";
-			}
-		
-			if ("A".equals((String)params.get("CJRA"))){
-				query +="  and key_sist='BENMED' and key_word ='AGENCIA' " 
-					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_agencia "
-					  + "  and f.ha_agencia = " + params.get("dom_agencia") + " ";
-			}
 		
 			// Si no viene la opfecha o viene con 'entre'
 			if ( (!params.containsKey("opfecha")) || "entre".equals((String)params.get("opfecha"))){
