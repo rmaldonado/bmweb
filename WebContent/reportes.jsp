@@ -464,20 +464,42 @@
     <tr><td colspan="32"><b>Reporte estadístico de Bonos Web</b> (generado en <%= sdfReporte.format(new Date()) %>)</td></tr>
     <tr><td colspan="32">Filtros Utilizados:<br>
     
-    <!-- TODO: Reparticiones a incluir -->
+    <!-- Reparticiones -->
+    <%
+	String nombresReparticionesSeleccionadas = "";
+    int numRepsSeleccionadas = 0;
+	for (int i=0; i<listaReparticiones.size(); i++){
+		CiudadDTO rep = (CiudadDTO)listaReparticiones.get(i);
+		int iRep = rep.getCodigo();
+		if (lasReparticiones.indexOf(iRep +",") > -1){ 
+			numRepsSeleccionadas++;
+			nombresReparticionesSeleccionadas = nombresReparticionesSeleccionadas + rep.getNombre() + ", ";
+		}
+	}
+	
+	if (numRepsSeleccionadas > 0) {
+	%>
+		Reparticiones: <%= nombresReparticionesSeleccionadas %><br>
+	<% } %>				
     
     <!-- Rango de Fechas -->
-    <% if (!"".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><% } %><br>
+    <% if (!"".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><br><% } %>
     
     <!-- Ciudad -->
-    <% if (!"".equals(domCiudad)){ String nombreCiudad = (String) mapaCiudades.get(new Integer(domCiudad)); %>Ciudad: <%= nombreCiudad %><br><% } %>
+    <% if ("C".equals(CJRA)){ CiudadDTO dtoCiudad = (CiudadDTO) mapaCiudades.get(new Integer(domCiudad)); %>Ciudad: <%= dtoCiudad.getNombre() %><br><% } %>
+
+    <!-- Jurisdicción -->
+    <% if ("J".equals(CJRA)){ CiudadDTO dtoJurisdiccion = (CiudadDTO) mapaJurisdicciones.get(new Integer(domJurisdiccion)); %>Jurisdicción: <%= dtoJurisdiccion.getNombre() %><br><% } %>
+   
+    <!-- Region -->
+    <% if ("R".equals(CJRA)){ CiudadDTO dtoRegion = (CiudadDTO) mapaRegiones.get(new Integer(domRegion)); %>Región: <%= dtoRegion.getNombre() %><br><% } %>
+   
+    <!-- Agencia -->
+    <% if ("A".equals(CJRA)){ CiudadDTO dtoAgencia = (CiudadDTO) mapaAgencias.get(new Integer(domAgencia)); %>Agencia: <%= dtoAgencia.getNombre() %><br><% } %>
    
     <!-- RUT del prestador -->
     <% if ("si".equals(opPrestador)){ %>Rut del Prestador: <%= prestador %><br><%  }%>
-    
-    <!-- Jurisdicción -->
-    <% if (!"".equals(domJurisdiccion)){ String nombreJurisdiccion = (String) mapaJurisdicciones.get(new Integer(domJurisdiccion)); %>Jurisdicción: <%= nombreJurisdiccion %><br><% } %>
-    
+        
     <!-- Código de Prestación -->
     <% if ("si".equals(request.getParameter("opPrestacion"))){ %>Código de Prestación: <%= request.getParameter("prestacion") %><br><% } %>
     
