@@ -484,7 +484,7 @@
 	<% } %>				
     
     <!-- Rango de Fechas -->
-    <% if (!"".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><br><% } %>
+    <% if ("entre".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><br><% } %>
     
     <!-- Ciudad -->
     <% if ("C".equals(CJRA)){ String nombreCiudad = (String) mapaCiudades.get(new Integer(domCiudad)); %>Ciudad: <%= nombreCiudad %><br><% } %>
@@ -768,8 +768,12 @@
 	</script>
 	
 	<!-- boton salida a excel -->
+	<% 
+	String exportarDeshabilitado = "";
+	if (filasReporte.size() == 0){ exportarDeshabilitado = "disabled=\"disabled\""; }
+	%>
 		<input type="button" onClick="document.formulario.salida.value='excel';document.formulario.submit();document.formulario.salida.value='';"
-		class="submit" value="Exportar como archivo Excel">
+		class="submit" value="Exportar como archivo Excel" <%= exportarDeshabilitado %>>
 
 	<p>
 	<a href="http://www.primopdf.com"><img src="img/primopdf.gif" target="blank" border="0"></a><br>

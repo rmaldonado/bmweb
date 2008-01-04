@@ -142,11 +142,12 @@ public class ReportesDao implements IReportesDao {
 					" count(b.bo_serial) subtotal " +
 					// " key_descr[1,10] jurisdiccion" +
 					" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e " +
-//					" bm_habilitado f, keyword_det k " +
+					// " bm_habilitado f, keyword_det k " +
 					" where b.bo_serial = a.bo_serial " +
 					"  and b.dom_tipbon='W' " +
 					"  and c.pr_codigo = a.pr_codigo ";
-// parche Luis LAtin para cuando no filtre por Jurisdiccion o Region o Ciudad o Agencia //
+			
+			// parche Luis Latin para cuando no filtre por Jurisdiccion o Region o Ciudad o Agencia
 			if ("C".equals((String)params.get("CJRA"))||
 			    "J".equals((String)params.get("CJRA"))||
 			    "R".equals((String)params.get("CJRA"))||
@@ -166,7 +167,7 @@ public class ReportesDao implements IReportesDao {
 				"  and c.pr_codigo = a.pr_codigo ";
 				
 			}
-// fin parche Luis LAtin CJRA //
+			// fin parche Luis LAtin CJRA //
 			
 			// CJRA: ciudad - jurisdiccion - region - agencia
 			if ("C".equals((String)params.get("CJRA"))){
@@ -234,8 +235,8 @@ public class ReportesDao implements IReportesDao {
 			}
 		
 		
-			// Si no viene la opfecha o viene con 'entre'
-			if ( (!params.containsKey("opfecha")) || "entre".equals((String)params.get("opfecha"))){
+			// Si la opfecha viene con 'entre'
+			if ( "entre".equals((String)params.get("opfecha")) ){
 				query += "" +
 				"  and bo_fecemi between TO_DATE('" + fechaDesde + "', '%d/%m/%Y')" +
 				"    and TO_DATE('" + fechaHasta + "', '%d/%m/%Y')";
