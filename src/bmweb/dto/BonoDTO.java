@@ -22,7 +22,7 @@ public class BonoDTO implements Serializable {
 	public static final String TIPOBONO_FACTURADO	= "F";
 	public static final String TIPOBONO_ABIERTO		= "G";
 	public static final String TIPOBONO_VALORADO	= "V";
-	public static final String TIPOBONO_WEB			= "X"; // ojo!
+	public static final String TIPOBONO_WEB			= "W"; // ojo!
  
 	public static final Integer CAUSADERIVACION_NOHORASDISPONIBLES 	= new Integer(1);
 	public static final Integer CAUSADERIVACION_EXAMENFUERAHOSPITAL	= new Integer(2);

@@ -62,7 +62,7 @@ public class ReportesDao implements IReportesDao {
 		Map cuadroReporte = new HashMap();
 
 		// Para cada fila del reporte
-		// (especialidad, reparticion[1-5], imp_carga[00-05], sexo[MF], subtotal)
+		// (especialidad, reparticion[1-5], imp_carga[00-05], sexo[MF], subtotal, subvalor)
 
 		Iterator iFilaReporte = res2.iterator();
 		while (iFilaReporte.hasNext()){
@@ -87,16 +87,24 @@ public class ReportesDao implements IReportesDao {
 							intImpCarga + "." +
 							(String) filaQuery.get("sexo");
 			
+			String llave2 = (Integer) filaQuery.get("reparticion") + "." +
+			                 intImpCarga + "." +
+			                 (String) filaQuery.get("sexo") + ".valor";
+
 			// System.out.println("***" + llave);
-			
+			 
 			// Si ya había registrado un subtotal con ese nombre, lo aumento
 			if (mapaReporte.containsKey(llave)){
-				int valorAnterior = ((Integer)mapaReporte.get(llave)).intValue();				
+				int valorAnterior = ((Integer)mapaReporte.get(llave)).intValue();
+				int valorAnterior2= ((Integer)mapaReporte.get(llave2)).intValue();
 				int subtotal = ((Integer) filaQuery.get("subtotal")).intValue();
+				int subvalor = ((Integer) filaQuery.get("subvalor")).intValue();
 				mapaReporte.put(llave, new Integer(valorAnterior+subtotal));
+				mapaReporte.put(llave2, new Integer(valorAnterior2+subvalor));
 			} else {
 				// Si no habia valor registrado, uso el del subtotal actual del reporte
 				mapaReporte.put(llave, (Integer)filaQuery.get("subtotal"));
+				mapaReporte.put(llave2, (Integer)filaQuery.get("subvalor"));
 			}
 			
 			// Truco: En el mapaReporte, coloco la especialidad, asi solo utilizo los valores
@@ -125,73 +133,109 @@ public class ReportesDao implements IReportesDao {
 			// Por omisión, se buscan los bonos emitidos en el dia de hoy 
 			SimpleDateFormat sdf_ahora = new SimpleDateFormat("dd/MM/yyyy");
 			Date ahora = new Date();
-			
 			String fechaDesde;
+			String fechaHasta;
+
+			String tipbon=""+ "  and b.dom_tipbon='W' ";
+			
 			if (!params.containsKey("fechaDesde")){ fechaDesde = sdf_ahora.format(ahora); }
 			else { fechaDesde = (String) params.get("fechaDesde"); }
+
+            //solo bonos web
+			if ("W".equals((String)params.get("bonoSeleccion"))){
+				String paramBonoSeleccion = (String)params.get("bonoSeleccion");
+				tipbon = ""+ "   and b.dom_tipbon='W'   ";
+			}
+			//todos los tipos de bonos
+			if ("T".equals((String)params.get("bonoSeleccion"))){
+				String paramBonoSeleccion = (String)params.get("bonoSeleccion");
+				tipbon = ""+ " and b.dom_tipbon in ('W','D','F') ";
+			}
 			
-			String fechaHasta;
 			if (!params.containsKey("fechaHasta")){ fechaHasta = sdf_ahora.format(ahora); }
 			else { fechaHasta = (String) params.get("fechaHasta"); }
 			
 			String query = "" +
-					" select pr_nombre[1,30] especialidad, " +
-					" be_carne[1,1] reparticion, " +
-					" be_carne[10,11] imp_carga, " +
-					" sexo, " + 
-					" count(b.bo_serial) subtotal " +
-					// " key_descr[1,10] jurisdiccion" +
-					" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e " +
-					// " bm_habilitado f, keyword_det k " +
-					" where b.bo_serial = a.bo_serial " +
-					"  and b.dom_tipbon='W' " +
-					"  and c.pr_codigo = a.pr_codigo ";
-			
-			// parche Luis Latin para cuando no filtre por Jurisdiccion o Region o Ciudad o Agencia
-			if ("C".equals((String)params.get("CJRA"))||
-			    "J".equals((String)params.get("CJRA"))||
-			    "R".equals((String)params.get("CJRA"))||
-			    "A".equals((String)params.get("CJRA")))
+				" select pr_nombre[1,30] especialidad, "
+				+" be_carne[1,1] reparticion, "
+				+" be_carne[10,11] imp_carga, "
+				+" sexo, " 
+				+" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
+				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e "
+				+" where b.bo_serial = a.bo_serial "
+				+tipbon
+				+"  and c.pr_codigo = a.pr_codigo ";
+			//Por Ciudad
+			if ("C".equals((String)params.get("CJRA")))
 			{
 				query ="" +
-				" select pr_nombre[1,30] especialidad, " +
-				" be_carne[1,1] reparticion, " +
-				" be_carne[10,11] imp_carga, " +
-				" sexo, " + 
-				" count(b.bo_serial) subtotal " +
-				// " key_descr[1,10] jurisdiccion" +
-				" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, " +
-				" bm_habilitado f, keyword_det k " +
-				" where b.bo_serial = a.bo_serial " +
-				"  and b.dom_tipbon='W' " +
-				"  and c.pr_codigo = a.pr_codigo ";
-				
+				 " select pr_nombre[1,30] especialidad, "
+				+" be_carne[1,1] reparticion, "
+				+" be_carne[10,11] imp_carga, "
+				+" sexo, "
+				+" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
+				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, "
+				+" bm_preben f, keyword_det k "
+				+" where b.bo_serial = a.bo_serial " +
+				tipbon
+				+" and c.pr_codigo = a.pr_codigo "
+				+" and key_sist='BENMED' and key_word ='CIUDAD' "
+				+" and f.pb_rut = b.pb_rut and k.key_id = f.dom_ciudad "
+				+" and f.dom_ciudad = " + params.get("dom_ciudad") + " ";
 			}
-			// fin parche Luis LAtin CJRA //
-			
-			// CJRA: ciudad - jurisdiccion - region - agencia
-			if ("C".equals((String)params.get("CJRA"))){
-				query +="  and key_sist='BENMED' and key_word ='CIUDAD' "
-					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.dom_ciudad "
-				      + "  and f.dom_ciudad = " + params.get("dom_ciudad") + " ";
+            //Por Region
+			if ("R".equals((String)params.get("CJRA")))
+			{
+				query ="" +
+				 " select pr_nombre[1,30] especialidad, "
+				+" be_carne[1,1] reparticion, "
+				+" be_carne[10,11] imp_carga, "
+				+" sexo, "  
+				+" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
+				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, "
+				+" bm_preben f, keyword_det k "
+				+" where b.bo_serial = a.bo_serial " +
+				tipbon
+				+"  and c.pr_codigo = a.pr_codigo "
+				+"  and key_sist='BENMED' and key_word ='REGION' "
+				+"  and f.pb_rut = b.pb_rut and k.key_id = f.dom_region "
+			    +"  and f.dom_region  = " + params.get("dom_region") + " ";					
 			}
-		
-			if ("J".equals((String)params.get("CJRA"))){
-				query +="  and key_sist='BENMED' and key_word ='JURISD' "
-					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd "
-					  + "  and f.ha_jurisd = " + params.get("dom_jurisdiccion") + " ";
+            //Por Jurisdiccion
+			if ("J".equals((String)params.get("CJRA")))
+			{
+				query ="" +
+				 " select pr_nombre[1,30] especialidad, "
+				+" be_carne[1,1] reparticion, "
+				+" be_carne[10,11] imp_carga, "
+				+" sexo, "
+				+" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
+				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, "
+				+" bm_habilitado f, keyword_det k "
+				+" where b.bo_serial = a.bo_serial "
+				+tipbon
+				+"  and c.pr_codigo = a.pr_codigo "
+			    +"  and key_sist='BENMED' and key_word ='JURISD' "
+				+ "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd "
+				+ "  and f.ha_jurisd = " + params.get("dom_jurisdiccion") + " ";
 			}
-		
-			if ("R".equals((String)params.get("CJRA"))){
-				query +="  and key_sist='BENMED' and key_word ='REGION' "
-					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_region "
-					  + "  and f.ha_region = " + params.get("dom_region") + " ";
-			}
-		
-			if ("A".equals((String)params.get("CJRA"))){
-				query +="  and key_sist='BENMED' and key_word ='AGENCIA' " 
-					  + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_agencia "
-					  + "  and f.ha_agencia = " + params.get("dom_agencia") + " ";
+		    //Por Agencia
+			if ("A".equals((String)params.get("CJRA")))
+			{
+				query ="" +
+				 " select pr_nombre[1,30] especialidad, "
+				+" be_carne[1,1] reparticion, "
+				+" be_carne[10,11] imp_carga, "
+				+" sexo, "
+				+" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
+				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, "
+				+" bm_habilitado f, keyword_det k "
+				+" where b.bo_serial = a.bo_serial "
+				+tipbon
+				+"  and c.pr_codigo = a.pr_codigo "
+                +"  and key_sist='BENMED' and key_word ='AGENCIA' " 
+	            +"  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_agencia "
+	            +"  and f.ha_agencia = " + params.get("dom_agencia") + " ";
 			}
 			
 			if ("si".equals((String)params.get("opPrestacion"))){
@@ -215,8 +259,6 @@ public class ReportesDao implements IReportesDao {
 					"  and b.be_carne[6] in ('0','1','2','3','4','5','6','7','8','9') " +
 					"  and b.be_carne[7] in ('0','1','2','3','4','5','6','7','8','9') " +
 					"  and b.be_carne[8] in ('0','1','2','3','4','5','6','7','8','9') "; 
-				//	"  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd " 
-				//"  and key_sist='BENMED' and key_word ='JURISD' ";
 			
 			// Si viene la reparticion
 			if (params.containsKey("reparticiones")){
@@ -242,9 +284,7 @@ public class ReportesDao implements IReportesDao {
 				"    and TO_DATE('" + fechaHasta + "', '%d/%m/%Y')";
 			}
 			
-			// Si el estado del bono es uno de estos: 'A', 'P', lo incluyo en la query
-			//if (BonoDTO.ESTADOBONO_ANULADO.equals((String)params.get("estadoBono")) ||
-			//	BonoDTO.ESTADOBONO_IMPRESO.equals((String)params.get("estadoBono"))){
+			// Si el estado del bono es Anulado o Liquidado
 			if (BonoDTO.ESTADOBONO_ANULADO.equals((String)params.get("estadoBono"))){
 				String paramEstadoBono = (String)params.get("estadoBono");
 				query += "  and b.dom_estbon = '" + paramEstadoBono + "' ";
@@ -292,6 +332,12 @@ public class ReportesDao implements IReportesDao {
 			fila.put("imp_carga", rs.getString("imp_carga"));
 			fila.put("sexo", rs.getString("sexo"));
 			fila.put("subtotal", new Integer(rs.getString("subtotal")));
+			
+			try {
+				fila.put("subvalor", new Integer(rs.getString("subvalor")));
+			} catch (Exception e) {
+				fila.put("subvalor", new Integer(0));
+			}
 			return fila;
 		}
 	}

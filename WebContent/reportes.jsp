@@ -108,6 +108,12 @@
 
   String estadoBono = "";
   if (request.getParameter("estadoBono") != null) { estadoBono = request.getParameter("estadoBono"); }
+
+  String tipoEstadistica = "";
+  if (request.getParameter("tipoEstadistica") != null) { tipoEstadistica = request.getParameter("tipoEstadistica"); }
+
+  String bonoSeleccion = "";
+  if (request.getParameter("bonoSeleccion") != null) { bonoSeleccion = request.getParameter("bonoSeleccion"); }
   
   String lasReparticiones = "";
   if (request.getAttribute("lasReparticiones") != null) { lasReparticiones = (String) request.getAttribute("lasReparticiones"); }
@@ -121,6 +127,7 @@
   
   // Calculo del gran total de bonos del reporte
   int granTotal = 0;
+  int granValor = 0;
   for (Iterator it = filasReporte.iterator(); it.hasNext();) {
     Map fila = (Map) it.next();
     
@@ -133,12 +140,15 @@
     			
     			String sexo = (iSex==0)? "M" : "F";
     			String llave = reparticion + "." + impCarga + "." + sexo;
-    			
+    			String llave2= reparticion + "." + impCarga + "." + sexo;
     			String valor = "0";
+    			String valor2= "0";
     			if (fila.containsKey(llave)){ valor = fila.get(llave).toString(); }
-    			
+    			if (fila.containsKey(llave2)){ valor2 = fila.get(llave2).toString(); }    			
     			int intValor = (new Integer(valor)).intValue();
+    			int intValor2 = (new Integer(valor2)).intValue();
     			granTotal += intValor;
+    			granValor += intValor2;
     		}
     	}
     }
@@ -158,7 +168,7 @@
 
 <div>
 
-	<h1>Reporte Estadístico de Bonos</h1>
+	<h1>Reporte Estadistico de Bonos</h1>
 
 	<table class="tabla-borde-delgado" id="filtro-min" style="<%= (mostrarFiltros)? "display:none":"" %>">
 		<tr class="encabezados-tabla">
@@ -311,14 +321,14 @@
 		</tr>
 
 		<tr class="fila-detalle-par">
-			<td>Ciudad / Jurisdicción / Región / Agencia</td>
+			<td>Ciudad / Jurisdiccion / Region / Agencia</td>
 			<td style="text-align:left">
 			
 				<select name="CJRA" onChange="mostrarCJRA()">
 				<option value="">No filtrar</option>
 				<option value="C" <%= "C".equals(CJRA)?"selected":"" %>>Filtrar por Ciudad</option>
-				<option value="J" <%= "J".equals(CJRA)?"selected":"" %>>Filtrar por Jurisdicción</option>
-				<option value="R" <%= "R".equals(CJRA)?"selected":"" %>>Filtrar por Región</option>
+				<option value="J" <%= "J".equals(CJRA)?"selected":"" %>>Filtrar por Jurisdiccion</option>
+				<option value="R" <%= "R".equals(CJRA)?"selected":"" %>>Filtrar por Region</option>
 				<option value="A" <%= "A".equals(CJRA)?"selected":"" %>>Filtrar por Agencia</option>
 				</select>
 			</td>
@@ -350,7 +360,7 @@
 
 
 		<tr id="fila-J" class="fila-detalle-impar" style="<%= "J".equals(CJRA)?"":"display:none" %>">
-			<td>Jurisdicción</td>
+			<td>Jurisdiccion</td>
 			<td style="text-align:left">
 				<select name="dom_jurisdiccion">
 			<%
@@ -373,7 +383,7 @@
 		</tr>
 
 		<tr id="fila-R" class="fila-detalle-impar" style="<%= "R".equals(CJRA)?"":"display:none" %>">
-			<td>Región</td>
+			<td>Region</td>
 			<td style="text-align:left">
 				<select name="dom_region">
 			<%
@@ -419,7 +429,7 @@
 		</tr>
 
 		<tr class="fila-detalle-par">
-			<td>Código de Prestación</td>
+			<td>Codigo de Prestacion</td>
 			<td style="text-align:left">
 			<%
 			String estiloDivPrestacion = "display:none";
@@ -427,14 +437,14 @@
 			%>
 				<select name="opPrestacion" onChange="mostrarPrestacion()">
 				<option value="no" <%= "no".equals(opPrestacion)?"selected":"" %>>No filtrar</option>
-				<option value="si" <%= "si".equals(opPrestacion)?"selected":"" %>>Filtrar por este código de prestación</option>
+				<option value="si" <%= "si".equals(opPrestacion)?"selected":"" %>>Filtrar por este codigo de prestacion</option>
 				</select>
 				
 				<br>
 
 				<!-- filtro rut prestador -->
 				<span id="div-opPrestacion" style="<%= estiloDivPrestacion %>">
-				<input type="text" name="prestacion" size="12" value="<%= prestacion %>" onBlur="if(!CampoEsNumeroEnRango(this, 101001, 999999)){document.formulario.opPrestacion.selectedIndex=0;mostrarPrestacion();}">				
+				<input type="text" name="prestacion" size="12" value="<%= prestacion %>" onBlur="if(!CampoEsNumeroEnRango(this, 101001, 9999999)){document.formulario.opPrestacion.selectedIndex=0;mostrarPrestacion();}">				
 				</span>
 			</td>
 		</tr>
@@ -450,6 +460,31 @@
 
 			</td>		
 		</tr>
+
+		<tr class="fila-detalle-par">
+			<td>Tipo Estadistica</td>
+			<td style="text-align:left">
+				<select name="tipoEstadistica">
+				<option value="">No filtrar por tipoEstadistica</option>
+				<option value="C" <%= ("C".equals(tipoEstadistica))?"selected":"" %>>Cuantitativa (prestablecida)</option>
+				<option value="V" <%= ("V".equals(tipoEstadistica))?"selected":"" %>>Valorativa</option>
+				</select>		
+
+			</td>		
+		</tr>
+		
+		<tr class="fila-detalle-impar">
+			<td>Bonos a Seleccionar</td>
+			<td style="text-align:left">
+				<select name="bonoSeleccion">
+				<option value="">No filtrar</option>
+				<option value="W" <%= ("W".equals(bonoSeleccion))?"selected":"" %>>Bonos Web (prestablecida)</option>
+				<option value="T" <%= ("T".equals(bonoSeleccion))?"selected":"" %>>Todos</option>
+				</select>		
+
+			</td>		
+		</tr>
+		
 		
 	</table>
 
@@ -462,7 +497,7 @@
 
 <% if (salidaExcel){ %>
 
-    <tr><td colspan="32"><b>Reporte estadístico de Bonos Web</b> (generado en <%= sdfReporte.format(new Date()) %>)</td></tr>
+    <tr><td colspan="32"><b>Reporte estadistico de Bonos Web</b> (generado en <%= sdfReporte.format(new Date()) %>)</td></tr>
     <tr><td colspan="32">Filtros Utilizados:<br>
     
     <!-- Reparticiones -->
@@ -489,11 +524,11 @@
     <!-- Ciudad -->
     <% if ("C".equals(CJRA)){ String nombreCiudad = (String) mapaCiudades.get(new Integer(domCiudad)); %>Ciudad: <%= nombreCiudad %><br><% } %>
 
-    <!-- Jurisdicción -->
-    <% if ("J".equals(CJRA)){ String nombreJurisdiccion = (String) mapaJurisdicciones.get(new Integer(domJurisdiccion)); %>Jurisdicción: <%= nombreJurisdiccion %><br><% } %>
+    <!-- Jurisdiccion -->
+    <% if ("J".equals(CJRA)){ String nombreJurisdiccion = (String) mapaJurisdicciones.get(new Integer(domJurisdiccion)); %>Jurisdiccion: <%= nombreJurisdiccion %><br><% } %>
    
     <!-- Region -->
-    <% if ("R".equals(CJRA)){ String nombreRegion = (String) mapaRegiones.get(new Integer(domRegion)); %>Región: <%= nombreRegion %><br><% } %>
+    <% if ("R".equals(CJRA)){ String nombreRegion = (String) mapaRegiones.get(new Integer(domRegion)); %>Region: <%= nombreRegion %><br><% } %>
    
     <!-- Agencia -->
     <% if ("A".equals(CJRA)){ String nombreAgencia = (String) mapaAgencias.get(new Integer(domAgencia)); %>Agencia: <%= nombreAgencia %><br><% } %>
@@ -501,12 +536,12 @@
     <!-- RUT del prestador -->
     <% if ("si".equals(opPrestador)){ %>Rut del Prestador: <%= prestador %><br><%  }%>
         
-    <!-- Código de Prestación -->
-    <% if ("si".equals(request.getParameter("opPrestacion"))){ %>Código de Prestación: <%= request.getParameter("prestacion") %><br><% } %>
+    <!-- Codigo de Prestacion -->
+    <% if ("si".equals(request.getParameter("opPrestacion"))){ %>Codigo de Prestacion: <%= request.getParameter("prestacion") %><br><% } %>
     
     <!-- Estado del Bono -->
     <% if (BonoDTO.ESTADOBONO_ANULADO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Anulado<br><% } %>
-    <% if (BonoDTO.ESTADOBONO_IMPRESO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Impreso<br><% } %>
+    <% if (BonoDTO.ESTADOBONO_IMPRESO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Liquidado<br><% } %>
     
     </td></tr>
 
@@ -653,6 +688,204 @@
 		}
 %>
 	</table>
+	
+    <!-- Estadistica Valorativa -->
+	<table id="listado" <% if (salidaExcel){ %>border="1"<% } %>>
+
+<% if (salidaExcel){ %>
+
+    <tr><td colspan="32"><b>Reporte estadistico de Bonos Web</b> (generado en <%= sdfReporte.format(new Date()) %>)</td></tr>
+    <tr><td colspan="32">Filtros Utilizados:<br>
+    
+    <!-- Reparticiones -->
+    <%
+	String nombresReparticionesSeleccionadas = "";
+    int numRepsSeleccionadas = 0;
+	for (int i=0; i<listaReparticiones.size(); i++){
+		CiudadDTO rep = (CiudadDTO)listaReparticiones.get(i);
+		int iRep = rep.getCodigo();
+		if (lasReparticiones.indexOf(iRep +",") > -1){ 
+			numRepsSeleccionadas++;
+			nombresReparticionesSeleccionadas = nombresReparticionesSeleccionadas + rep.getNombre() + ", ";
+		}
+	}
+	
+	if (numRepsSeleccionadas > 0) {
+	%>
+		Reparticiones: <%= nombresReparticionesSeleccionadas %><br>
+	<% } %>				
+    
+    <!-- Rango de Fechas -->
+    <% if ("entre".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><br><% } %>
+    
+    <!-- Ciudad -->
+    <% if ("C".equals(CJRA)){ String nombreCiudad = (String) mapaCiudades.get(new Integer(domCiudad)); %>Ciudad: <%= nombreCiudad %><br><% } %>
+
+    <!-- Jurisdiccion -->
+    <% if ("J".equals(CJRA)){ String nombreJurisdiccion = (String) mapaJurisdicciones.get(new Integer(domJurisdiccion)); %>Jurisdiccion: <%= nombreJurisdiccion %><br><% } %>
+   
+    <!-- Region -->
+    <% if ("R".equals(CJRA)){ String nombreRegion = (String) mapaRegiones.get(new Integer(domRegion)); %>Region: <%= nombreRegion %><br><% } %>
+   
+    <!-- Agencia -->
+    <% if ("A".equals(CJRA)){ String nombreAgencia = (String) mapaAgencias.get(new Integer(domAgencia)); %>Agencia: <%= nombreAgencia %><br><% } %>
+   
+    <!-- RUT del prestador -->
+    <% if ("si".equals(opPrestador)){ %>Rut del Prestador: <%= prestador %><br><%  }%>
+        
+    <!-- Codigo de Prestacion -->
+    <% if ("si".equals(request.getParameter("opPrestacion"))){ %>Codigo de Prestacion: <%= request.getParameter("prestacion") %><br><% } %>
+    
+    <!-- Estado del Bono -->
+    <% if (BonoDTO.ESTADOBONO_ANULADO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Anulado<br><% } %>
+    <% if (BonoDTO.ESTADOBONO_IMPRESO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Liquidado<br><% } %>
+    
+    </td></tr>
+
+<% } %>
+
+
+
+		<tr class="encabezados-tabla">
+			<td rowspan="3"><br>Especialidades</td>
+			<td rowspan="2" colspan="2">Total General</td>
+
+			<td colspan="4">Total por sexo</td>
+			
+			<% for (int i=0; i<listaReparticiones.size(); i++){
+				CiudadDTO rep = (CiudadDTO) listaReparticiones.get(i);
+			%>
+			<td colspan="4"><%= rep.getNombre() %></td>			
+			<% } %>
+		</tr>
+		
+		<tr class="encabezados-tabla">
+			<!-- total -->
+			<td colspan="2"><small>Imponentes</small></td>
+			<td colspan="2"><small>Cargas</small></td>
+
+			<% for (int i=0; i<listaReparticiones.size(); i++){
+				CiudadDTO rep = (CiudadDTO) listaReparticiones.get(i);
+			%>
+			<!-- <%= rep.getNombre() %> -->
+			<td colspan="2"><small>Imponentes</small></td>
+			<td colspan="2"><small>Cargas</small></td>
+			<% } %>
+
+		</tr>
+
+		<tr class="encabezados-tabla">
+			<td>Total</td><td>%</td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			
+
+			<% for (int i=0; i<listaReparticiones.size(); i++){
+				CiudadDTO rep = (CiudadDTO) listaReparticiones.get(i);
+			%>
+			<!-- <%= rep.getNombre() %> -->
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<td><small>Masc.</small></td><td><small>Fem.</small></td>
+			<% } %>
+		</tr>
+
+<%
+		int numFila2 = 1;
+		for (Iterator it = filasReporte.iterator(); it.hasNext();) {
+		    Map fila = (Map) it.next();
+
+		    // Determino un string que se alterna para cambiar la grafica de las filas
+		    String clase= (numFila2 %2 == 0)? "fila-detalle-par":"fila-detalle-impar";
+		    numFila2++;
+		    
+		    String especialidad = (String) fila.get("especialidad");
+		    		    		    
+%>
+		<tr class="<%=clase%>">
+			<td><%= especialidad %></td>
+
+<%
+
+			StringBuffer bufferLinea = new StringBuffer();
+			int totalEspecialidad = 0;
+			int totalImponentesMasc = 0;
+			int totalImponentesFem = 0;
+			int totalCargasMasc = 0;
+			int totalCargasFem = 0;
+
+		    for (int r=0; r<listaReparticiones.size(); r++){
+		    	for (int impCarga = 0; impCarga <=1; impCarga++) {
+		    		for (int iSex = 0; iSex <= 1; iSex++){
+		    			
+		    			CiudadDTO rep = (CiudadDTO) listaReparticiones.get(r);
+		    			int reparticion = rep.getCodigo();
+		    			
+		    			String sexo = (iSex==0)? "M" : "F";
+		    			String llave2 = reparticion + "." + impCarga + "." + sexo + ".valor";
+		    			
+		    			String valor = "0";
+		    			if (fila.containsKey(llave2)){ valor = fila.get(llave2).toString(); }
+		    			
+		    			int intValor = (new Integer(valor)).intValue();
+		    			
+		    			totalEspecialidad += intValor;
+		    			
+		    			// total imponentes masculinos x especialidad
+		    			if ((impCarga==0) && (iSex==0)){ totalImponentesMasc += intValor; }
+		    			
+		    			// total imponentes femeninos x especialidad
+		    			if ((impCarga==0) && (iSex==1)){ totalImponentesFem += intValor; }
+		    			
+		    			// total cargas masculinos x especialidad
+		    			if ((impCarga==1) && (iSex==0)){ totalCargasMasc += intValor; }
+		    			
+		    			// total cargas femeninos x especialidad
+		    			if ((impCarga==1) && (iSex==1)){ totalCargasFem += intValor; }
+		    			
+		    			bufferLinea.append("\t\t\t<td>");
+		    			// DEBUG
+		    			//bufferLinea.append("<!-- ");
+		    			//bufferLinea.append(llave);
+		    			//bufferLinea.append("-->");
+		    			bufferLinea.append(valor);
+		    			bufferLinea.append("</td>\n");
+		    			
+
+		    		}
+		    	}
+		    }
+		    
+			double porcentaje = (int)((totalEspecialidad*1000.0)/granTotal);
+			porcentaje = porcentaje/10.0;
+
+%>			
+			<!-- total especialidad -->
+			<td><%= totalEspecialidad %></td>
+			
+			<!-- porcentaje del total x especialidad -->
+			<td><%= porcentaje %>%</td>
+			
+			<!-- total imponentes masculinos x especialidad -->
+			<td><%= totalImponentesMasc %></td>
+			
+			<!-- total imponentes femeninos x especialidad -->
+			<td><%= totalImponentesFem %></td>
+			
+			<!-- total cargas masculinos x especialidad -->
+			<td><%= totalCargasMasc %></td>
+			
+			<!-- total cargas femeninos x especialidad -->
+			<td><%= totalCargasFem %></td>
+
+<%= bufferLinea.toString() %>
+			
+		</tr>
+		
+<% 
+		}
+%>
+	</table>
+
 <%
   if (!salidaExcel) {
 %>
@@ -761,7 +994,7 @@
 		    
 	  }
 	  
-	  // En esta pÃ¡gina, si viene la cookie "update", simplemente se consume la cookie
+	  // En esta página, si viene la cookie "update", simplemente se consume la cookie
 	  // Si no se encuentra la cookie "update", se fuerza un refresco de la pagina
 	  // if (!GetCookie('update')){ document.formulario.submit(); } else { DeleteCookie('update'); }
 

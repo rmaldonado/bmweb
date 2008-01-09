@@ -152,15 +152,15 @@ public class CiudadDao implements ICiudadDao {
 		else {
 			listaReparticiones = new ArrayList();
 			listaReparticiones.add(new CiudadDTO(1,  "Carabineros"));
-			listaReparticiones.add(new CiudadDTO(2,  "Gendarmería"));
+			listaReparticiones.add(new CiudadDTO(2,  "Gendarmeria"));
 			listaReparticiones.add(new CiudadDTO(3,  "Investigaciones"));
 			listaReparticiones.add(new CiudadDTO(4,  "Mutualidad"));
 			listaReparticiones.add(new CiudadDTO(5,  "Funcionarios Dipreca"));
 			listaReparticiones.add(new CiudadDTO(7,  "Pensionados"));
 			listaReparticiones.add(new CiudadDTO(8,  "Montepiados"));
-			listaReparticiones.add(new CiudadDTO(9,  "Investigaciones-2"));
-			listaReparticiones.add(new CiudadDTO(10, "Exonerados-X"));
-			listaReparticiones.add(new CiudadDTO(11, "Exonerados-Y"));
+			listaReparticiones.add(new CiudadDTO(9,  "Subsecretaria Investigaciones"));
+			listaReparticiones.add(new CiudadDTO(10, "Exonerados"));
+			listaReparticiones.add(new CiudadDTO(11, "Codigo "));
 			
 			return listaReparticiones;
 		}

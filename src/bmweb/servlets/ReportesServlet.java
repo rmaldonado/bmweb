@@ -72,6 +72,7 @@ public class ReportesServlet extends ServletSeguro {
 			}
 			
 			params.put("reparticiones", reparticiones);
+			 
 			
 			// Conservo la lista de reparticiones
 			request.setAttribute("lasReparticiones", lasReparticiones);
