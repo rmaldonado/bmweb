@@ -136,23 +136,26 @@ public class ReportesDao implements IReportesDao {
 			String fechaDesde;
 			String fechaHasta;
 
-			String tipbon=""+ "  and b.dom_tipbon='W' ";
+			String tipbon=""+ "  and b.dom_tipbon='W' and (dom_estbon is not null and dom_estbon <> 'A') ";
+			String Aahora = sdf_ahora.format(ahora);
 			
-			if (!params.containsKey("fechaDesde")){ fechaDesde = sdf_ahora.format(ahora); }
-			else { fechaDesde = (String) params.get("fechaDesde"); }
 
-            //solo bonos web
+            //solo bonos web 
 			if ("W".equals((String)params.get("bonoSeleccion"))){
 				String paramBonoSeleccion = (String)params.get("bonoSeleccion");
-				tipbon = ""+ "   and b.dom_tipbon='W'   ";
+				tipbon = ""+ "   and b.dom_tipbon='W'   "
+			           +"and (dom_estbon is not null and dom_estbon <> 'A')";				
 			}
 			//todos los tipos de bonos
 			if ("T".equals((String)params.get("bonoSeleccion"))){
 				String paramBonoSeleccion = (String)params.get("bonoSeleccion");
-				tipbon = ""+ " and b.dom_tipbon in ('W','D','F') ";
+				tipbon = ""+ " and b.dom_tipbon in ('W','D','F') "
+				       +"and (dom_estbon is not null and dom_estbon <> 'A')";
 			}
+			if (!params.containsKey("fechaDesde")){ fechaDesde = sdf_ahora.format(Aahora); }
+			else { fechaDesde = (String) params.get("fechaDesde"); }
 			
-			if (!params.containsKey("fechaHasta")){ fechaHasta = sdf_ahora.format(ahora); }
+			if (!params.containsKey("fechaHasta")){ fechaHasta = sdf_ahora.format(Aahora); }
 			else { fechaHasta = (String) params.get("fechaHasta"); }
 			
 			String query = "" +
@@ -282,6 +285,11 @@ public class ReportesDao implements IReportesDao {
 				query += "" +
 				"  and bo_fecemi between TO_DATE('" + fechaDesde + "', '%d/%m/%Y')" +
 				"    and TO_DATE('" + fechaHasta + "', '%d/%m/%Y')";
+			}else 
+			{
+				query += "" +
+				"  and bo_fecemi between TO_DATE('" + Aahora + "', '%d/%m/%Y')" +
+				"    and TO_DATE('" + Aahora + "', '%d/%m/%Y')";
 			}
 			
 			// Si el estado del bono es Anulado o Liquidado
@@ -289,10 +297,12 @@ public class ReportesDao implements IReportesDao {
 				String paramEstadoBono = (String)params.get("estadoBono");
 				query += "  and b.dom_estbon = '" + paramEstadoBono + "' ";
 			}
-			if (BonoDTO.ESTADOBONO_IMPRESO.equals((String)params.get("estadoBono"))){
+			if (BonoDTO.ESTADOBONO_LIQUIDADO.equals((String)params.get("estadoBono"))){
 				String paramEstadoBono = (String)params.get("estadoBono");
 				query += "  and (b.dp_serial is not null and b.dp_serial > 0) ";
 			}
+
+			
 			// Si viene el rut del prestador, filtro por el
 			if ("si".equals((String)params.get("opPrestador"))){
 					String paramRutPrestador = (String)params.get("prestador");
@@ -302,7 +312,87 @@ public class ReportesDao implements IReportesDao {
 			query += "" +
 				"group by 1,2,3,4 " +
 				"order by 1,2,3,4 ";
+      
+		/////// OJO DESDE AQUI SE REPITEN MUCHAS COSAS HABRIA QUE OPTIMIZARLO ///////
 
+			String habopre = ""; // bm_habilitado o bm_preben
+			String yhabopre= "";
+
+			if (BonoDTO.ESTADOBONO_EMITIDO.equals((String)params.get("estadoBono"))){
+				String paramEstadoBono = (String)params.get("estadoBono");
+				if ("C".equals((String)params.get("CJRA"))||"R".equals((String)params.get("CJRA")))
+				{
+				   habopre = " bm_preben f,";
+				   if ("C".equals((String)params.get("CJRA")))
+				       yhabopre="  and (key_sist='BENMED' and key_word ='CIUDAD' "
+					   +"  and f.pb_rut = b.pb_rut and k.key_id = f.dom_ciudad "
+				       +"  and f.dom_ciudad  = " + params.get("dom_ciudad") + ") ";					
+				   if ("R".equals((String)params.get("CJRA")))
+					   yhabopre="  and (key_sist='BENMED' and key_word ='REGION' "
+					   +"  and f.pb_rut = b.pb_rut and k.key_id = f.dom_region "
+				       +"  and f.dom_region  = " + params.get("dom_region") + ") ";					
+				}
+
+				if ("J".equals((String)params.get("CJRA"))||"A".equals((String)params.get("CJRA")))
+				{  
+				   habopre = " bm_habilitado f,";
+				   if ("J".equals((String)params.get("CJRA")))
+				       yhabopre="  and (key_sist='BENMED' and key_word ='JURISD' "
+					   + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd "
+					   + "  and f.ha_jurisd = " + params.get("dom_jurisdiccion") + ") ";
+				   
+				   if ("A".equals((String)params.get("CJRA")))
+				       yhabopre="  and (key_sist='BENMED' and key_word ='AGENCIA' " 
+		               +"  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_agencia "
+		               +"  and f.ha_agencia = " + params.get("dom_agencia") + ") ";
+				}
+				
+				query ="" +
+				 " select k.key_descr[1,30] especialidad, "
+				+" be_carne[1,1] reparticion, "
+				+" be_carne[10,11] imp_carga, "
+				+" sexo, "
+				+" count(b.bo_serial) subtotal, 0 subvalor "
+				+" from bmw_bonite a, bm_bono b, rolbene d, beneficiario e, "+habopre+" "
+//				+" bm_habilitado f, keyword_det k "
+				+" keyword_det k "
+				+" where b.bo_serial not in (select i.bo_serial from bm_bonite j,bm_bono i where i.dom_tipbon ='W' and i.bo_serial=j.bo_serial)"
+				+" and b.bo_serial = a.bo_serial and b.dom_tipbon='W'"
+               +"  and key_sist='BENMED' and key_word ='PREGEN' " 
+               +"  and k.key_id = a.wi_codigo ";
+				query += ""+yhabopre+" ";
+				query += "" +
+				"  and d.rut_bene = e.rut_bene " +
+				"  and d.cod_repart = b.be_carne[1,1] " +
+				"  and d.nro_impo   = b.be_carne[3,8] " +
+				"  and d.nro_correl = b.be_carne[10,11] " +
+				"  and b.be_carne[2,2]='-' " +
+				"  and b.be_carne[9,9]='-' " +
+				"  and b.be_carne[3] in  ('0','1','2','3','4','5','6','7','8','9') " +
+				"  and b.be_carne[4] in ('0','1','2','3','4','5','6','7','8','9') " +
+				"  and b.be_carne[5] in ('0','1','2','3','4','5','6','7','8','9') " +
+				"  and b.be_carne[6] in ('0','1','2','3','4','5','6','7','8','9') " +
+				"  and b.be_carne[7] in ('0','1','2','3','4','5','6','7','8','9') " +
+				"  and b.be_carne[8] in ('0','1','2','3','4','5','6','7','8','9') ";				
+
+				// Si la opfecha viene con 'entre'
+				if ( "entre".equals((String)params.get("opfecha")) ){
+					query += "" +
+					"  and bo_fecemi between TO_DATE('" + fechaDesde + "', '%d/%m/%Y')" +
+					"    and TO_DATE('" + fechaHasta + "', '%d/%m/%Y')";
+				}else 
+				{
+					query += "" +
+					"  and bo_fecemi between TO_DATE('" + Aahora + "', '%d/%m/%Y')" +
+					"    and TO_DATE('" + Aahora + "', '%d/%m/%Y')";
+				}
+
+				query += "" +
+				"group by 1,2,3,4 " +
+				"order by 1,2,3,4 ";
+
+			}
+			/////// OJO HASTA AQUI SE REPITEN MUCHAS COSAS HABRIA QUE OPTIMIZARLO ///////
 			// Conversión de fechas usando
 			// TO_DATE ('2002-12-31 23:59:59' , '%Y-%m-%d %H:%M:%S' )
 
