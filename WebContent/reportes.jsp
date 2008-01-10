@@ -82,6 +82,7 @@
   String fechaHasta = "31/12/" + sdf_yyyy.format(new Date());
   if (request.getParameter("fechaHasta") != null) { fechaHasta = request.getParameter("fechaHasta"); }
 
+
   String domCiudad = "";
   if (request.getParameter("dom_ciudad") != null) { domCiudad = request.getParameter("dom_ciudad"); }
   
@@ -108,9 +109,6 @@
 
   String estadoBono = "";
   if (request.getParameter("estadoBono") != null) { estadoBono = request.getParameter("estadoBono"); }
-
-  String tipoEstadistica = "";
-  if (request.getParameter("tipoEstadistica") != null) { tipoEstadistica = request.getParameter("tipoEstadistica"); }
 
   String bonoSeleccion = "";
   if (request.getParameter("bonoSeleccion") != null) { bonoSeleccion = request.getParameter("bonoSeleccion"); }
@@ -321,8 +319,10 @@
 
 				<!-- filtro rut prestador -->
 				<span id="div-opPrestador" style="<%= estiloDivRutPrestador %>">
-				<input type="text" name="prestador" size="12" value="<%= prestador %>" onBlur="if(!CampoEsRut(this)){document.formulario.opPrestador.selectedIndex=0;mostrarRutPrestador();}">				
+				<input type="text" name="prestador" size="12" value="<%= prestador %>" onBlur="if(!CampoEsRut(this)){document.formulario.opPrestador.selectedIndex=0;mostrarRutPrestador();}"Incluir guion>				
+				Incluir Guion
 				</span>
+
 			</td>
 		</tr>
 
@@ -461,25 +461,14 @@
 				<select name="estadoBono">
 				<option value="">No filtrar por Estado</option>
 				<option value="A" <%= ("A".equals(estadoBono))?"selected":"" %>>Bonos Anulados</option>
-				<option value="P" <%= ("P".equals(estadoBono))?"selected":"" %>>Bonos Liquidados</option>
+				<option value="P" <%= ("P".equals(estadoBono))?"selected":"" %>>Bonos Liquidados (preseleccionado)</option>
+				<option value="E" <%= ("P".equals(estadoBono))?"selected":"" %>>Bonos Emitidos</option>				
 				</select>		
 
 			</td>		
 		</tr>
 
 		<tr class="fila-detalle-par">
-			<td>Tipo Estadistica</td>
-			<td style="text-align:left">
-				<select name="tipoEstadistica">
-				<option value="">No filtrar por tipoEstadistica</option>
-				<option value="C" <%= ("C".equals(tipoEstadistica))?"selected":"" %>>Cuantitativa (prestablecida)</option>
-				<option value="V" <%= ("V".equals(tipoEstadistica))?"selected":"" %>>Valorativa</option>
-				</select>		
-
-			</td>		
-		</tr>
-		
-		<tr class="fila-detalle-impar">
 			<td>Bonos a Seleccionar</td>
 			<td style="text-align:left">
 				<select name="bonoSeleccion">
@@ -507,14 +496,14 @@
 <%
   if (mostrarTablas) {
 %>
-
-	<h1>Estadistica Cuantitativa</h1>
+    <% if ("entre".equals(opfecha)){ %><h1>Estadistica Cuantitativa Fecha entre <%= fechaDesde %> y <%= fechaHasta %></h1><br><% }
+       else { %><h1>Estadistica Cuantitativa Fecha entre <%= sdf.format(new Date()) %> y <%=sdf.format(new Date()) %></h1><br><% } %>
 
 	<table id="listado" <% if (salidaExcel){ %>border="1"<% } %>>
 
 <% if (salidaExcel){ %>
 
-    <tr><td colspan="32"><b>Reporte estadistico de Bonos Web</b> (generado en <%= sdfReporte.format(new Date()) %>)</td></tr>
+    <tr><td colspan="32"><b>Reporte estadistico de Bonos</b> (generado el <%= sdfReporte.format(new Date()) %>)</td></tr>
     <tr><td colspan="32">Filtros Utilizados:<br>
     
     <!-- Reparticiones -->
@@ -536,8 +525,8 @@
 	<% } %>				
     
     <!-- Rango de Fechas -->
-    <% if ("entre".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><br><% } %>
-    
+    <% if ("entre".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><br><% }
+       else { %>Fecha entre <%= sdf.format(new Date()) %> y <%=sdf.format(new Date()) %><br><% } %>
     <!-- Ciudad -->
     <% if ("C".equals(CJRA)){ String nombreCiudad = (String) mapaCiudades.get(new Integer(domCiudad)); %>Ciudad: <%= nombreCiudad %><br><% } %>
 
@@ -558,7 +547,8 @@
     
     <!-- Estado del Bono -->
     <% if (BonoDTO.ESTADOBONO_ANULADO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Anulado<br><% } %>
-    <% if (BonoDTO.ESTADOBONO_IMPRESO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Liquidado<br><% } %>
+    <% if (BonoDTO.ESTADOBONO_LIQUIDADO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Liquidado<br><% } %>
+    <% if (BonoDTO.ESTADOBONO_EMITIDO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Emitido<br><% } %>    
     
     </td></tr>
 
@@ -735,8 +725,9 @@
 	</table>
 	
     <!-- Estadistica Valorativa -->
-    
-    <h1>Estadistica Valorativa</h1>
+<% if ("entre".equals(opfecha)){ %><h1>Estadistica Valorativa Fecha entre <%= fechaDesde %> y <%= fechaHasta %></h1><br><% }
+       else { %><h1>Estadistica Cuantitativa Fecha entre <%= sdf.format(new Date()) %> y <%=sdf.format(new Date()) %></h1><br><% } %>
+   
 	<table id="listado" <% if (salidaExcel){ %>border="1"<% } %>>
 
 <% if (salidaExcel){ %>
@@ -763,8 +754,8 @@
 	<% } %>				
     
     <!-- Rango de Fechas -->
-    <% if ("entre".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><br><% } %>
-    
+    <% if ("entre".equals(opfecha)){ %>Fecha entre <%= fechaDesde %> y <%= fechaHasta %><br><% }
+       else { %>Fecha entre <%= sdf.format(new Date()) %> y <%=sdf.format(new Date()) %><br><% } %>
     <!-- Ciudad -->
     <% if ("C".equals(CJRA)){ String nombreCiudad = (String) mapaCiudades.get(new Integer(domCiudad)); %>Ciudad: <%= nombreCiudad %><br><% } %>
 
@@ -785,7 +776,8 @@
     
     <!-- Estado del Bono -->
     <% if (BonoDTO.ESTADOBONO_ANULADO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Anulado<br><% } %>
-    <% if (BonoDTO.ESTADOBONO_IMPRESO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Liquidado<br><% } %>
+    <% if (BonoDTO.ESTADOBONO_LIQUIDADO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Liquidado<br><% } %>
+    <% if (BonoDTO.ESTADOBONO_EMITIDO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Emitido<br><% } %>    
     
     </td></tr>
 
