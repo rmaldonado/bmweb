@@ -70,8 +70,8 @@
   }
 
   // deteccion de parametros para filtros
-  boolean mostrarFiltros = false;
-  if ("1".equals(request.getParameter("mostrarFiltros"))) { mostrarFiltros = true; }
+  boolean mostrarFiltros = true;
+  if ("0".equals(request.getParameter("mostrarFiltros"))) { mostrarFiltros = false; }
   
   String opfecha = "";
   if (request.getParameter("opfecha") != null) { opfecha = request.getParameter("opfecha"); }
@@ -124,7 +124,13 @@
   // coloco el titulo de la pagina
   request.setAttribute("titulo", "Reportes");
 
+  boolean mostrarTablas = false;
+  if ("mostrarTablas".equals(request.getParameter("mostrarTablas")) ) { mostrarTablas = true; }
   
+  // fila con los totales
+  Map filaTotales = new HashMap();
+  Map filaValoresTotales = new HashMap();
+
   // Calculo del gran total de bonos del reporte
   int granTotal = 0;
   int granValor = 0;
@@ -140,7 +146,7 @@
     			
     			String sexo = (iSex==0)? "M" : "F";
     			String llave = reparticion + "." + impCarga + "." + sexo;
-    			String llave2= reparticion + "." + impCarga + "." + sexo;
+    			String llave2= reparticion + "." + impCarga + "." + sexo + ".valor";
     			String valor = "0";
     			String valor2= "0";
     			if (fila.containsKey(llave)){ valor = fila.get(llave).toString(); }
@@ -487,12 +493,23 @@
 		
 		
 	</table>
+	
+	<input type="hidden" name="mostrarTablas" value="mostrarTablas">
+	</form>
 
 	<br>
+	
 <%
   // fin if (!salidaExcel)
   }
 %>
+
+<%
+  if (mostrarTablas) {
+%>
+
+	<h1>Estadistica Cuantitativa</h1>
+
 	<table id="listado" <% if (salidaExcel){ %>border="1"<% } %>>
 
 <% if (salidaExcel){ %>
@@ -627,11 +644,13 @@
 		    			String llave = reparticion + "." + impCarga + "." + sexo;
 		    			
 		    			String valor = "0";
-		    			if (fila.containsKey(llave)){ valor = fila.get(llave).toString(); }
-		    			
-		    			int intValor = (new Integer(valor)).intValue();
-		    			
+		    			if (fila.containsKey(llave)){ valor = fila.get(llave).toString(); }		    			
+		    			int intValor = (new Integer(valor)).intValue();		    			
 		    			totalEspecialidad += intValor;
+		    			
+		    			Integer valorTotales = new Integer(0);
+		    			if (filaTotales.containsKey(llave)){ valorTotales = (Integer)filaTotales.get(llave); }
+		    			filaTotales.put(llave, new Integer(valorTotales.intValue() + intValor));
 		    			
 		    			// total imponentes masculinos x especialidad
 		    			if ((impCarga==0) && (iSex==0)){ totalImponentesMasc += intValor; }
@@ -687,9 +706,37 @@
 <%
 		}
 %>
+		<!-- FILA TOTALES -->
+		<tr class="encabezados-tabla">
+		<td>TOTAL</td>
+		
+		<td>&nbsp;</td>
+		<td>100%</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+<%	
+	    for (int r=0; r<listaReparticiones.size(); r++){
+	    	for (int impCarga = 0; impCarga <=1; impCarga++) {
+	    		for (int iSex = 0; iSex <= 1; iSex++){
+	    			
+	    			CiudadDTO rep = (CiudadDTO) listaReparticiones.get(r);
+	    			int reparticion = rep.getCodigo();	    			
+	    			String sexo = (iSex==0)? "M" : "F";
+	    			String llave = reparticion + "." + impCarga + "." + sexo;
+%>
+		<td><%= filaTotales.get(llave) %></td>
+<%
+	    		}
+	    	}
+	    }
+%>
 	</table>
 	
     <!-- Estadistica Valorativa -->
+    
+    <h1>Estadistica Valorativa</h1>
 	<table id="listado" <% if (salidaExcel){ %>border="1"<% } %>>
 
 <% if (salidaExcel){ %>
@@ -830,6 +877,11 @@
 		    			
 		    			totalEspecialidad += intValor;
 		    			
+		    			Integer valorTotales = new Integer(0);
+		    			if (filaTotales.containsKey(llave2)){ valorTotales = (Integer)filaTotales.get(llave2); }
+		    			filaValoresTotales.put(llave2, new Integer(valorTotales.intValue() + intValor));
+
+		    			
 		    			// total imponentes masculinos x especialidad
 		    			if ((impCarga==0) && (iSex==0)){ totalImponentesMasc += intValor; }
 		    			
@@ -855,7 +907,7 @@
 		    	}
 		    }
 		    
-			double porcentaje = (int)((totalEspecialidad*1000.0)/granTotal);
+			double porcentaje = (int)((totalEspecialidad*1000.0)/granValor);
 			porcentaje = porcentaje/10.0;
 
 %>			
@@ -884,7 +936,39 @@
 <% 
 		}
 %>
+
+		<!-- FILA TOTALES -->
+		<tr class="encabezados-tabla">
+		<td>TOTAL</td>
+		
+		<td>&nbsp;</td>
+		<td>100%</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+<%	
+	    for (int r=0; r<listaReparticiones.size(); r++){
+	    	for (int impCarga = 0; impCarga <=1; impCarga++) {
+	    		for (int iSex = 0; iSex <= 1; iSex++){
+	    			
+	    			CiudadDTO rep = (CiudadDTO) listaReparticiones.get(r);
+	    			int reparticion = rep.getCodigo();	    			
+	    			String sexo = (iSex==0)? "M" : "F";
+	    			String llave = reparticion + "." + impCarga + "." + sexo + ".valor";
+%>
+		<td><%= filaValoresTotales.get(llave) %></td>
+<%
+	    		}
+	    	}
+	    }
+%>
+
 	</table>
+
+<%
+  } // end if mostrarTablas
+%>
 
 <%
   if (!salidaExcel) {
