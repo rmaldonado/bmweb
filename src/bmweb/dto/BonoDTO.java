@@ -44,8 +44,9 @@ public class BonoDTO implements Serializable {
 	public static final String TIPOPRESTADOR_CASAREPOSO		= "R";
 	public static final String TIPOPRESTADOR_NORMAL			= "N";
  
-	public static final String ESTADOBONO_IMPRESO			= "P";
+	public static final String ESTADOBONO_LIQUIDADO			= "L";
 	public static final String ESTADOBONO_ANULADO			= "A";
+	public static final String ESTADOBONO_EMITIDO			= "E";	
 	
 	/*
         <property name="tipoBono" type="string" column="dom_tipbon" not-null="false"/>
