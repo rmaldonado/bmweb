@@ -118,8 +118,8 @@
   String estadoBono = "";
   if (request.getParameter("estadoBono") != null) { estadoBono = request.getParameter("estadoBono"); }
 
-  String tipoEstadistica = "";
-  if (request.getParameter("tipoEstadistica") != null) { tipoEstadistica = request.getParameter("tipoEstadistica"); }
+  String filtroGrupo = "";
+  if (request.getParameter("filtroGrupo") != null) { filtroGrupo = request.getParameter("filtroGrupo"); }
 
   String bonoSeleccion = "";
   if (request.getParameter("bonoSeleccion") != null) { bonoSeleccion = request.getParameter("bonoSeleccion"); }
@@ -324,8 +324,19 @@
 				
 				</span></td>
 		</tr>
-				
 		<tr class="fila-detalle-impar">
+			<td>Grupo de Prestaciones</td>
+			<td style="text-align:left">
+				<select name="filtroGrupo">
+				<option value="">No filtrar por Grupo</option>
+				<option value="C" <%= ("C".equals(filtroGrupo))?"selected":"" %>>Grupo Consultas </option>
+				<option value="T" <%= ("T".equals(filtroGrupo))?"selected":"" %>>Todos los Grupos</option>
+				</select>		
+
+			</td>		
+		</tr>
+				
+		<tr class="fila-detalle-par">
 			<td>RUT del prestador</td>
 			<td style="text-align:left">
 			<%
@@ -352,7 +363,7 @@
 			</td>
 		</tr>
 
-		<tr class="fila-detalle-par">
+		<tr class="fila-detalle-impar">
 			<td>Ciudad / Jurisdiccion / Region / Agencia</td>
 			<td style="text-align:left">
 			
@@ -367,7 +378,7 @@
 		</tr>
 
 
-		<tr id="fila-C" class="fila-detalle-impar" style="<%= "C".equals(CJRA)?"":"display:none" %>">
+		<tr id="fila-C" class="fila-detalle-par" style="<%= "C".equals(CJRA)?"":"display:none" %>">
 			<td>Ciudad</td>
 			<td style="text-align:left">
 				<select name="dom_ciudad">
@@ -414,7 +425,7 @@
 			</td>		
 		</tr>
 
-		<tr id="fila-R" class="fila-detalle-impar" style="<%= "R".equals(CJRA)?"":"display:none" %>">
+		<tr id="fila-R" class="fila-detalle-par" style="<%= "R".equals(CJRA)?"":"display:none" %>">
 			<td>Region</td>
 			<td style="text-align:left">
 				<select name="dom_region">
@@ -487,8 +498,8 @@
 				<select name="estadoBono">
 				<option value="">No filtrar por Estado</option>
 				<option value="A" <%= ("A".equals(estadoBono))?"selected":"" %>>Bonos Anulados</option>
-				<option value="P" <%= ("P".equals(estadoBono))?"selected":"" %>>Bonos Liquidados (preseleccionado)</option>
-				<option value="E" <%= ("P".equals(estadoBono))?"selected":"" %>>Bonos Emitidos</option>				
+				<option value="L" <%= ("L".equals(estadoBono))?"selected":"" %>>Bonos Liquidados (preseleccionado)</option>
+				<option value="E" <%= ("E".equals(estadoBono))?"selected":"" %>>Bonos Emitidos</option>				
 				</select>		
 
 			</td>		
@@ -813,7 +824,10 @@
     <% if (BonoDTO.ESTADOBONO_ANULADO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Anulado<br><% } %>
     <% if (BonoDTO.ESTADOBONO_LIQUIDADO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Liquidado<br><% } %>
     <% if (BonoDTO.ESTADOBONO_EMITIDO.equals(request.getParameter("estadoBono"))) { %>Estado de bono: Emitido<br><% } %>    
-    
+
+    <!-- FiltroGrupo (Solo consultas o todos los grupos) -->
+    <% if (BonoDTO.FILTROGRUPO_CONSU.equals(request.getParameter("filtroGrupo"))) { %>Grupo de prestaciones: Consultas<br><% } %>       
+    <% if (BonoDTO.FILTROGRUPO_TODOS.equals(request.getParameter("filtroGrupo"))) { %>Grupo de prestaciones: Todos<br><% } %>       
     </td></tr>
 
 <% } %>
