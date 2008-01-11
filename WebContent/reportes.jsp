@@ -99,7 +99,15 @@
   if (request.getParameter("opPrestador") != null) { opPrestador = request.getParameter("opPrestador"); }
   
   String prestador = "";
-  if (request.getParameter("prestador") != null) { prestador = request.getParameter("prestador"); }
+  String prestadorN = "";
+  String prestadorDV = "";
+  if (request.getParameter("prestador") != null) { 
+	  prestador = request.getParameter("prestador");
+	  if (prestador.length() > 2){
+		  prestadorN = prestador.substring(0, prestador.length() -2);
+		  prestadorDV = prestador.substring(prestador.length() -1, prestador.length());
+	  }
+  }
 
   String opPrestacion = "";
   if (request.getParameter("opPrestacion") != null) { opPrestacion = request.getParameter("opPrestacion"); }
@@ -109,6 +117,9 @@
 
   String estadoBono = "";
   if (request.getParameter("estadoBono") != null) { estadoBono = request.getParameter("estadoBono"); }
+
+  String tipoEstadistica = "";
+  if (request.getParameter("tipoEstadistica") != null) { tipoEstadistica = request.getParameter("tipoEstadistica"); }
 
   String bonoSeleccion = "";
   if (request.getParameter("bonoSeleccion") != null) { bonoSeleccion = request.getParameter("bonoSeleccion"); }
@@ -127,7 +138,18 @@
   
   // fila con los totales
   Map filaTotales = new HashMap();
+  filaTotales.put("totalImponentesMasc", new Integer(0));
+  filaTotales.put("totalImponentesFem", new Integer(0));
+  filaTotales.put("totalCargasMasc", new Integer(0));
+  filaTotales.put("totalCargasFem", new Integer(0));
+  filaTotales.put("total", new Integer(0));
+  
   Map filaValoresTotales = new HashMap();
+  filaValoresTotales.put("totalImponentesMasc", new Integer(0));
+  filaValoresTotales.put("totalImponentesFem", new Integer(0));
+  filaValoresTotales.put("totalCargasMasc", new Integer(0));
+  filaValoresTotales.put("totalCargasFem", new Integer(0));
+  filaValoresTotales.put("total", new Integer(0));
 
   // Calculo del gran total de bonos del reporte
   int granTotal = 0;
@@ -232,7 +254,7 @@
 				title="Volver a los valores anteriores de los criterios de b&uacute;squeda"
 				style="width:120px">
 				<br>
-				<input type="button" class="button" value="Nueva B&uacute;squeda" onclick="limpiar_filtros()" 
+				<input type="button" class="button" value="Nueva B&uacute;squeda" onclick="document.location='/bmweb/Reportes'" 
 				title="Limpiar los valores de los criterios de b&uacute;squeda"
 				style="width:120px">
 			</td>
@@ -319,8 +341,12 @@
 
 				<!-- filtro rut prestador -->
 				<span id="div-opPrestador" style="<%= estiloDivRutPrestador %>">
-				<input type="text" name="prestador" size="12" value="<%= prestador %>" onBlur="if(!CampoEsRut(this)){document.formulario.opPrestador.selectedIndex=0;mostrarRutPrestador();}"Incluir guion>				
-				Incluir Guion
+				<input type="text" name="prestadorN" size="8" maxsize="8" value="<%= prestadorN %>" 
+				onBlur="validarPrestadorN()">
+				-				
+				<input type="text" name="prestadorDV" size="1" maxsize="1" value="<%= prestadorDV %>" 
+				 onBlur="validarPrestadorDV()">				
+				<input type="hidden" name="prestador" size="12" value="<%= prestador %>">				
 				</span>
 
 			</td>
@@ -667,6 +693,12 @@
 		    	}
 		    }
 		    
+			filaTotales.put("totalImponentesMasc", new Integer( ((Integer)filaTotales.get("totalImponentesMasc")).intValue() + totalImponentesMasc) );
+			filaTotales.put("totalImponentesFem", new Integer( ((Integer)filaTotales.get("totalImponentesFem")).intValue() + totalImponentesFem) );
+			filaTotales.put("totalCargasMasc", new Integer( ((Integer)filaTotales.get("totalCargasMasc")).intValue() + totalCargasMasc) );
+			filaTotales.put("totalCargasFem", new Integer( ((Integer)filaTotales.get("totalCargasFem")).intValue() + totalCargasFem) );
+			filaTotales.put("total", new Integer( ((Integer)filaTotales.get("total")).intValue() + totalEspecialidad) );
+		    
 			double porcentaje = (int)((totalEspecialidad*1000.0)/granTotal);
 			porcentaje = porcentaje/10.0;
 
@@ -699,13 +731,13 @@
 		<!-- FILA TOTALES -->
 		<tr class="encabezados-tabla">
 		<td>TOTAL</td>
-		
-		<td>&nbsp;</td>
+		<td><%= filaTotales.get("total") %></td>
 		<td>100%</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
+		<td><%= filaTotales.get("totalImponentesMasc") %></td>
+		<td><%= filaTotales.get("totalImponentesFem") %></td>
+		<td><%= filaTotales.get("totalCargasMasc") %></td>
+		<td><%= filaTotales.get("totalCargasFem") %></td>
+
 <%	
 	    for (int r=0; r<listaReparticiones.size(); r++){
 	    	for (int impCarga = 0; impCarga <=1; impCarga++) {
@@ -715,8 +747,11 @@
 	    			int reparticion = rep.getCodigo();	    			
 	    			String sexo = (iSex==0)? "M" : "F";
 	    			String llave = reparticion + "." + impCarga + "." + sexo;
+	    			
+	    			String valor = "0";
+	    			if (filaTotales.containsKey(llave)){ valor = filaTotales.get(llave).toString(); }
 %>
-		<td><%= filaTotales.get(llave) %></td>
+		<td><%= valor %></td>
 <%
 	    		}
 	    	}
@@ -870,7 +905,7 @@
 		    			totalEspecialidad += intValor;
 		    			
 		    			Integer valorTotales = new Integer(0);
-		    			if (filaTotales.containsKey(llave2)){ valorTotales = (Integer)filaTotales.get(llave2); }
+		    			if (filaTotales.containsKey(llave2)){ valorTotales = (Integer)filaValoresTotales.get(llave2); }
 		    			filaValoresTotales.put(llave2, new Integer(valorTotales.intValue() + intValor));
 
 		    			
@@ -898,6 +933,13 @@
 		    		}
 		    	}
 		    }
+		    
+		    filaValoresTotales.put("totalImponentesMasc", new Integer( ((Integer)filaValoresTotales.get("totalImponentesMasc")).intValue() + totalImponentesMasc) );
+		    filaValoresTotales.put("totalImponentesFem", new Integer( ((Integer)filaValoresTotales.get("totalImponentesFem")).intValue() + totalImponentesFem) );
+		    filaValoresTotales.put("totalCargasMasc", new Integer( ((Integer)filaValoresTotales.get("totalCargasMasc")).intValue() + totalCargasMasc) );
+		    filaValoresTotales.put("totalCargasFem", new Integer( ((Integer)filaValoresTotales.get("totalCargasFem")).intValue() + totalCargasFem) );
+		    filaValoresTotales.put("total", new Integer( ((Integer)filaValoresTotales.get("total")).intValue() + totalEspecialidad) );
+
 		    
 			double porcentaje = (int)((totalEspecialidad*1000.0)/granValor);
 			porcentaje = porcentaje/10.0;
@@ -933,12 +975,13 @@
 		<tr class="encabezados-tabla">
 		<td>TOTAL</td>
 		
-		<td>&nbsp;</td>
+		<td><%= filaValoresTotales.get("total") %></td>
 		<td>100%</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
+		<td><%= filaValoresTotales.get("totalImponentesMasc") %></td>
+		<td><%= filaValoresTotales.get("totalImponentesFem") %></td>
+		<td><%= filaValoresTotales.get("totalCargasMasc") %></td>
+		<td><%= filaValoresTotales.get("totalCargasFem") %></td>
+
 <%	
 	    for (int r=0; r<listaReparticiones.size(); r++){
 	    	for (int impCarga = 0; impCarga <=1; impCarga++) {
@@ -948,8 +991,11 @@
 	    			int reparticion = rep.getCodigo();	    			
 	    			String sexo = (iSex==0)? "M" : "F";
 	    			String llave = reparticion + "." + impCarga + "." + sexo + ".valor";
+	    			
+	    			String valor = "0";
+	    			if (filaValoresTotales.containsKey(llave)){ valor = filaValoresTotales.get(llave).toString(); }
 %>
-		<td><%= filaValoresTotales.get(llave) %></td>
+		<td><%= valor %></td>
 <%
 	    		}
 	    	}
@@ -1068,6 +1114,37 @@
 		      document.getElementById(filaVisible).style.display = "";
 		    }
 		    
+	  }
+	  
+	  function validarPrestadorN(){
+	  		document.formulario.prestadorDV.value="";
+	  		if(!CampoEsNumero(document.formulario.prestadorN)){
+	  			// document.formulario.opPrestador.selectedIndex=0;
+	  			document.formulario.prestadorN.value = "";
+	  			// mostrarRutPrestador();
+	  		}
+	  }
+	  
+	  function validarPrestadorDV(){
+	  		if ( !("" == document.formulario.prestadorN.value) 
+	  			&& CampoEsNumero(document.formulario.prestadorN)){
+	  		    if ("k" == document.formulario.prestadorDV.value
+	  		    	|| "K" ==  document.formulario.prestadorDV.value
+	  		    	|| CampoEsNumeroEnRango(document.formulario.prestadorDV, 0, 9)
+	  		    ) {
+	  		      // copio ambos campos en el rut completo (hidden)
+	  		      document.formulario.prestador.value = 
+	  		      	document.formulario.prestadorN.value + 
+	  		      	"-" + 
+	  		      	document.formulario.prestadorDV.value.toUpperCase();
+	  		      	
+	  		      // valido el rut
+	  		      if (!CampoEsRut(document.formulario.prestador)){
+	  		        document.formulario.prestadorN.value = "";
+	  		        document.formulario.prestadorDV.value = "";
+	  		      }
+	  		    }
+	  		}
 	  }
 	  
 	  // En esta página, si viene la cookie "update", simplemente se consume la cookie
