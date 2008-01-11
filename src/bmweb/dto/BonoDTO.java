@@ -48,7 +48,8 @@ public class BonoDTO implements Serializable {
 	public static final String ESTADOBONO_LIQUIDADO			= "L";
 	public static final String ESTADOBONO_ANULADO			= "A";
 	public static final String ESTADOBONO_EMITIDO			= "E";	
-	
+	public static final String FILTROGRUPO_CONSU            = "C";	
+	public static final String FILTROGRUPO_TODOS            = "T";
 	/*
         <property name="tipoBono" type="string" column="dom_tipbon" not-null="false"/>
         <property name="folio" type="int" column="bo_folio" not-null="true"/>
