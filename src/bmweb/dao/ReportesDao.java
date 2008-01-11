@@ -136,70 +136,108 @@ public class ReportesDao implements IReportesDao {
 			String fechaDesde;
 			String fechaHasta;
 
-			String tipbon=""+ "  and b.dom_tipbon='W' and (dom_estbon is not null and dom_estbon <> 'A') ";
+			String tipbon=" and b.dom_tipbon in ('W','D','F') "
+		               //  +" and (dom_estbon is not null and dom_estbon <> 'A')";
+			+" and (dom_estbon is null or (dom_estbon is not null and dom_estbon <> 'A'))";			
+			String prenomOPregen =" pr_nombre[1,30]"; //pr_nombre o key_descr (PREGEN)
+			String andpresta ="";
+	        String tablaKWD  ="";
 			String Aahora = sdf_ahora.format(ahora);
+
 			
 
             //solo bonos web 
 			if ("W".equals((String)params.get("bonoSeleccion"))){
 				String paramBonoSeleccion = (String)params.get("bonoSeleccion");
 				tipbon = ""+ "   and b.dom_tipbon='W'   "
-			           +"and (dom_estbon is not null and dom_estbon <> 'A')";				
+			        //   +"and (dom_estbon is not null and dom_estbon <> 'A')";			
+				+" and (dom_estbon is null or (dom_estbon is not null and dom_estbon <> 'A'))";				
 			}
 			//todos los tipos de bonos
 			if ("T".equals((String)params.get("bonoSeleccion"))){
 				String paramBonoSeleccion = (String)params.get("bonoSeleccion");
 				tipbon = ""+ " and b.dom_tipbon in ('W','D','F') "
-				       +"and (dom_estbon is not null and dom_estbon <> 'A')";
+				    //   +"and (dom_estbon is not null and dom_estbon <> 'A')";
+				+" and (dom_estbon is null or (dom_estbon is not null and dom_estbon <> 'A'))";				
 			}
 			if (!params.containsKey("fechaDesde")){ fechaDesde = sdf_ahora.format(Aahora); }
 			else { fechaDesde = (String) params.get("fechaDesde"); }
 			
 			if (!params.containsKey("fechaHasta")){ fechaHasta = sdf_ahora.format(Aahora); }
 			else { fechaHasta = (String) params.get("fechaHasta"); }
+
+			if ("si".equals((String)params.get("opPrestacion")))
+			{
+                prenomOPregen = " pr_nombre[1,30]";
+				andpresta = "  and c.pr_codigo = " + (String)params.get("prestacion") + " ";				
+			} // aqui segun FILTROGRUPO:'C'ONSULTAS o FILTROGRUPO:'T'ODOS LOS GRUPOS 
+			else if (BonoDTO.FILTROGRUPO_CONSU.equals((String)params.get("filtroGrupo")))
+			     {
+                    prenomOPregen = " pr_nombre[1,30]";
+				    andpresta = "  and c.pr_codigo between 0101005 and 0101099 ";
+
+				 }
+				 if (BonoDTO.FILTROGRUPO_TODOS.equals((String)params.get("filtroGrupo")))
+				 {
+				         tablaKWD  = ",keyword_det l";
+				 	     prenomOPregen = " l.key_descr[1,30]";
+				 	     andpresta     = " and l.key_sist='BENMED' and l.key_word ='PREGEN' " 
+                                       + "  and l.key_id = ROUND(a.pr_codigo/100000) ";
+				 }
+			
+					
 			
 			String query = "" +
-				" select pr_nombre[1,30] especialidad, "
+				" select "
+			    +prenomOPregen
+				+" especialidad, "
 				+" be_carne[1,1] reparticion, "
 				+" be_carne[10,11] imp_carga, "
 				+" sexo, " 
 				+" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
-				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e "
+				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e "+tablaKWD
 				+" where b.bo_serial = a.bo_serial "
 				+tipbon
-				+"  and c.pr_codigo = a.pr_codigo ";
+				+"  and c.pr_codigo = a.pr_codigo "
+				+andpresta;
 			//Por Ciudad
 			if ("C".equals((String)params.get("CJRA")))
 			{
 				query ="" +
-				 " select pr_nombre[1,30] especialidad, "
-				+" be_carne[1,1] reparticion, "
-				+" be_carne[10,11] imp_carga, "
-				+" sexo, "
-				+" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
-				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, "
-				+" bm_preben f, keyword_det k "
-				+" where b.bo_serial = a.bo_serial " +
-				tipbon
-				+" and c.pr_codigo = a.pr_codigo "
-				+" and key_sist='BENMED' and key_word ='CIUDAD' "
-				+" and f.pb_rut = b.pb_rut and k.key_id = f.dom_ciudad "
-				+" and f.dom_ciudad = " + params.get("dom_ciudad") + " ";
+				 " select "
+				 +prenomOPregen
+				 +" especialidad, "
+				 +" be_carne[1,1] reparticion, "
+				 +" be_carne[10,11] imp_carga, "
+				 +" sexo, "
+				 +" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
+				 +" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, "
+				 +" bm_preben f, keyword_det k "+tablaKWD
+				 +" where b.bo_serial = a.bo_serial "
+				 +tipbon
+				 +" and c.pr_codigo = a.pr_codigo "
+				 +andpresta
+				 +" and key_sist='BENMED' and key_word ='CIUDAD' "
+				 +" and f.pb_rut = b.pb_rut and k.key_id = f.dom_ciudad "
+				 +" and f.dom_ciudad = " + params.get("dom_ciudad") + " ";
 			}
             //Por Region
 			if ("R".equals((String)params.get("CJRA")))
 			{
 				query ="" +
-				 " select pr_nombre[1,30] especialidad, "
+				 " select "
+				+prenomOPregen
+				+" especialidad, "
 				+" be_carne[1,1] reparticion, "
 				+" be_carne[10,11] imp_carga, "
 				+" sexo, "  
 				+" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
 				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, "
-				+" bm_preben f, keyword_det k "
-				+" where b.bo_serial = a.bo_serial " +
-				tipbon
+				+" bm_preben f, keyword_det k "+tablaKWD
+				+" where b.bo_serial = a.bo_serial "
+				+tipbon
 				+"  and c.pr_codigo = a.pr_codigo "
+				+andpresta
 				+"  and key_sist='BENMED' and key_word ='REGION' "
 				+"  and f.pb_rut = b.pb_rut and k.key_id = f.dom_region "
 			    +"  and f.dom_region  = " + params.get("dom_region") + " ";					
@@ -208,47 +246,45 @@ public class ReportesDao implements IReportesDao {
 			if ("J".equals((String)params.get("CJRA")))
 			{
 				query ="" +
-				 " select pr_nombre[1,30] especialidad, "
+				 " select "
+				+prenomOPregen
+				+" especialidad, "
 				+" be_carne[1,1] reparticion, "
 				+" be_carne[10,11] imp_carga, "
 				+" sexo, "
 				+" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
 				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, "
-				+" bm_habilitado f, keyword_det k "
+				+" bm_habilitado f, keyword_det k "+tablaKWD
 				+" where b.bo_serial = a.bo_serial "
 				+tipbon
-				+"  and c.pr_codigo = a.pr_codigo "
-			    +"  and key_sist='BENMED' and key_word ='JURISD' "
-				+ "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd "
-				+ "  and f.ha_jurisd = " + params.get("dom_jurisdiccion") + " ";
+				+" and c.pr_codigo = a.pr_codigo "
+				+andpresta
+			    +" and key_sist='BENMED' and key_word ='JURISD' "
+				+" and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd "
+				+" and f.ha_jurisd = " + params.get("dom_jurisdiccion") + " ";
 			}
 		    //Por Agencia
 			if ("A".equals((String)params.get("CJRA")))
 			{
 				query ="" +
-				 " select pr_nombre[1,30] especialidad, "
+				 " select "
+				+prenomOPregen
+				+" especialidad, "
 				+" be_carne[1,1] reparticion, "
 				+" be_carne[10,11] imp_carga, "
 				+" sexo, "
 				+" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
 				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, "
-				+" bm_habilitado f, keyword_det k "
+				+" bm_habilitado f, keyword_det k "+tablaKWD
 				+" where b.bo_serial = a.bo_serial "
 				+tipbon
 				+"  and c.pr_codigo = a.pr_codigo "
+				+andpresta
                 +"  and key_sist='BENMED' and key_word ='AGENCIA' " 
 	            +"  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_agencia "
 	            +"  and f.ha_agencia = " + params.get("dom_agencia") + " ";
 			}
 			
-			if ("si".equals((String)params.get("opPrestacion"))){
-				query += "" +
-					"  and c.pr_codigo = " + (String)params.get("prestacion") + " ";				
-			} else {
-				query += "" +
-				"  and c.pr_codigo between 0101005 and 0101099 ";
-			}
-					
 			query += "" +
 					"  and d.rut_bene = e.rut_bene " +
 					"  and d.cod_repart = b.be_carne[1,1] " +
@@ -256,7 +292,7 @@ public class ReportesDao implements IReportesDao {
 					"  and d.nro_correl = b.be_carne[10,11] " +
 					"  and b.be_carne[2,2]='-' " +
 					"  and b.be_carne[9,9]='-' " +
-					"  and b.be_carne[3] in  ('0','1','2','3','4','5','6','7','8','9') " +
+					"  and b.be_carne[3] in ('0','1','2','3','4','5','6','7','8','9') " +
 					"  and b.be_carne[4] in ('0','1','2','3','4','5','6','7','8','9') " +
 					"  and b.be_carne[5] in ('0','1','2','3','4','5','6','7','8','9') " +
 					"  and b.be_carne[6] in ('0','1','2','3','4','5','6','7','8','9') " +
@@ -324,12 +360,12 @@ public class ReportesDao implements IReportesDao {
 				{
 				   habopre = " bm_preben f,";
 				   if ("C".equals((String)params.get("CJRA")))
-				       yhabopre="  and (key_sist='BENMED' and key_word ='CIUDAD' "
-					   +"  and f.pb_rut = b.pb_rut and k.key_id = f.dom_ciudad "
+				       yhabopre="  and (g.key_sist='BENMED' and g.key_word ='CIUDAD' "
+					   +"  and f.pb_rut = b.pb_rut and g.key_id = f.dom_ciudad "
 				       +"  and f.dom_ciudad  = " + params.get("dom_ciudad") + ") ";					
 				   if ("R".equals((String)params.get("CJRA")))
-					   yhabopre="  and (key_sist='BENMED' and key_word ='REGION' "
-					   +"  and f.pb_rut = b.pb_rut and k.key_id = f.dom_region "
+					   yhabopre="  and (g.key_sist='BENMED' and g.key_word ='REGION' "
+					   +"  and f.pb_rut = b.pb_rut and g.key_id = f.dom_region "
 				       +"  and f.dom_region  = " + params.get("dom_region") + ") ";					
 				}
 
@@ -337,13 +373,13 @@ public class ReportesDao implements IReportesDao {
 				{  
 				   habopre = " bm_habilitado f,";
 				   if ("J".equals((String)params.get("CJRA")))
-				       yhabopre="  and (key_sist='BENMED' and key_word ='JURISD' "
-					   + "  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd "
+				       yhabopre="  and (g.key_sist='BENMED' and g.key_word ='JURISD' "
+					   + "  and f.ha_codigo = b.ha_codigo and g.key_id = f.ha_jurisd "
 					   + "  and f.ha_jurisd = " + params.get("dom_jurisdiccion") + ") ";
 				   
 				   if ("A".equals((String)params.get("CJRA")))
-				       yhabopre="  and (key_sist='BENMED' and key_word ='AGENCIA' " 
-		               +"  and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_agencia "
+				       yhabopre="  and (g.key_sist='BENMED' and g.key_word ='AGENCIA' " 
+		               +"  and f.ha_codigo = b.ha_codigo and g.key_id = f.ha_agencia "
 		               +"  and f.ha_agencia = " + params.get("dom_agencia") + ") ";
 				}
 				
@@ -355,10 +391,11 @@ public class ReportesDao implements IReportesDao {
 				+" count(b.bo_serial) subtotal, 0 subvalor "
 				+" from bmw_bonite a, bm_bono b, rolbene d, beneficiario e, "+habopre+" "
 //				+" bm_habilitado f, keyword_det k "
-				+" keyword_det k "
-				+" where b.bo_serial not in (select i.bo_serial from bm_bonite j,bm_bono i where i.dom_tipbon ='W' and i.bo_serial=j.bo_serial)"
+				+" keyword_det k, keyword_det g"
+				+" where b.dp_serial is null" 
+				//"b.bo_serial not in (select i.bo_serial from bm_bonite j,bm_bono i where i.dom_tipbon ='W' and i.bo_serial=j.bo_serial)"
 				+" and b.bo_serial = a.bo_serial and b.dom_tipbon='W'"
-               +"  and key_sist='BENMED' and key_word ='PREGEN' " 
+               +"  and k.key_sist='BENMED' and k.key_word ='PREGEN' " 
                +"  and k.key_id = a.wi_codigo ";
 				query += ""+yhabopre+" ";
 				query += "" +
