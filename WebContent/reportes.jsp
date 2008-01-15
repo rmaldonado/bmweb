@@ -145,14 +145,14 @@
   filaTotales.put("total", new Integer(0));
   
   Map filaValoresTotales = new HashMap();
-  filaValoresTotales.put("totalImponentesMasc", new Integer(0));
-  filaValoresTotales.put("totalImponentesFem", new Integer(0));
-  filaValoresTotales.put("totalCargasMasc", new Integer(0));
-  filaValoresTotales.put("totalCargasFem", new Integer(0));
-  filaValoresTotales.put("total", new Integer(0));
+  filaValoresTotales.put("totalImponentesMasc", new Long(0));
+  filaValoresTotales.put("totalImponentesFem", new Long(0));
+  filaValoresTotales.put("totalCargasMasc", new Long(0));
+  filaValoresTotales.put("totalCargasFem", new Long(0));
+  filaValoresTotales.put("total", new Long(0));
 
   // Calculo del gran total de bonos del reporte
-  int granTotal = 0;
+  long granTotal = 0;
   int granValor = 0;
   for (Iterator it = filasReporte.iterator(); it.hasNext();) {
     Map fila = (Map) it.next();
@@ -172,7 +172,7 @@
     			if (fila.containsKey(llave)){ valor = fila.get(llave).toString(); }
     			if (fila.containsKey(llave2)){ valor2 = fila.get(llave2).toString(); }    			
     			int intValor = (new Integer(valor)).intValue();
-    			int intValor2 = (new Integer(valor2)).intValue();
+    			long intValor2 = (new Long(valor2)).longValue();
     			granTotal += intValor;
     			granValor += intValor2;
     		}
@@ -878,6 +878,8 @@
 		</tr>
 
 <%
+try {
+
 		int numFila2 = 1;
 		for (Iterator it = filasReporte.iterator(); it.hasNext();) {
 		    Map fila = (Map) it.next();
@@ -893,13 +895,12 @@
 			<td><%= especialidad %></td>
 
 <%
-
 			StringBuffer bufferLinea = new StringBuffer();
-			int totalEspecialidad = 0;
-			int totalImponentesMasc = 0;
-			int totalImponentesFem = 0;
-			int totalCargasMasc = 0;
-			int totalCargasFem = 0;
+			long totalEspecialidadL = 0;
+			long totalImponentesMascL = 0;
+			long totalImponentesFemL = 0;
+			long totalCargasMascL = 0;
+			long totalCargasFemL = 0;
 
 		    for (int r=0; r<listaReparticiones.size(); r++){
 		    	for (int impCarga = 0; impCarga <=1; impCarga++) {
@@ -914,26 +915,26 @@
 		    			String valor = "0";
 		    			if (fila.containsKey(llave2)){ valor = fila.get(llave2).toString(); }
 		    			
-		    			int intValor = (new Integer(valor)).intValue();
+		    			long longValor = (new Long(valor)).longValue();
 		    			
-		    			totalEspecialidad += intValor;
+		    			totalEspecialidadL += longValor;
 		    			
-		    			Integer valorTotales = new Integer(0);
-		    			if (filaTotales.containsKey(llave2)){ valorTotales = (Integer)filaValoresTotales.get(llave2); }
-		    			filaValoresTotales.put(llave2, new Integer(valorTotales.intValue() + intValor));
+		    			Long valorTotales = new Long(0);
+		    			if (filaValoresTotales.containsKey(llave2)){ valorTotales = (Long)filaValoresTotales.get(llave2); }
+		    			filaValoresTotales.put(llave2, new Long(valorTotales.longValue() + longValor));
 
 		    			
 		    			// total imponentes masculinos x especialidad
-		    			if ((impCarga==0) && (iSex==0)){ totalImponentesMasc += intValor; }
+		    			if ((impCarga==0) && (iSex==0)){ totalImponentesMascL += longValor; }
 		    			
 		    			// total imponentes femeninos x especialidad
-		    			if ((impCarga==0) && (iSex==1)){ totalImponentesFem += intValor; }
+		    			if ((impCarga==0) && (iSex==1)){ totalImponentesFemL += longValor; }
 		    			
 		    			// total cargas masculinos x especialidad
-		    			if ((impCarga==1) && (iSex==0)){ totalCargasMasc += intValor; }
+		    			if ((impCarga==1) && (iSex==0)){ totalCargasMascL += longValor; }
 		    			
 		    			// total cargas femeninos x especialidad
-		    			if ((impCarga==1) && (iSex==1)){ totalCargasFem += intValor; }
+		    			if ((impCarga==1) && (iSex==1)){ totalCargasFemL += longValor; }
 		    			
 		    			bufferLinea.append("\t\t\t<td>");
 		    			// DEBUG
@@ -948,34 +949,34 @@
 		    	}
 		    }
 		    
-		    filaValoresTotales.put("totalImponentesMasc", new Integer( ((Integer)filaValoresTotales.get("totalImponentesMasc")).intValue() + totalImponentesMasc) );
-		    filaValoresTotales.put("totalImponentesFem", new Integer( ((Integer)filaValoresTotales.get("totalImponentesFem")).intValue() + totalImponentesFem) );
-		    filaValoresTotales.put("totalCargasMasc", new Integer( ((Integer)filaValoresTotales.get("totalCargasMasc")).intValue() + totalCargasMasc) );
-		    filaValoresTotales.put("totalCargasFem", new Integer( ((Integer)filaValoresTotales.get("totalCargasFem")).intValue() + totalCargasFem) );
-		    filaValoresTotales.put("total", new Integer( ((Integer)filaValoresTotales.get("total")).intValue() + totalEspecialidad) );
+		    filaValoresTotales.put("totalImponentesMasc", new Long( ((Long)filaValoresTotales.get("totalImponentesMasc")).longValue() + totalImponentesMascL) );
+		    filaValoresTotales.put("totalImponentesFem", new Long( ((Long)filaValoresTotales.get("totalImponentesFem")).longValue() + totalImponentesFemL) );
+		    filaValoresTotales.put("totalCargasMasc", new Long( ((Long)filaValoresTotales.get("totalCargasMasc")).longValue() + totalCargasMascL) );
+		    filaValoresTotales.put("totalCargasFem", new Long( ((Long)filaValoresTotales.get("totalCargasFem")).longValue() + totalCargasFemL) );
+		    filaValoresTotales.put("total", new Long( ((Long)filaValoresTotales.get("total")).longValue() + totalEspecialidadL) );
 
 		    
-			double porcentaje = (int)((totalEspecialidad*1000.0)/granValor);
+			double porcentaje = (int)((totalEspecialidadL*1000.0)/(granValor*1.0));
 			porcentaje = porcentaje/10.0;
 
 %>			
 			<!-- total especialidad -->
-			<td><%= totalEspecialidad %></td>
+			<td><%= totalEspecialidadL %></td>
 			
 			<!-- porcentaje del total x especialidad -->
 			<td><%= porcentaje %>%</td>
 			
 			<!-- total imponentes masculinos x especialidad -->
-			<td><%= totalImponentesMasc %></td>
+			<td><%= totalImponentesMascL %></td>
 			
 			<!-- total imponentes femeninos x especialidad -->
-			<td><%= totalImponentesFem %></td>
+			<td><%= totalImponentesFemL %></td>
 			
 			<!-- total cargas masculinos x especialidad -->
-			<td><%= totalCargasMasc %></td>
+			<td><%= totalCargasMascL %></td>
 			
 			<!-- total cargas femeninos x especialidad -->
-			<td><%= totalCargasFem %></td>
+			<td><%= totalCargasFemL %></td>
 
 <%= bufferLinea.toString() %>
 			
@@ -983,6 +984,12 @@
 		
 <% 
 		}
+%>
+
+<%
+  } catch (Exception e) {
+    e.printStackTrace();
+  } 
 %>
 
 		<!-- FILA TOTALES -->
@@ -1184,6 +1191,8 @@ especialidad                    reparticion  imp_carga  sexo  subtotal
 ------------------------------  -----------  ---------  ----  --------  
 CONS.ESPEC.TRAUMATOLOGIA        2            02         M     1         
  -->
+
+
 	
 <jsp:include page="pie.jsp" flush="true"/>
 
@@ -1192,4 +1201,6 @@ CONS.ESPEC.TRAUMATOLOGIA        2            02         M     1
 } else {
 %>
 </body></html>
+
 <% } %>
+
