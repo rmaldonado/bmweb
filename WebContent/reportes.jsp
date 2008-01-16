@@ -1,3 +1,4 @@
+<%@ page import="java.math.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="bmweb.dto.*" %>
@@ -955,8 +956,12 @@ try {
 		    filaValoresTotales.put("totalCargasFem", new Long( ((Long)filaValoresTotales.get("totalCargasFem")).longValue() + totalCargasFemL) );
 		    filaValoresTotales.put("total", new Long( ((Long)filaValoresTotales.get("total")).longValue() + totalEspecialidadL) );
 
-		    double porcentajeF = totalEspecialidadL/(granValor*1.0);
-			double porcentajeL = (int)(porcentajeF*1000);
+		    // Uso BigDecimal por problemas de overflow
+		    BigDecimal porcentajeBD = new BigDecimal(totalEspecialidadL);
+		    porcentajeBD = porcentajeBD.multiply(new BigDecimal(1000)); 
+		    porcentajeBD = porcentajeBD.divide(new BigDecimal(granValor), BigDecimal.ROUND_FLOOR); 
+
+			double porcentajeL = porcentajeBD.doubleValue();
 			porcentajeL = porcentajeL/10.0;
 
 %>			
