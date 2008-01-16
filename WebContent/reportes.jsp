@@ -955,16 +955,16 @@ try {
 		    filaValoresTotales.put("totalCargasFem", new Long( ((Long)filaValoresTotales.get("totalCargasFem")).longValue() + totalCargasFemL) );
 		    filaValoresTotales.put("total", new Long( ((Long)filaValoresTotales.get("total")).longValue() + totalEspecialidadL) );
 
-		    
-			double porcentaje = (int)((totalEspecialidadL*1000.0)/(granValor*1.0));
-			porcentaje = porcentaje/10.0;
+		    double porcentajeF = totalEspecialidadL/(granValor*1.0);
+			double porcentajeL = (int)(porcentajeF*1000);
+			porcentajeL = porcentajeL/10.0;
 
 %>			
 			<!-- total especialidad -->
 			<td><%= totalEspecialidadL %></td>
 			
 			<!-- porcentaje del total x especialidad -->
-			<td><%= porcentaje %>%</td>
+			<td><%= porcentajeL %>%</td>
 			
 			<!-- total imponentes masculinos x especialidad -->
 			<td><%= totalImponentesMascL %></td>
