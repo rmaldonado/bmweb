@@ -51,8 +51,26 @@ public class ReportesDao implements IReportesDao {
 		fila.put("reparticion", new Integer(1));
 		fila.put("imp_carga", "01");
 		fila.put("sexo", "F");
-		fila.put("subtotal", new Integer(42));
+		fila.put("subtotal", new Integer(2111333444));
+
+		Map fila2 = new HashMap();
+		fila2.put("especialidad", "YYYYYYYY");
+		fila2.put("reparticion", new Integer(1));
+		fila2.put("imp_carga", "01");
+		fila2.put("sexo", "M");
+		fila2.put("subtotal", new Integer(2111333444));
+
+		Map fila3 = new HashMap();
+		fila3.put("especialidad", "ZZZZZZZZZ");
+		fila3.put("reparticion", new Integer(1));
+		fila3.put("imp_carga", "02");
+		fila3.put("sexo", "M");
+		fila3.put("subtotal", new Integer(2111333444));
+
 		resultado.add(fila);
+		resultado.add(fila2);
+		resultado.add(fila3);
+		resultado.add(fila3);
 		*/
 		
 		ReporteGenericoMappingQuery rgmp = new ReporteGenericoMappingQuery(dataSource, params, uw);
