@@ -139,11 +139,11 @@
   
   // fila con los totales
   Map filaTotales = new HashMap();
-  filaTotales.put("totalImponentesMasc", new Integer(0));
-  filaTotales.put("totalImponentesFem", new Integer(0));
-  filaTotales.put("totalCargasMasc", new Integer(0));
-  filaTotales.put("totalCargasFem", new Integer(0));
-  filaTotales.put("total", new Integer(0));
+  filaTotales.put("totalImponentesMasc", new Long(0));
+  filaTotales.put("totalImponentesFem", new Long(0));
+  filaTotales.put("totalCargasMasc", new Long(0));
+  filaTotales.put("totalCargasFem", new Long(0));
+  filaTotales.put("total", new Long(0));
   
   Map filaValoresTotales = new HashMap();
   filaValoresTotales.put("totalImponentesMasc", new Long(0));
@@ -154,7 +154,7 @@
 
   // Calculo del gran total de bonos del reporte
   long granTotal = 0;
-  int granValor = 0;
+  long granValor = 0;
   for (Iterator it = filasReporte.iterator(); it.hasNext();) {
     Map fila = (Map) it.next();
     
@@ -172,7 +172,7 @@
     			String valor2= "0";
     			if (fila.containsKey(llave)){ valor = fila.get(llave).toString(); }
     			if (fila.containsKey(llave2)){ valor2 = fila.get(llave2).toString(); }    			
-    			int intValor = (new Integer(valor)).intValue();
+    			long intValor = (new Long(valor)).longValue();
     			long intValor2 = (new Long(valor2)).longValue();
     			granTotal += intValor;
     			granValor += intValor2;
@@ -655,11 +655,11 @@
 <%
 
 			StringBuffer bufferLinea = new StringBuffer();
-			int totalEspecialidad = 0;
-			int totalImponentesMasc = 0;
-			int totalImponentesFem = 0;
-			int totalCargasMasc = 0;
-			int totalCargasFem = 0;
+			long totalEspecialidad = 0;
+			long totalImponentesMasc = 0;
+			long totalImponentesFem = 0;
+			long totalCargasMasc = 0;
+			long totalCargasFem = 0;
 
 		    for (int r=0; r<listaReparticiones.size(); r++){
 		    	for (int impCarga = 0; impCarga <=1; impCarga++) {
@@ -673,12 +673,12 @@
 		    			
 		    			String valor = "0";
 		    			if (fila.containsKey(llave)){ valor = fila.get(llave).toString(); }		    			
-		    			int intValor = (new Integer(valor)).intValue();		    			
+		    			long intValor = (new Long(valor)).longValue();		    			
 		    			totalEspecialidad += intValor;
 		    			
-		    			Integer valorTotales = new Integer(0);
-		    			if (filaTotales.containsKey(llave)){ valorTotales = (Integer)filaTotales.get(llave); }
-		    			filaTotales.put(llave, new Integer(valorTotales.intValue() + intValor));
+		    			Long valorTotales = new Long(0);
+		    			if (filaTotales.containsKey(llave)){ valorTotales = (Long)filaTotales.get(llave); }
+		    			filaTotales.put(llave, new Long(valorTotales.longValue() + intValor));
 		    			
 		    			// total imponentes masculinos x especialidad
 		    			if ((impCarga==0) && (iSex==0)){ totalImponentesMasc += intValor; }
@@ -705,13 +705,18 @@
 		    	}
 		    }
 		    
-			filaTotales.put("totalImponentesMasc", new Integer( ((Integer)filaTotales.get("totalImponentesMasc")).intValue() + totalImponentesMasc) );
-			filaTotales.put("totalImponentesFem", new Integer( ((Integer)filaTotales.get("totalImponentesFem")).intValue() + totalImponentesFem) );
-			filaTotales.put("totalCargasMasc", new Integer( ((Integer)filaTotales.get("totalCargasMasc")).intValue() + totalCargasMasc) );
-			filaTotales.put("totalCargasFem", new Integer( ((Integer)filaTotales.get("totalCargasFem")).intValue() + totalCargasFem) );
-			filaTotales.put("total", new Integer( ((Integer)filaTotales.get("total")).intValue() + totalEspecialidad) );
-		    
-			double porcentaje = (int)((totalEspecialidad*1000.0)/granTotal);
+			filaTotales.put("totalImponentesMasc", new Long( ((Long)filaTotales.get("totalImponentesMasc")).longValue() + totalImponentesMasc) );
+			filaTotales.put("totalImponentesFem", new Long( ((Long)filaTotales.get("totalImponentesFem")).longValue() + totalImponentesFem) );
+			filaTotales.put("totalCargasMasc", new Long( ((Long)filaTotales.get("totalCargasMasc")).longValue() + totalCargasMasc) );
+			filaTotales.put("totalCargasFem", new Long( ((Long)filaTotales.get("totalCargasFem")).longValue() + totalCargasFem) );
+			filaTotales.put("total", new Long( ((Long)filaTotales.get("total")).longValue() + totalEspecialidad) );
+
+		    // Uso BigDecimal por problemas de overflow
+		    BigDecimal porcentajeBD = new BigDecimal(totalEspecialidad);
+		    porcentajeBD = porcentajeBD.multiply(new BigDecimal(1000)); 
+		    porcentajeBD = porcentajeBD.divide(new BigDecimal(granTotal), BigDecimal.ROUND_FLOOR); 
+
+			double porcentaje = porcentajeBD.doubleValue();
 			porcentaje = porcentaje/10.0;
 
 %>			
