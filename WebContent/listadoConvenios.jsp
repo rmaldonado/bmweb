@@ -251,7 +251,7 @@
 %>
 
 		<tr class="<%=clase%>">
-			<td><%= c.getCodigo() %></td>
+			<td><a href="Convenios?accion=detalle&id=<%= c.getCodigo() %>"><%= c.getCodigo() %></a></td>
 			<td><%= c.getCodigoPrestador() %></td>
 			<td><%= c.getGlosa() %></td>
 			<td><%= sdf.format(c.getFechaInicio()) %></td>
@@ -272,7 +272,6 @@
 <%
 		if ( inicio > 0 ){
 %>			
-			<!-- a href="Habilitados?inicio=<%= (inicio-dpp) %>&dpp=<%= dpp %>" title="Ir la la p&aacute;gina anterior">&lt;&lt;</a -->
 			<input type="button" class="button" value="&lt; p&aacute;gina anterior"
 			onclick="document.formulario.inicio.value=<%= (inicio-dpp) %>;document.formulario.dpp.value=<%= dpp %>;document.formulario.submit()">
 <%
@@ -290,7 +289,6 @@
 <%
 		if ( pagSiguiente ){
 %>			
-			<!-- a href="Habilitados?inicio=<%= (inicio+dpp) %>&dpp=<%= dpp %>" title="Ir la la p&aacute;gina siguiente">&gt;&gt;</a --> 
 			<input type="button" class="button" value="p&aacute;gina siguiente &gt;"
 			onclick="document.formulario.inicio.value=<%= (inicio+dpp) %>;document.formulario.dpp.value=<%= dpp %>;document.formulario.submit()">
 <%
@@ -304,11 +302,10 @@
 	</table>
 
 	<p>
-	<form method="post" action="Habilitados">
+	<form method="post" action="Convenios">
 	<input type="hidden" name="accion" value="crear">
-	<input type="submit" value="Agregar un nuevo Habilitado" class="submit">
+	<input type="submit" value="Agregar un nuevo Convenio" class="submit">
 	</form>
-	<!-- a href="Habilitados?accion=crear">Agregar un Nuevo Habilitado</a -->
 	</p>
 
 	</div>
@@ -317,7 +314,7 @@
 	<script language="javascript">
 	  function eliminar(codigo, nombre){
 	    if (confirm("Confirme que desea eliminar el siguiente registro:\n ''" + nombre + "'' ")){
-	       document.location = "Habilitados?accion=eliminar&codigo=" + codigo;
+	       document.location = "Convenios?accion=eliminar&codigo=" + codigo;
 	    }
 	  }
 	  

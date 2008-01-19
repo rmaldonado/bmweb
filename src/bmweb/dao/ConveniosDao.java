@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import org.springframework.jdbc.object.MappingSqlQuery;
 
 import bmweb.dto.ConvenioDTO;
+import bmweb.dto.ValconDTO;
 import bmweb.util.Constantes;
 import bmweb.util.QueryLogger;
 import bmweb.util.QueryUtil;
@@ -34,6 +35,14 @@ public class ConveniosDao implements IConveniosDao {
 		 "nivelReferenciaFonasa", "cv_refniv", 
 		 "factorRefFonasa", "cv_reffac",
 		 "estadoConvenio", "dom_estcvn",
+	};
+
+	private static String[] mapaValcon = new String[] {
+		 "idConvenio", "cv_codigo",
+		 "codigoPrestacion", "pr_codigo",
+		 "valorCovenido", "vc_valor",
+		 "valorLista", "vc_lispre",
+		 "estado", "dom_estvlc",
 	};
 
 	private DataSource dataSource;
@@ -68,6 +77,68 @@ public class ConveniosDao implements IConveniosDao {
 		
 	}
 
+	public List getValcon(Map params, UsuarioWeb uw){
+
+		try {
+		ValconMappingQuery buscaValcon = 
+			new ValconMappingQuery(dataSource, params, uw);
+		
+		List lista = buscaValcon.execute();
+
+		int inicio = 0;
+		try { inicio = Integer.parseInt((String) params.get("inicio")); } catch (Exception e) { }
+		
+		List resultado = lista.subList(inicio, lista.size());
+		return resultado;
+			
+		} catch (Exception e) {
+			return new ArrayList();
+		}
+		
+	}
+
+	class ValconMappingQuery extends MappingSqlQuery {
+		
+		public ValconMappingQuery(DataSource ds, Map params, UsuarioWeb uw){
+			super();
+			setDataSource(ds);
+
+			int inicio = 0;
+			int dpp = Constantes.DATOS_POR_PAGINA;
+			int maxResults = Constantes.DATOS_POR_PAGINA + 1;
+
+			// Paginacion
+			if (params.containsKey("inicio")) {
+				try { inicio = Integer.parseInt((String) params.get("inicio")); } catch (Exception e) { }
+			}
+
+			if (params.containsKey("dpp")) {
+				try { dpp = Integer.parseInt((String) params.get("dpp")); maxResults = dpp+1; } catch (Exception e) { }
+			}
+
+			ArrayList listaWhere = new ArrayList();
+			
+			String query = "select first " + (inicio+maxResults) + " * from bm_valcon ";
+			
+			if (params.containsKey("id")){
+				Integer id = new Integer((String)params.get("id"));
+				try { listaWhere.add("cv_codigo = " + id); } 
+				catch (Exception ex){  }
+			}
+
+			query = query + QueryUtil.getWhere(listaWhere) + " order by cv_codigo asc";
+			
+			QueryLogger.log(uw, query);
+			setSql(query);
+			compile();
+		}
+		
+		protected Object mapRow(ResultSet rs, int rowNumber) throws SQLException {
+			ValconDTO valorConvenio = new ValconDTO();
+			ReflectionFiller.fill( mapaValcon, rs, valorConvenio);
+			return valorConvenio;
+		}
+	}
 	
 	class ConveniosListadoMappingQuery extends MappingSqlQuery {
 		
@@ -213,7 +284,13 @@ public class ConveniosDao implements IConveniosDao {
 				} catch (Exception ex){  }
 			}
 			*/
-			
+
+			if (params.containsKey("id")){
+				Integer id = new Integer((String)params.get("id"));
+				try { listaWhere.add("cv_codigo = " + id); } 
+				catch (Exception ex){  }
+			}
+
 			query = query + QueryUtil.getWhere(listaWhere) + " order by cv_codigo asc";
 			
 			QueryLogger.log(uw, query);
