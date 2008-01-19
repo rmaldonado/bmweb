@@ -28,6 +28,8 @@ paginas.add( new String[]{"/DETALLARBONOSMASIVO", "detalleBonosMasivo.jsp", "Car
 paginas.add( new String[]{"/FACTURA", "Factura", "Administrador de Facturas" }  );
 // reportes
 paginas.add( new String[]{"/REPORTES", "Reportes", "Reportes Estad&iacute;sticos de Bonos Web" }  );
+// convenios
+paginas.add( new String[]{"/CONVENIOS", "Convenios", "Administración de Convenios" }  );
 
 
 HttpSession sesion = request.getSession();

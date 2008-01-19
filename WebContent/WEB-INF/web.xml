@@ -97,6 +97,12 @@
 		<servlet-class>bmweb.servlets.ReportesServlet</servlet-class>
 	</servlet>
 
+	<!-- convenios  -->
+	<servlet>
+		<servlet-name>ConveniosServlet</servlet-name>
+		<servlet-class>bmweb.servlets.ConvenioServlet</servlet-class>
+	</servlet>
+
 	
 	<!-- *** Mapping de servlets *********************************** -->    
 
@@ -164,6 +170,12 @@
     <servlet-mapping>
 		<servlet-name>ReportesServlet</servlet-name>
 	    <url-pattern>/Reportes</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Convenios  -->
+    <servlet-mapping>
+		<servlet-name>ConveniosServlet</servlet-name>
+	    <url-pattern>/Convenios</url-pattern>
 	</servlet-mapping>
 	
 </web-app>

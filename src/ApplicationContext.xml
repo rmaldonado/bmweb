@@ -21,6 +21,7 @@
 
 	<!-- denis + linux + informix -->
 	<!-- property name="url"><value>jdbc:informix-sqli://127.0.0.1:1546/testDB:informixserver=server1;user=informix;password=informix</value></property -->
+	<!-- denis + linux + informix 2008 -->
 	<!-- property name="url"><value>jdbc:informix-sqli://127.0.0.1:9088/bmweb:informixserver=bmweb;user=informix;password=informix</value></property -->
  
 	<!-- dipreca + windows + informix -->
@@ -106,6 +107,14 @@
 	</property>
 </bean>
 
+<bean id="conveniosDao" class="bmweb.dao.ConveniosDao">
+
+	<property name="dataSource">
+		<ref bean="myDataSource"/>
+	</property>
+
+</bean>
+
 <bean id="reportesDao" class="bmweb.dao.ReportesDao">
 
 	<property name="dataSource">
@@ -113,6 +122,8 @@
 	</property>
 
 </bean>
+
+
 
 <!-- Managers -->
 
