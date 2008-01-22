@@ -183,112 +183,22 @@ public class ConveniosDao implements IConveniosDao {
 				} catch (Exception ex){  }
 			}
 
-			// Filtro por nombre
-			if ( params.containsKey("opnombre") && params.containsKey("nombre") ){
-				try {
-					String nombre = ((String)params.get("nombre")).toUpperCase();
-					nombre = TextUtil.filtrar(nombre);
-					if ("comienza".equals(params.get("opnombre"))){
-						listaWhere.add("upper(ha_nombre) like ('" + nombre + "%') ");
-					}
 
-					if ("contiene".equals(params.get("opnombre"))){
-						listaWhere.add("upper(ha_nombre) like ('%" + nombre + "%') ");
-					}
-
-					if ("termina".equals(params.get("opnombre"))){
-						listaWhere.add("upper(ha_nombre) like ('%" + nombre + "') ");
-					}
-
-				} catch (Exception ex){  }
-			}
-			
-			// Filtro por ubicacion
-			if (params.containsKey("opubicacion") && params.containsKey("ubicacion") ){
-				try {
-					String ubicacion = ((String)params.get("ubicacion")).toUpperCase();
-					ubicacion = TextUtil.filtrar(ubicacion);
-					if ("comienza".equals(params.get("opubicacion"))){
-						listaWhere.add("upper(ha_ubicacion) like ('" + ubicacion + "%') ");
-					}
-
-					if ("contiene".equals(params.get("opubicacion"))){
-						listaWhere.add("upper(ha_ubicacion) like ('%" + ubicacion + "%') ");
-					}
-
-					if ("termina".equals(params.get("opubicacion"))){
-						listaWhere.add("upper(ha_ubicacion) like ('%" + ubicacion + "') ");
-					}
-
-				} catch (Exception ex){  }
-			}
-
-			// Filtro por ciudad
-			if ( params.containsKey("dom_ciudad") ){
-				try {
-					String dom_ciudad  = TextUtil.filtrar((String)params.get("dom_ciudad"));
-					listaWhere.add("dom_ciudad = " + dom_ciudad + " ");
-
-				} catch (Exception ex){  }
-			}
-
-			// Filtro por direccion
-			if (params.containsKey("opdireccion")){
-				try {
-					String direccion = TextUtil.filtrar(((String)params.get("direccion")).toUpperCase());
-					if ("comienza".equals(params.get("opdireccion"))){
-						listaWhere.add("upper(ha_direccion) like ('" + direccion + "%') ");
-					}
-
-					if ("contiene".equals(params.get("opdireccion"))){
-						listaWhere.add("upper(ha_direccion) like ('%" + direccion + "%') ");
-					}
-
-					if ("termina".equals(params.get("opdireccion"))){
-						listaWhere.add("upper(ha_direccion) like ('%" + direccion + "') ");
-					}
-
-				} catch (Exception ex){  }
-			}
-
-			// Filtro por responsable
-			if (params.containsKey("opresponsable")){
-				try {
-					String responsable = TextUtil.filtrar(((String)params.get("responsable")).toUpperCase());
-					if ("comienza".equals(params.get("opresponsable"))){
-						listaWhere.add("upper(ha_responsable) like ('" + responsable + "%') ");
-					}
-
-					if ("contiene".equals(params.get("opresponsable"))){
-						listaWhere.add("upper(ha_responsable) like ('%" + responsable + "%') ");
-					}
-
-					if ("termina".equals(params.get("opresponsable"))){
-						listaWhere.add("upper(ha_responsable) like ('%" + responsable + "') ");
-					}
-
-				} catch (Exception ex){  }
-			}
-
-			// Filtro por estado activo/no activo
-			if (params.containsKey("opactivo")){
-				try {
-					if ("activo".equals(params.get("opactivo"))){
-						listaWhere.add("ha_activo = 'S'");
-					}
-
-					if ("noactivo".equals(params.get("opactivo"))){
-						listaWhere.add("ha_activo = 'N'");
-					}
-
-				} catch (Exception ex){  }
-			}
 			*/
 
 			if (params.containsKey("id")){
 				Integer id = new Integer((String)params.get("id"));
 				try { listaWhere.add("cv_codigo = " + id); } 
 				catch (Exception ex){  }
+			}
+			
+			// Filtro del convenio más reciente por prestador de beneficios
+			// por omision o opTipoConvenio == "recientes"
+			if (!params.containsKey("opTipoConvenio")
+				|| ( params.containsKey("opTipoConvenio")
+						&& "recientes".equals((String)params.get("opTipoConvenio"))
+						)){
+				listaWhere.add("cv_codigo in ( select max(cv_codigo) from bm_convenio group by pb_codigo )");
 			}
 
 			query = query + QueryUtil.getWhere(listaWhere) + " order by cv_codigo asc";

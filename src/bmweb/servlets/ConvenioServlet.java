@@ -46,6 +46,11 @@ public class ConvenioServlet extends ServletSeguro {
 				return;
 			}
 
+			if ("detalleExcel".equals(params.get("accion"))){
+				detalleExcel(request, response);
+				return;
+			}
+
 			// Acción por omisión
 			listaConvenios(request, response);
 
@@ -62,6 +67,36 @@ public class ConvenioServlet extends ServletSeguro {
 		
 
 	}
+	
+	/**
+	 * Exportar el detalle de un convenio en formato MS-Excel
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	private void detalleExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		UsuarioWeb uw = getUsuarioWeb(request);		
+		Map params = ParamsUtil.fixParams(request.getParameterMap());
+		String id = (String) params.get("id");
+
+		Map paramsValcon = new HashMap();
+		paramsValcon.put("id", id);
+		// Hay que pasar un numero maximo de filas, de lo contrario una Constantes.DPP (10)
+		paramsValcon.put("dpp", "1000000");
+		paramsValcon.put("inicio", "0");
+
+		// Recupero la lista con dichos parametros
+		List listaValcon = conveniosDao.getValcon(paramsValcon, uw);
+		
+		request.setAttribute("resultado", listaValcon);
+		
+	    response.setContentType("application/vnd.ms-excel");
+	    response.setHeader("Content-Disposition", "attachment; filename=\"convenios_" + id + ".xls\"");
+
+	    redirigir(request, response, "detalleConveniosExcel.jsp");
+	}
+
 
 	/**
 	 * Ver detalle de un convenio

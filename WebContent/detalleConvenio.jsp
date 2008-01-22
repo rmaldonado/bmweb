@@ -85,6 +85,15 @@
 			<td><strong>Nivel de Referencia FONASA</strong></td><td><%= convenio.getNivelReferenciaFonasa() %></td>
 			<td><strong>Factor de Referencia FONASA</strong></td><td><%= convenio.getFactorRefFonasa() %></td>
 		</tr>	
+		<tr class="encabezados-tabla">
+			<td colspan="4" style="text-align:right">
+			<form>
+				<input type="hidden" name="id" value="<%= convenio.getCodigo() %>">
+				<input type="hidden" name="accion" value="detalleExcel">
+				<input type="submit" value="Exportar listado en formato Excel">
+			</form>
+			</td>
+		</tr>		
 			
 	</table>
 

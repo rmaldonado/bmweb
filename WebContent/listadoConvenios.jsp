@@ -106,7 +106,7 @@
 		
 		<tr class="encabezados-tabla">
 			<td colspan="2">
-				Buscar Habilitados
+				Buscar Convenios
 			</td>
 			<td>
 				<span style="width:100%;text-align:right">
@@ -127,7 +127,7 @@
 			<!-- rowspan tantas filas como tenga el filtro -->
 			<td rowspan="7" style="text-align:center; vertical-align:middle">
 				<input type="submit" value="Filtrar datos" class="submit" 
-				title="Muestra el listado de Habilitados usando los criterios de b&uacute;squeda"
+				title="Muestra el listado usando los criterios de b&uacute;squeda"
 				style="width:120px">
 				<br>
 				<br>
@@ -256,7 +256,7 @@
 			<td><%= c.getGlosa() %></td>
 			<td><%= sdf.format(c.getFechaInicio()) %></td>
 			<td><%= sdf.format(c.getFechaTermino()) %></td>
-			<td>.</td>
+			<td><a href="Convenios?accion=detalleExcel&id=<%= c.getCodigo() %>">Exportar como Excel</a></td>
 			<td>.</td>
 		</tr>
 		
