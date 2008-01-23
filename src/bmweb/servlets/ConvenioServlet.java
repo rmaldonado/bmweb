@@ -1,19 +1,29 @@
 package bmweb.servlets;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUpload;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.context.ApplicationContext;
 
 import bmweb.dao.ICiudadDao;
 import bmweb.dao.IConveniosDao;
 import bmweb.dto.ConvenioDTO;
+import bmweb.dto.ValconDTO;
 import bmweb.util.Constantes;
+import bmweb.util.CsvParser;
 import bmweb.util.ParamsUtil;
 import bmweb.util.UsuarioWeb;
 
@@ -39,7 +49,18 @@ public class ConvenioServlet extends ServletSeguro {
 		
 		try {
 			
+			if (FileUpload.isMultipartContent(request)){
+				procesarArchivoValores(request, response);
+				return;
+			}
+
 			Map params = ParamsUtil.fixParams(request.getParameterMap());
+			
+			// La primera vez que voy a crear un convenio no he subido archivos
+			if ("crear".equals(params.get("accion"))){
+				redirigir(request, response, "crearConvenio.jsp");
+				return;
+			}
 
 			if ("detalle".equals(params.get("accion"))){
 				detalle(request, response);
@@ -67,6 +88,131 @@ public class ConvenioServlet extends ServletSeguro {
 		
 
 	}
+
+	/**
+	 * Proceso de un formulario con subida de archivo con el detalle de valores de un nuevo convenio
+	 * 
+	 */
+	
+	private void procesarArchivoValores(HttpServletRequest request, HttpServletResponse response) throws Exception{
+
+		UsuarioWeb uw = getUsuarioWeb(request);
+		
+		Map params = new HashMap();
+		List datosArchivo = null;
+		List resultado = new ArrayList();
+		
+		if (FileUpload.isMultipartContent(request)){
+			
+			// Create a factory for disk-based file items
+			DiskFileItemFactory factory = new DiskFileItemFactory();
+			factory.setSizeThreshold(300*1024); // 300 kilobytes
+			factory.setRepository(new File("/tmp")); // 300 kilobytes
+			
+			// Create a new file upload handler
+			ServletFileUpload upload = new ServletFileUpload(factory);
+
+			// Parse the request
+			List requestItems = upload.parseRequest(request);
+			
+			// Process the uploaded items
+			Iterator iter = requestItems.iterator();
+			while (iter.hasNext()) {
+			    FileItem item = (FileItem) iter.next();
+
+			    if (item.isFormField()) {
+			        //processFormField(item);
+			    	params.put(item.getFieldName(), item.getString());
+			    } else {
+			    	// processUploadedFile(item);
+			    	String texto = new String(item.get()); // contenido en memoria
+			    	datosArchivo =  CsvParser.leer(texto);
+			    }
+			}
+
+			// Recorro la lista de datos leidos, creo un mapa usando el codigo de prestacion como llave
+			Map datosLeidos = new HashMap();
+
+			int idConvenio = 0;
+			// DESCARTO LA PRIMERA FILA (CON LOS NOMBES DE LAS COLUMNAS)
+			for (int i=1; i<datosArchivo.size(); i++){
+				String[] campos = (String []) datosArchivo.get(i);
+				
+				ValconDTO valcon = new ValconDTO();
+				
+				valcon.setIdConvenio(Integer.parseInt(campos[0]));
+				valcon.setCodigoPrestacion(Integer.parseInt(campos[1]));
+				valcon.setValorCovenido(new Float(campos[2]).longValue());
+				valcon.setValorLista(new Float(campos[3]).longValue());
+				
+				// Por omision, marco todos los valores como NUEVOS, luego el proceso
+				// los deja en NUEVO, MODIFICADO o ELIMINADO
+				// valcon.setEstado(Integer.parseInt(campos[4]));
+				valcon.setEstado(ValconDTO.ESTADO_NUEVO);
+				
+				// resultado.add(valcon);
+				datosLeidos.put(new Integer(valcon.getCodigoPrestacion()), valcon);
+				
+				// conservo el idConvenio
+				idConvenio = valcon.getIdConvenio();
+			}
+			
+			// Leo los valores actuales del convenio
+			Map paramsValcon = new HashMap(); // parametros: inicio, id, dpp, como Strings
+			paramsValcon.put("id", "" + idConvenio);
+			paramsValcon.put("inicio", "0");
+			paramsValcon.put("dpp", "1000000");
+			List listaValcon = conveniosDao.getValcon(paramsValcon, uw);
+			
+			// Voy comparando los valores del convenio vigente con los subidos por el usuario.
+			// * Si el nuevo valor viene en cero o no está en la planilla, está eliminado
+			// * Si el nuevo valor es distinto, lo marco como modificado
+			
+			for (int i=0; i<listaValcon.size(); i++){
+				ValconDTO valcon = (ValconDTO)listaValcon.get(i);
+				int codigoPrestacion = valcon.getCodigoPrestacion();
+				
+				// Si el archivo contiene la prestacion presente en el convenio actual
+				if (datosLeidos.containsKey(new Integer(codigoPrestacion))){
+				  
+					ValconDTO valconArchivo = (ValconDTO) datosLeidos.get(new Integer(codigoPrestacion));
+					
+					if (valconArchivo.getValorCovenido() == 0){
+						valcon.setEstado(ValconDTO.ESTADO_ELIMINADO);
+						datosLeidos.put(new Integer(codigoPrestacion), valcon);						
+					} else {
+						// Finalmente, veo si (precioNuevo - precioActual) <> 0 ==> modificado
+						if (valconArchivo.getValorCovenido() - valcon.getValorCovenido() != 0){
+							valconArchivo.setEstado(ValconDTO.ESTADO_MODIFICADO);
+							datosLeidos.put(new Integer(codigoPrestacion), valconArchivo);
+						}
+					}
+					
+				} else {
+					// La prestación no está en la planilla, la agrego pero en estado eliminada
+					valcon.setEstado(ValconDTO.ESTADO_ELIMINADO);
+					datosLeidos.put(new Integer(codigoPrestacion), valcon);
+				}
+			}
+
+			// tomo todos los valores ya aumentados y modificados y creo una lista
+			// que entrego como resultado
+			
+			TreeSet tsResultado = new TreeSet(datosLeidos.values());
+			Iterator iResultado = tsResultado.iterator();
+			
+			resultado = new ArrayList();
+			while (iResultado.hasNext()){ resultado.add((ValconDTO)iResultado.next()); }
+			// resultado = new ArrayList(tsResultado.iterator()); // datosLeidos.values());
+
+		} // end if form == multipart
+		
+		request.setAttribute("convenios", resultado);
+		
+		redirigir(request, response, "crearConvenio.jsp");
+		
+	}
+	
 	
 	/**
 	 * Exportar el detalle de un convenio en formato MS-Excel

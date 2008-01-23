@@ -30,6 +30,7 @@ paginas.add( new String[]{"/FACTURA", "Factura", "Administrador de Facturas" }  
 paginas.add( new String[]{"/REPORTES", "Reportes", "Reportes Estad&iacute;sticos de Bonos Web" }  );
 // convenios
 paginas.add( new String[]{"/CONVENIOS", "Convenios", "Administración de Convenios" }  );
+paginas.add( new String[]{"/CONVENIOS.CREAR", "Convenios?accion=crear", "Cargar un listado de precios de convenio" }  );
 
 
 HttpSession sesion = request.getSession();

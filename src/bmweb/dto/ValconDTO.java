@@ -12,11 +12,11 @@ dom_estvlc           smallint      = CAMPO NUEVO, indica el estado de una presta
                                      (NUEVO, MODIFICADO,ELIMINADO,etc.) 
 
  */
-public class ValconDTO implements Serializable {
+public class ValconDTO implements Serializable, Comparable {
 
-	public int ESTADO_NUEVO = 1;
-	public int ESTADO_MODIFICADO = 2;
-	public int ESTADO_ELIMINADO = 3;
+	public static int ESTADO_NUEVO = 1;
+	public static int ESTADO_MODIFICADO = 2;
+	public static int ESTADO_ELIMINADO = 3;
 	
 	private int idConvenio;
 	private int codigoPrestacion;
@@ -25,6 +25,15 @@ public class ValconDTO implements Serializable {
 	private int estado;
 	
 	public ValconDTO(){ }
+	
+	public int compareTo(Object o) {
+		if (ValconDTO.class.isAssignableFrom(o.getClass())){
+			ValconDTO oV = (ValconDTO) o;
+			return this.codigoPrestacion - oV.getCodigoPrestacion();
+		} else {
+			return -1;
+		}
+	}
 	
 	public int getIdConvenio() {
 		return idConvenio;

@@ -19,7 +19,7 @@ if (request.getAttribute("resultado") != null ){
     <td>CODIGO PRESTACION</td>
     <td>VALOR CONVENIDO</td>
     <td>VALOR LISTA</td>
-    <td>ESTADO</td>
+    <td>ESTADO (1:Nuevo, 2:Modificado, 3:Eliminado)</td>
   </tr>
 <%
   for (int i=0; i<listaValcon.size(); i++) {
