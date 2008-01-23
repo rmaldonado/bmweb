@@ -46,6 +46,9 @@
   String opcodigo = "";  
   if (request.getParameter("opcodigo") != null) { opcodigo = request.getParameter("opcodigo"); }
 
+  String ide = "";  
+  if (request.getParameter("id") != null) { ide = request.getParameter("id"); }
+
   String codigo = "";
   if (request.getParameter("codigo") != null) { codigo = request.getParameter("codigo"); }
   
@@ -101,130 +104,47 @@
 	<table class="tabla-borde-delgado" id="filtro-max" style="<%= (mostrarFiltros)? "":"display:none" %>">
 	<form name="formulario" method="post" action="Convenios">
 		<input type="hidden" name="mostrarFiltros" value="<%= (mostrarFiltros)? "1":"0" %>">
+		<input type="hidden" name="accion" value="listado">
 		<input type="hidden" name="inicio" value="">
 		<input type="hidden" name="dpp" value="">
+
+		<input type="hidden" name="sala" value="">
 		
 		<tr class="encabezados-tabla">
 			<td colspan="2">
-				Buscar Convenios
+				
 			</td>
 			<td>
 				<span style="width:100%;text-align:right">
-				<a href="javascript:ocultar_filtros()" title="Ocultar los filtros del listado">Ocultar filtros</a>
+				<a href="javascript:ocultar_filtros()" title="Ocultar">Ocultar opciones de b&uacute;squeda</a>
 				</span>
 			</td>
 		</tr>
-		<tr class="fila-detalle-impar">
-			<td>C&oacute;digo</td>
-			<td style="text-align:left">
-				<select name="opcodigo">
-				<option value="no" <%= "no".equals(opcodigo)?"selected":"" %>>No filtrar por c&oacute;digo</option>
-				<option value="le" <%= "le".equals(opcodigo)?"selected":"" %>>tenga un valor menor o igual a</option>
-				<option value="eq" <%= "eq".equals(opcodigo)?"selected":"" %>>tenga un valor igual a</option>
-				<option value="gt" <%= "gt".equals(opcodigo)?"selected":"" %>>tenga un valor igual o mayor a</option>
-				</select><input type="text" name="codigo" size="20" maxlength="30" class="input" value="<%= codigo %>"></td>
 
-			<!-- rowspan tantas filas como tenga el filtro -->
-			<td rowspan="7" style="text-align:center; vertical-align:middle">
-				<input type="submit" value="Filtrar datos" class="submit" 
-				title="Muestra el listado usando los criterios de b&uacute;squeda"
-				style="width:120px">
-				<br>
-				<br>
-				<input type="reset" class="button" value="Restaurar Valores" 
-				title="Volver a los valores anteriores de los criterios de b&uacute;squeda"
-				style="width:120px">
-				<br>
-				<input type="button" class="button" value="Limpiar filtros" onclick="limpiar_filtros()" 
-				title="Limpiar los valores de los criterios de b&uacute;squeda"
-				style="width:120px">
-			</td>
-		</tr>
 
 		<tr class="fila-detalle-par">
-			<td>Nombre</td>
+			<td>Codigo de Prestacion</td>
 			<td style="text-align:left">
-				<select name="opnombre">
-				<option value="no" <%= "no".equals(opnombre)?"selected":"" %>>No filtrar por nombre</option>
-				<option value="comienza" <%= "comienza".equals(opnombre)?"selected":"" %>>comienza con el siguiente texto</option>
-				<option value="contiene" <%= "contiene".equals(opnombre)?"selected":"" %>>contiene el siguiente texto</option>
-				<option value="termina"  <%= "termina".equals(opnombre)?"selected":"" %>>termina con el siguiente texto</option>
-				</select><input type="text" name="nombre" size="20" maxlength="30" class="input" value="<%= nombre %>"></td>
-		</tr>
-
-		<tr class="fila-detalle-impar">
-			<td>Ubicaci&oacute;n</td>
-			<td style="text-align:left">
-				<select name="opubicacion">
-				<option value="no" <%= "no".equals(opubicacion)?"selected":"" %>>No filtrar por ubicaci&oacute;n</option>
-				<option value="comienza" <%= "comienza".equals(opubicacion)?"selected":"" %>>comienza con el siguiente texto</option>
-				<option value="contiene" <%= "contiene".equals(opubicacion)?"selected":"" %>>contiene el siguiente texto</option>
-				<option value="termina"  <%= "termina".equals(opubicacion)?"selected":"" %>>termina con el siguiente texto</option>
-				</select><input type="text" name="ubicacion" size="20" maxlength="30" class="input" value="<%= ubicacion %>"></td>
-		</tr>
-		
-		<tr class="fila-detalle-par">
-			<td>Ciudad:</td>
-			<td style="text-align:left">
-				<select name="dom_ciudad">
-				<option value="">No filtrar por Ciudad</option>
 			<%
-				for (int i=0; i<listaCiudades.size(); i++){
-				CiudadDTO c = (CiudadDTO) listaCiudades.get(i);
-				String nombreCiudad = c.getNombre();
-				String codigoCiudad = "" + c.getCodigo();
-				
-				String selected = "";
-				if (ciudad.equals(codigoCiudad)){ selected = "selected"; }
-				
+			String estiloDivId = "display:none";
+			if ("si".equals(ide)) estiloDivId = "";
 			%>
-				<option value="<%= codigoCiudad  %>" <%= selected  %>><%= nombreCiudad %></option>
-			<%
-				}
-			%>
-				</select>		
-
-			</td>		
-		</tr>
-
-		<tr class="fila-detalle-impar">
-			<td>Direcci&oacute;n</td>
-			<td style="text-align:left">
-				<select name="opdireccion">
-				<option value="no" <%= "no".equals(opdireccion)?"selected":"" %>>No filtrar por Direcci&oacute;n</option>
-				<option value="comienza" <%= "comienza".equals(opdireccion)?"selected":"" %>>comienza con el siguiente texto</option>
-				<option value="contiene" <%= "contiene".equals(opdireccion)?"selected":"" %>>contiene el siguiente texto</option>
-				<option value="termina"  <%= "termina".equals(opdireccion)?"selected":"" %>>termina con el siguiente texto</option>
-				</select><input type="text" name="direccion" size="20" maxlength="30" class="input" value="<%= direccion %>"></td>
-		</tr>
-		
-		<tr class="fila-detalle-par">
-			<td>Responsable</td>
-			<td style="text-align:left">
-				<select name="opresponsable">
-				<option value="no" <%= "no".equals(opresponsable)?"selected":"" %>>No filtrar por nombre</option>
-				<option value="comienza" <%= "comienza".equals(opresponsable)?"selected":"" %>>comienza con el siguiente texto</option>
-				<option value="contiene" <%= "contiene".equals(opresponsable)?"selected":"" %>>contiene el siguiente texto</option>
-				<option value="termina"  <%= "termina".equals(opresponsable)?"selected":"" %>>termina con el siguiente texto</option>
-				</select><input type="text" name="responsable" size="20" maxlength="30" class="input" value="<%= responsable %>"></td>
-		</tr>
-
-		<tr class="fila-detalle-par">
-			<td>Estado</td>
-			<td style="text-align:left">
-				<select name="opactivo">
-				<option value="no" <%= "no".equals(opactivo)?"selected":"" %>>No filtrar por estado</option>
-				<option value="activo" <%= "activo".equals(opactivo)?"selected":"" %>>Activo</option>
-				<option value="noactivo" <%= "noactivo".equals(opactivo)?"selected":"" %>>No Activo</option>
+				<select name="ide" onChange="mostrarId()">
+				<option value="no" <%= "no".equals(ide)?"selected":"" %>>No filtrar</option>
+				<option value="si" <%= "si".equals(ide)?"selected":"" %>>Filtrar por este codigo de prestacion</option>
 				</select>
+				
+				<br>
+
+				<!-- filtro rut prestador -->
+				<span id="div-Id" style="<%= estiloDivId %>">
+				<input type="text" name="id" size="12" value="<%= ide %>" onBlur="if(!CampoEsNumeroEnRango(this, 1, 9999999)){document.formulario.ide.selectedIndex=0;mostrarId();}">				
+				</span>
 			</td>
 		</tr>
 
-
 		
-		<tr class="encabezados-tabla">
-			<td colspan="3"></td>
-		</tr>
+		
 	</table>
 
 	
@@ -312,6 +232,19 @@
 	
 
 	<script language="javascript">
+	  function mostrarId(){
+	    if (document.formulario.ide.selectedIndex > 0){
+	  
+		    if (document.getElementById("div-Id")){
+		    	document.getElementById("div-Id").style.display = "";
+		    }
+	    } else {
+		    if (document.getElementById("div-Id")){
+		    	document.getElementById("div-Id").style.display = "none";
+		    }
+	    }
+	  }
+	
 	  function eliminar(codigo, nombre){
 	    if (confirm("Confirme que desea eliminar el siguiente registro:\n ''" + nombre + "'' ")){
 	       document.location = "Convenios?accion=eliminar&codigo=" + codigo;
