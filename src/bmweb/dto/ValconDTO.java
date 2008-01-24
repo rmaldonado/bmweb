@@ -78,6 +78,10 @@ public class ValconDTO implements Serializable, Comparable {
 		this.estado = estado;
 	}
 	
+	public void setEstado(Short estado) {
+		this.estado = estado.intValue();
+	}
+	
 	
 	
 }

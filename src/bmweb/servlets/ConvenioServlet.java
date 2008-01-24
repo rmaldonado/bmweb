@@ -203,7 +203,10 @@ public class ConvenioServlet extends ServletSeguro {
 			
 			resultado = new ArrayList();
 			while (iResultado.hasNext()){ resultado.add((ValconDTO)iResultado.next()); }
-			// resultado = new ArrayList(tsResultado.iterator()); // datosLeidos.values());
+			
+			// "resultado" contiene la lista de ValconDTO del nuevo convenio
+			int rutPrestador = Integer.parseInt(uw.getNombreUsuario());
+			conveniosDao.guardarNuevoConvenio(rutPrestador, resultado);
 
 		} // end if form == multipart
 		
@@ -255,6 +258,7 @@ public class ConvenioServlet extends ServletSeguro {
 		
 		Map paramsDetalle = new HashMap();
 		paramsDetalle.put("id", id);
+		paramsDetalle.put("tipoConvenios", "todos");
 		
 		// La lista de convenios solo debería entregar uno 
 		List listaConvenios = conveniosDao.getConvenios(paramsDetalle, uw);
@@ -318,6 +322,16 @@ public class ConvenioServlet extends ServletSeguro {
 			int dpp = Constantes.DATOS_POR_PAGINA;
 			Map params = ParamsUtil.fixParams(request.getParameterMap());
 			params.put("dpp", new Integer(dpp + 1).toString());
+			
+			// Si el usuario está en uno de estos niveles (23 o 24), agrego
+			// el RUT del prestador para filtrar sólo los convenios de ese RUT
+			if (23 == Integer.parseInt(uw.getNivel())
+				|| 24 == Integer.parseInt(uw.getNivel()) ){
+
+				// uw.getNombreUsuario() contiene el RUT del prestador
+				params.put("rut", uw.getNombreUsuario());
+			}
+			
 			List listaConvenios = conveniosDao.getConvenios(params, uw);
 
 			// Calculo si hay pagina anterior y siguiente

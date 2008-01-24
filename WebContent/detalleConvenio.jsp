@@ -51,6 +51,26 @@
   // coloco el titulo de la pagina
   //request.setAttribute("titulo", "Detalle de Convenio");
 
+  String fechaInicio = "";
+  if (null != convenio.getFechaInicio()) {
+	  fechaInicio = sdf.format(convenio.getFechaInicio());
+  } else {
+	  fechaInicio = "Convenio nuevo";
+  }
+  
+  String fechaTermino = "";
+  if (null != convenio.getFechaTermino()) {
+	  fechaTermino = sdf.format(convenio.getFechaTermino());
+  } else {
+	  fechaTermino = "Convenio nuevo";
+  }
+  
+  Map estadosConvenio = new HashMap();
+  estadosConvenio.put(new Integer(0), "Convenio vigente");
+  estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_NUEVO), "Nuevo convenio");
+  estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_MODIFICADO), "Convenio Modificado");
+  estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_ELIMINADO), "Convenio Eliminado");
+  
 %>
 <jsp:include page="cabecera.jsp" flush="true"/>
 
@@ -62,7 +82,7 @@
 		<tr class="encabezados-tabla">
 			<td colspan="4">
 			Convenio #<%= convenio.getCodigo() %>: "<%= convenio.getGlosa() %>",
-			Estado <%= convenio.getEstadoConvenio() %>
+			Estado <%= estadosConvenio.get(new Integer(convenio.getEstadoConvenio())) %>
 			</td>
 		</tr>		
 		<tr class="fila-detalle-impar">
@@ -70,16 +90,16 @@
 			<td><strong>Código Arancel Fonasa</strong></td><td><%= convenio.getCodigoArancelFonasa() %></td>
 		</tr>	
 		<tr class="fila-detalle-par">
-			<td><strong>Fecha Inicio Convenio</strong></td><td><%= sdf.format(convenio.getFechaInicio()) %></td>
-			<td><strong>Fecha Término Convenio</strong></td><td><%= sdf.format(convenio.getFechaTermino()) %></td>
+			<td><strong>Fecha Inicio Convenio</strong></td><td><%= fechaInicio %></td>
+			<td><strong>Fecha Término Convenio</strong></td><td><%= fechaTermino %></td>
 		</tr>
 		<tr class="fila-detalle-impar">
 			<td><strong>Tipo de Convenio</strong></td><td><%= convenio.getTipoConvenio() %></td>
-			<td><strong>Resolución de Concurrencia</strong></td><td><%= convenio.getCodigoConcurrencia() %></td>
+			<td><strong>Resolución de Concurrencia</strong></td><td><%= "" + convenio.getCodigoConcurrencia() %></td>
 		</tr>	
 		<tr class="fila-detalle-par">
 			<td><strong>Moneda</strong></td><td><%= convenio.getMoneda() %></td>
-			<td><strong>Convenio hace referencia a FONASA?</strong></td><td><%= convenio.getReferenciaFonasa() %></td>
+			<td><strong>Convenio hace referencia a FONASA?</strong></td><td><%= "" + convenio.getReferenciaFonasa() %></td>
 		</tr>
 		<tr class="fila-detalle-impar">
 			<td><strong>Nivel de Referencia FONASA</strong></td><td><%= convenio.getNivelReferenciaFonasa() %></td>
@@ -129,7 +149,7 @@
 			<td><%= valcon.getCodigoPrestacion() %></td>
 			<td><%= valcon.getValorCovenido() %></td>
 			<td><%= valcon.getValorLista() %></td>
-			<td><%= valcon.getEstado() %></td>
+			<td><%= estadosConvenio.get(new Integer(valcon.getEstado())) %></td>
 			<td>.</td>
 			<td>.</td>
 		</tr>

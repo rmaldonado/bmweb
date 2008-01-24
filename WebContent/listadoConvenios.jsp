@@ -49,39 +49,8 @@
   String ide = "";  
   if (request.getParameter("id") != null) { ide = request.getParameter("id"); }
 
-  String codigo = "";
-  if (request.getParameter("codigo") != null) { codigo = request.getParameter("codigo"); }
-  
-  String opnombre = "";
-  if (request.getParameter("opnombre") != null) { opnombre = request.getParameter("opnombre"); }
-
-  String nombre = "";
-  if (request.getParameter("nombre") != null) { nombre = request.getParameter("nombre"); }
-
-  String opubicacion = "";
-  if (request.getParameter("opubicacion") != null) { opubicacion = request.getParameter("opubicacion"); }
-
-  String ubicacion = "";
-  if (request.getParameter("ubicacion") != null) { ubicacion = request.getParameter("ubicacion"); }
-
-  String ciudad = "";
-  if (request.getParameter("dom_ciudad") != null) { ciudad = request.getParameter("dom_ciudad"); }
-
-  String opdireccion = "";
-  if (request.getParameter("opdireccion") != null) { opdireccion = request.getParameter("opdireccion"); }
-
-  String direccion = "";
-  if (request.getParameter("direccion") != null) { direccion = request.getParameter("direccion"); }
-
-  String opresponsable = "";
-  if (request.getParameter("opresponsable") != null) { opresponsable = request.getParameter("opresponsable"); }
-
-  String responsable = "";
-  if (request.getParameter("responsable") != null) { responsable = request.getParameter("responsable"); }
-
-  String opactivo = "";
-  if (request.getParameter("opactivo") != null) { opactivo = request.getParameter("opactivo"); }
-  
+  String tipoConvenios = "";  
+  if (request.getParameter("tipoConvenios") != null) { tipoConvenios = request.getParameter("tipoConvenios"); }
 
   // coloco el titulo de la pagina
   request.setAttribute("titulo", "Administración de Convenios");
@@ -104,7 +73,7 @@
 	<table class="tabla-borde-delgado" id="filtro-max" style="<%= (mostrarFiltros)? "":"display:none" %>">
 	<form name="formulario" method="post" action="Convenios">
 		<input type="hidden" name="mostrarFiltros" value="<%= (mostrarFiltros)? "1":"0" %>">
-		<input type="hidden" name="accion" value="listado">
+		<input type="hidden" name="xaccion" value="listado">
 		<input type="hidden" name="inicio" value="">
 		<input type="hidden" name="dpp" value="">
 
@@ -123,7 +92,7 @@
 
 
 		<tr class="fila-detalle-par">
-			<td>Codigo de Prestacion</td>
+			<td>Codigo de Prestador</td>
 			<td style="text-align:left">
 			<%
 			String estiloDivId = "display:none";
@@ -131,7 +100,7 @@
 			%>
 				<select name="ide" onChange="mostrarId()">
 				<option value="no" <%= "no".equals(ide)?"selected":"" %>>No filtrar</option>
-				<option value="si" <%= "si".equals(ide)?"selected":"" %>>Filtrar por este codigo de prestacion</option>
+				<option value="si" <%= "si".equals(ide)?"selected":"" %>>Filtrar por este codigo de prestador</option>
 				</select>
 				
 				<br>
@@ -141,8 +110,25 @@
 				<input type="text" name="id" size="12" value="<%= ide %>" onBlur="if(!CampoEsNumeroEnRango(this, 1, 9999999)){document.formulario.ide.selectedIndex=0;mostrarId();}">				
 				</span>
 			</td>
+			
+			<td rowspan="2">
+			  <input type="submit" class="submit" value="Buscar">
+			</td>
 		</tr>
 
+		<tr class="fila-detalle-par">
+			<td>Tipo de Convenios</td>
+			<td style="text-align:left">
+				<select name="tipoConvenios" onChange="mostrarId()">
+				<option value="vigentes" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>Sólo Vigentes</option>
+				<option value="nuevos" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>Sólo Nuevos</option>
+				<option value="modificados" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>Sólo Modificados</option>
+				<option value="eliminados" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>Sólo Eliminados</option>
+				<option value="todos" <%= "todos".equals(tipoConvenios)?"selected":"" %>>Mostrar todos</option>
+				</select>
+			</td>
+			
+		</tr>
 		
 		
 	</table>
@@ -167,6 +153,13 @@
 		    String clase= (numFila%2 == 0)? "fila-detalle-par":"fila-detalle-impar";
 		    numFila++;
 		    
+		    String fechaInicio = "";
+		    if (null == c.getFechaInicio()){ fechaInicio = "Sin fecha de inicio"; }
+		    else { fechaInicio = sdf.format(c.getFechaInicio()); }
+		    
+		    String fechaTermino = "";
+		    if (null == c.getFechaTermino()){ fechaTermino = "Sin fecha de termino"; }
+		    else { fechaTermino = sdf.format(c.getFechaTermino()); }
 		    
 %>
 
@@ -174,8 +167,8 @@
 			<td><a href="Convenios?accion=detalle&id=<%= c.getCodigo() %>"><%= c.getCodigo() %></a></td>
 			<td><%= c.getCodigoPrestador() %></td>
 			<td><%= c.getGlosa() %></td>
-			<td><%= sdf.format(c.getFechaInicio()) %></td>
-			<td><%= sdf.format(c.getFechaTermino()) %></td>
+			<td><%= fechaInicio %></td>
+			<td><%= fechaTermino %></td>
 			<td><a href="Convenios?accion=detalleExcel&id=<%= c.getCodigo() %>">Exportar como Excel</a></td>
 			<td>.</td>
 		</tr>

@@ -28,6 +28,10 @@ import java.util.Date;
  */
 public class ConvenioDTO implements Serializable {
 
+	public static int CONVENIO_NUEVO = 1;
+	public static int CONVENIO_MODIFICADO = 2;
+	public static int CONVENIO_ELIMINADO = 3;
+
 	private int codigo;
 	private String glosa;
 	private int codigoPrestador;
@@ -179,6 +183,10 @@ public class ConvenioDTO implements Serializable {
 
 	public void setEstadoConvenio(int estadoConvenio) {
 		this.estadoConvenio = estadoConvenio;
+	}
+
+	public void setEstadoConvenio(Short estadoConvenio) {
+		this.estadoConvenio = estadoConvenio.intValue();
 	}
 
 	public int getNivelReferenciaFonasa() {

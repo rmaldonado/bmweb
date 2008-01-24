@@ -11,4 +11,5 @@ public interface IConveniosDao {
 	
 	public List getValcon(Map params, UsuarioWeb uw);
 	
+	public void guardarNuevoConvenio(int rutPrestador, List listaValcon) throws Exception;
 }
