@@ -38,12 +38,14 @@ public class CiudadDao implements ICiudadDao {
 	private static List listaRegiones = null;
 	private static List listaAgencias = null;
 	private static List listaReparticiones = null;
+	private static List listaTiposConvenio = null;
 	
 	private static Map mapaCiudades = null;
 	private static Map mapaJurisdicciones = null;
 	private static Map mapaRegiones = null;
 	private static Map mapaAgencias = null;
 	private static Map mapaReparticiones = null;
+	private static Map mapaTiposConvenio = null;
 	
 	private DataSource dataSource;
 	
@@ -176,7 +178,29 @@ public class CiudadDao implements ICiudadDao {
 		}
 		
 	}
+
+	public List listaTiposConvenio(){
+		
+		if (listaTiposConvenio != null) return listaTiposConvenio;
+		else {			
+			CiudadesMappingQuery buscador = new CiudadesMappingQuery(dataSource, "TIPCON");
+			listaTiposConvenio = buscador.execute();
+			return listaTiposConvenio;
+		}
+		
+	}
 	
+	public Map mapaTiposConvenio(){
+		
+		if (mapaTiposConvenio != null) return mapaTiposConvenio;
+		else {
+			mapaTiposConvenio = listaToMapa(listaTiposConvenio());
+			return mapaTiposConvenio;
+		}
+		
+	}
+	
+
 	
 	private Map listaToMapa(List lista){
 		

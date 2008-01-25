@@ -6,6 +6,10 @@
 <%@ page import="bmweb.util.*" %>
 <%
 
+  // Recupero el usuario en esta pantalla para ver si es administrador y dibujar elementos extra
+  UsuarioWeb uw = (UsuarioWeb) request.getSession().getAttribute(UsuarioWeb.ATRIBUTO_USUARIO_WEB);
+  boolean esAdministrador = "09".equals(uw.getNivel());
+
   SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
   ConvenioDTO convenio = new ConvenioDTO();
@@ -26,6 +30,11 @@
   List listaCiudades = new ArrayList();
   if (request.getAttribute("listaCiudades") != null){
   	listaCiudades = (List) request.getAttribute("listaCiudades");
+  }
+
+  List tiposConvenio = new ArrayList();  
+  if (request.getAttribute("tiposConvenio") != null){
+	  tiposConvenio = (List) request.getAttribute("tiposConvenio");
   }
 
   
@@ -54,15 +63,11 @@
   String fechaInicio = "";
   if (null != convenio.getFechaInicio()) {
 	  fechaInicio = sdf.format(convenio.getFechaInicio());
-  } else {
-	  fechaInicio = "Convenio nuevo";
   }
   
   String fechaTermino = "";
   if (null != convenio.getFechaTermino()) {
 	  fechaTermino = sdf.format(convenio.getFechaTermino());
-  } else {
-	  fechaTermino = "Convenio nuevo";
   }
   
   Map estadosConvenio = new HashMap();
@@ -77,6 +82,11 @@
 <div>
 
 	<h1>Información del Convenio</h1>
+
+	
+	<form name="formulario1" method="post" action="Convenios">
+	<input type="hidden" name="id" value="<%= convenio.getCodigo() %>">
+	<input type="hidden" name="accion" value="">
 	
 	<table id="listado">
 		<tr class="encabezados-tabla">
@@ -90,11 +100,93 @@
 			<td><strong>Código Arancel Fonasa</strong></td><td><%= convenio.getCodigoArancelFonasa() %></td>
 		</tr>	
 		<tr class="fila-detalle-par">
-			<td><strong>Fecha Inicio Convenio</strong></td><td><%= fechaInicio %></td>
-			<td><strong>Fecha Término Convenio</strong></td><td><%= fechaTermino %></td>
+			<td><strong>Fecha Inicio Convenio</strong></td>
+			<td>
+			<% if (esAdministrador && (convenio.getFechaInicio() == null)) { %>
+			<!-- calendario -->
+			
+				<span id="span-fecha-inicio"><%= ("".equals(fechaInicio))?"Convenio nuevo":fechaInicio %></span>
+				<input type="hidden" id="fechaInicio" name="fechaInicio" size="10" class="input" value="<%= fechaInicio %>">
+				
+				<img src="img/calendar.gif" id="f_trigger_c1"
+				     style="cursor: pointer; border: 1px solid green;"
+				     title="Seleccion de fecha"
+				     onmouseover="this.style.background='green';"
+				     onmouseout="this.style.background=''" />
+				<script type="text/javascript">
+				    Calendar.setup({
+				        displayArea    :    "span-fecha-inicio",
+				        inputField     :    "fechaInicio",
+				        daFormat       :    "%d/%m/%Y",
+				        ifFormat       :    "%d/%m/%Y",
+				        button         :    "f_trigger_c1",
+				        align          :    "Tl",
+				        weekNumbers    :    false,
+				        singleClick    :    true
+				    });
+				</script>
+			
+			<% } else { %>
+				<%= ("".equals(fechaInicio))?"Convenio nuevo":fechaInicio %>
+			<% } %>
+			
+			</td>
+			<td><strong>Fecha Término Convenio</strong></td>
+
+			<td>
+			<% if (esAdministrador && (convenio.getFechaInicio() == null)) { %>
+			<!-- calendario -->
+			
+				<span id="span-fecha-termino"><%= ("".equals(fechaTermino))?"Convenio nuevo":fechaTermino %></span>
+				<input type="hidden" id="fechaTermino" name="fechaTermino" size="10" class="input" value="<%= fechaTermino %>">
+				
+				<img src="img/calendar.gif" id="f_trigger_c2"
+				     style="cursor: pointer; border: 1px solid green;"
+				     title="Seleccion de fecha"
+				     onmouseover="this.style.background='green';"
+				     onmouseout="this.style.background=''" />
+				<script type="text/javascript">
+				    Calendar.setup({
+				        displayArea    :    "span-fecha-termino",
+				        inputField     :    "fechaTermino",
+				        daFormat       :    "%d/%m/%Y",
+				        ifFormat       :    "%d/%m/%Y",
+				        button         :    "f_trigger_c2",
+				        align          :    "Tl",
+				        weekNumbers    :    false,
+				        singleClick    :    true
+				    });
+				</script>
+			
+			<% } else { %>
+				<%= ("".equals(fechaTermino))?"Convenio nuevo":fechaTermino %>
+			<% } %>
+			
+			</td>
+
 		</tr>
 		<tr class="fila-detalle-impar">
-			<td><strong>Tipo de Convenio</strong></td><td><%= convenio.getTipoConvenio() %></td>
+			<td><strong>Tipo de Convenio</strong></td>
+			<td>
+			
+			<% if (esAdministrador && (convenio.getFechaInicio() == null)) { %>
+			    <select>
+				<% 
+				for(int i=0; i<tiposConvenio.size(); i++){ 
+						CiudadDTO tipoConvenio = (CiudadDTO) tiposConvenio.get(i);
+						String selected = "";
+						if (convenio.getTipoConvenio() == tipoConvenio.getCodigo() ){
+							selected  = "selected";
+						}
+				%>
+				<option value="<%= tipoConvenio.getCodigo() %>" <%= selected %>><%= tipoConvenio.getNombre() %></option>
+				<% } %>
+			    </select>
+			<% } else { %>
+				<%= convenio.getTipoConvenio() %>
+			<% } %>		
+			</td>
+			
 			<td><strong>Resolución de Concurrencia</strong></td><td><%= "" + convenio.getCodigoConcurrencia() %></td>
 		</tr>	
 		<tr class="fila-detalle-par">
@@ -107,15 +199,20 @@
 		</tr>	
 		<tr class="encabezados-tabla">
 			<td colspan="4" style="text-align:right">
-			<form>
-				<input type="hidden" name="id" value="<%= convenio.getCodigo() %>">
-				<input type="hidden" name="accion" value="detalleExcel">
-				<input type="submit" value="Exportar listado en formato Excel">
-			</form>
+
+<% if (esAdministrador && (convenio.getFechaInicio() == null)) { %>
+				<input type="button" class="submit" value="Guardar y Aprobar convenio"
+				 onClick="validarDatosConvenio()">
+<% } %>
+			
+				<input type="button" class="submit" value="Exportar listado en formato Excel"
+				 onClick="document.formulario1.accion.value='detalleExcel';document.formulario1.submit()">
+				 
 			</td>
 		</tr>		
 			
 	</table>
+	</form>
 
 	<h1>Detalle del Convenio</h1>
 	<form name="formulario" method="post" action="Convenios">
@@ -195,5 +292,13 @@
 	</form>	
 	</table>	
 </div>
+
+
+<script language="javascript">
+  function validarDatosConvenio(){
+    document.formulario1.accion.value = "autorizarConvenio";
+    document.formulario1.submit();
+  }
+</script>
 
 <jsp:include page="pie.jsp" flush="true"/>

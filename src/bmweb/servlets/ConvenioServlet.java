@@ -283,6 +283,8 @@ public class ConvenioServlet extends ServletSeguro {
 		request.setAttribute("ciudades", ciudadDao.mapa());
 		request.setAttribute("listaCiudades", ciudadDao.lista());
 
+		request.setAttribute("tiposConvenio", ciudadDao.listaTiposConvenio());
+
 		// Calculo si hay pagina anterior y siguiente
 		int inicio = 0;
 		if (params.containsKey("inicio")) {

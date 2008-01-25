@@ -94,33 +94,52 @@ public class ConveniosDao implements IConveniosDao {
 	public void guardarNuevoConvenio(int rutPrestador, List listaValcon) throws Exception {
 		
 		try {
-			
-			// Inserto una nueva fila en bm_convenio
-			// SIN FECHAS DE INICIO NI TERMINO
-			
+			JdbcTemplate template = new JdbcTemplate(dataSource);
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			
-			JdbcTemplate template = new JdbcTemplate(dataSource);
-			template.update("" +
-					" insert into bm_convenio " +
-					" (cv_glosa, pb_codigo, dom_moneda, dom_estcvn)" +
-					" values" +
-					" (?, ?, ?, ?)", 
-					new Object[]{
-					"Cargado en " + sdf.format(new Date()),
-					new Integer(rutPrestador),
-					new Integer(1),
-					new Integer(ConvenioDTO.CONVENIO_NUEVO)
-					});
+			// Determino si hay un convenio nuevo sin aprobar 
+			int numConveniosNuevos = template.queryForInt("" +
+					" select count(*) from bm_convenio" +
+					" where pb_codigo = " + rutPrestador + "" +
+					" and cv_fecini is null " +
+					" and cv_fecter is null");
 			
-			// Recupero el cv_codigo del nuevo convenio recien creado
+			Integer cvCodigo = null;
 			
-			int cv_codigo = template.queryForInt("" +
-					" select max(cv_codigo)" +
-					" from bm_convenio" +
-					" where cv_fecini is null and cv_fecter is null" +
-					" and pb_codigo = " + rutPrestador);
-			Integer cvCodigo = new Integer(cv_codigo);
+			// No hay convenios nuevos
+			if (numConveniosNuevos == 0){
+
+				// Inserto una nueva fila en bm_convenio
+				// SIN FECHAS DE INICIO NI TERMINO
+				
+				template.update("" +
+						" insert into bm_convenio " +
+						" (cv_glosa, pb_codigo, dom_moneda, dom_estcvn)" +
+						" values" +
+						" (?, ?, ?, ?)", 
+						new Object[]{
+						"Cargado en " + sdf.format(new Date()),
+						new Integer(rutPrestador),
+						new Integer(1),
+						new Integer(ConvenioDTO.CONVENIO_NUEVO)
+						});
+
+			} else {
+
+				// Recupero el cv_codigo del nuevo convenio (existente o recien creado)
+				int cv_codigo = template.queryForInt("" +
+						" select max(cv_codigo)" +
+						" from bm_convenio" +
+						" where cv_fecini is null and cv_fecter is null" +
+						" and pb_codigo = " + rutPrestador);
+				
+				cvCodigo = new Integer(cv_codigo);
+
+				// Borro la última versión de los valores asociados al convenio antes
+				// de insertar la lista de nuevos valores
+				
+				template.update("delete bm_valcon where cv_codigo = ?", new Object[]{ cvCodigo });
+			}
 			
 			// Inserto en bm_valcon toda la lista de convenios
 			

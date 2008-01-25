@@ -91,8 +91,7 @@
 		<input type="hidden" name="id" value="<%= convenio.getCodigo() %>">
 		<input type="hidden" name="accion" value="detalle">
 
-	<!-- TODO: OVERFLOW: AUTO -->
-	<table id="listado">
+	<table id="listado" style="height:500px;overflow:auto;">
 		<tr class="encabezados-tabla">
 			<td>C&oacute;digo Prestación</td>
 			<td>Valor Convenido</td>

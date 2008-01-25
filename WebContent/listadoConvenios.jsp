@@ -213,14 +213,7 @@
 	
 	</form>	
 	</table>
-
-	<p>
-	<form method="post" action="Convenios">
-	<input type="hidden" name="accion" value="crear">
-	<input type="submit" value="Agregar un nuevo Convenio" class="submit">
-	</form>
-	</p>
-
+	
 	</div>
 	
 

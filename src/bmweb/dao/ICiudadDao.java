@@ -26,5 +26,8 @@ public interface ICiudadDao {
 	public abstract List listaReparticiones();	
 	public abstract Map mapaReparticiones();
 	
+	public abstract List listaTiposConvenio();	
+	public abstract Map mapaTiposConvenio();
+	
 	
 }
