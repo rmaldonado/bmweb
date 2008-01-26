@@ -206,13 +206,29 @@ public class ConvenioServlet extends ServletSeguro {
 			
 			// "resultado" contiene la lista de ValconDTO del nuevo convenio
 			int rutPrestador = Integer.parseInt(uw.getNombreUsuario());
-			conveniosDao.guardarNuevoConvenio(rutPrestador, resultado);
+			int nuevoConvenio = conveniosDao.guardarNuevoConvenio(rutPrestador, resultado);
+	
+			/*
+			// Ahora recupero el estado actual del convenio
+			resultado = conveniosDao.getValcon(paramsValcon, uw);
+			*/
+			
+			// guardo el ID del convenio en el request para utilizarlo desde la funcion de detalle
+			request.setAttribute("id", "" + nuevoConvenio);
+
+			// Voy a la acción del detalle y termino
+			detalle(request, response);
+			return;
 
 		} // end if form == multipart
 		
+		/*
 		request.setAttribute("convenios", resultado);
+		*/
 		
 		redirigir(request, response, "crearConvenio.jsp");
+		return;
+		
 		
 	}
 	
@@ -254,7 +270,12 @@ public class ConvenioServlet extends ServletSeguro {
 	private void detalle(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		UsuarioWeb uw = getUsuarioWeb(request);		
 		Map params = ParamsUtil.fixParams(request.getParameterMap());
+		
+		// Recupero el ID del convenio desde los parametros enviados al servlet o como un atributo del request
 		String id = (String) params.get("id");
+		
+		// Este caso me sirve para ver el detalle de un convenio luego de cargar un archivo CSV de valores de convenio
+		if (request.getAttribute("id") != null){ id = (String) request.getAttribute("id"); }
 		
 		Map paramsDetalle = new HashMap();
 		paramsDetalle.put("id", id);
@@ -278,7 +299,6 @@ public class ConvenioServlet extends ServletSeguro {
 		paramsValcon.put("inicio", (String) params.get("inicio"));
 		
 		List listaValcon = conveniosDao.getValcon(paramsValcon, uw);
-		request.setAttribute("valcon", listaValcon);
 		
 		request.setAttribute("ciudades", ciudadDao.mapa());
 		request.setAttribute("listaCiudades", ciudadDao.lista());
@@ -304,6 +324,8 @@ public class ConvenioServlet extends ServletSeguro {
 			request.setAttribute("pagSiguiente", "pagSiguiente");
 			listaValcon = listaValcon.subList(0, dpp);
 		}
+
+		request.setAttribute("valcon", listaValcon);
 
 		redirigir(request, response, "detalleConvenio.jsp");
 

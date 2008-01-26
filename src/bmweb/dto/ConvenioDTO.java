@@ -31,6 +31,7 @@ public class ConvenioDTO implements Serializable {
 	public static int CONVENIO_NUEVO = 1;
 	public static int CONVENIO_MODIFICADO = 2;
 	public static int CONVENIO_ELIMINADO = 3;
+	public static int CONVENIO_RECHAZADO = 4;
 
 	private int codigo;
 	private String glosa;

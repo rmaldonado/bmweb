@@ -73,8 +73,13 @@
 
 	<h1>Procesar un listado de precios</h1>
 	
-	Para procesar un listado de convenios, utilice el siguiente formulario para
-	cargar un archivo CVS con datos separados por comas.
+	<p>
+	Para procesar un listado valores de convenios, utilice el siguiente formulario para
+	cargar un archivo CSV con datos separados por comas.
+	
+	<p>
+	Luego de cargar el archivo, se mostrará el detalle de los valores que fueron procesados,
+	comparándolos con el último convenio vigente en el sistema. 
 	
 	<form name="formularioArchivo" method="post" action="Convenios" 
 	  enctype="multipart/form-data">

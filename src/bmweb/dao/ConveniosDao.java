@@ -91,7 +91,7 @@ public class ConveniosDao implements IConveniosDao {
 		
 	}
 	
-	public void guardarNuevoConvenio(int rutPrestador, List listaValcon) throws Exception {
+	public int guardarNuevoConvenio(int rutPrestador, List listaValcon) throws Exception {
 		
 		try {
 			JdbcTemplate template = new JdbcTemplate(dataSource);
@@ -162,6 +162,8 @@ public class ConveniosDao implements IConveniosDao {
 					});
 			}
 			
+			return cvCodigo.intValue();
+			
 		} catch (Exception e) {
 			throw new Exception("No se pudieron guardar los valores del convenio, intente nuevamente más tarde");
 		}
@@ -199,7 +201,7 @@ public class ConveniosDao implements IConveniosDao {
 				catch (Exception ex){  }
 			}
 
-			query = query + QueryUtil.getWhere(listaWhere) + " order by cv_codigo asc";
+			query = query + QueryUtil.getWhere(listaWhere) + " order by cv_codigo, pr_codigo asc";
 			
 			QueryLogger.log(uw, query);
 			setSql(query);

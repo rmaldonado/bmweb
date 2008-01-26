@@ -16,6 +16,9 @@
   if (request.getAttribute("convenio") != null){
 	convenio = (ConvenioDTO) request.getAttribute("convenio");
   }
+  
+  // INDICO SI LOS CAMPOS DEL CONVENIO Y LISTA SON MODIFICABLES
+  boolean esEditable = esAdministrador && (convenio.getFechaInicio() == null);
 
   List lista = new ArrayList();
   if (request.getAttribute("valcon") != null){
@@ -83,6 +86,12 @@
 
 	<h1>Información del Convenio</h1>
 
+	<% if ((!esAdministrador) && (convenio.getFechaInicio() == null)) { %>
+	<p>
+	Este convenio no está vigente todavía. 
+	Sólo un usuario administrador puede aprobarlo y convertirlo en el convenio vigente.
+	<br><br>	
+	<% } %>
 	
 	<form name="formulario1" method="post" action="Convenios">
 	<input type="hidden" name="id" value="<%= convenio.getCodigo() %>">
@@ -97,12 +106,20 @@
 		</tr>		
 		<tr class="fila-detalle-impar">
 			<td><strong>Código Prestador</strong></td><td><%= convenio.getCodigoPrestador() %></td>
-			<td><strong>Código Arancel Fonasa</strong></td><td><%= convenio.getCodigoArancelFonasa() %></td>
+			<td><strong>Código Arancel Fonasa</strong></td>
+			<td>
+			<% if (esEditable) { %>
+				<input type="text" size="8" name="codigoArancelFonasa"
+				 value="<%= convenio.getCodigoArancelFonasa() %>" onBlur="">
+			<% } else { %>
+				<%= convenio.getCodigoArancelFonasa() %>
+			<% } %>
+			</td>
 		</tr>	
 		<tr class="fila-detalle-par">
 			<td><strong>Fecha Inicio Convenio</strong></td>
 			<td>
-			<% if (esAdministrador && (convenio.getFechaInicio() == null)) { %>
+			<% if (esEditable) { %>
 			<!-- calendario -->
 			
 				<span id="span-fecha-inicio"><%= ("".equals(fechaInicio))?"Convenio nuevo":fechaInicio %></span>
@@ -134,7 +151,7 @@
 			<td><strong>Fecha Término Convenio</strong></td>
 
 			<td>
-			<% if (esAdministrador && (convenio.getFechaInicio() == null)) { %>
+			<% if (esEditable) { %>
 			<!-- calendario -->
 			
 				<span id="span-fecha-termino"><%= ("".equals(fechaTermino))?"Convenio nuevo":fechaTermino %></span>
@@ -169,7 +186,7 @@
 			<td><strong>Tipo de Convenio</strong></td>
 			<td>
 			
-			<% if (esAdministrador && (convenio.getFechaInicio() == null)) { %>
+			<% if (esEditable) { %>
 			    <select>
 				<% 
 				for(int i=0; i<tiposConvenio.size(); i++){ 
@@ -187,15 +204,53 @@
 			<% } %>		
 			</td>
 			
-			<td><strong>Resolución de Concurrencia</strong></td><td><%= "" + convenio.getCodigoConcurrencia() %></td>
+			<td><strong>Resolución de Concurrencia</strong></td>
+			<td>
+				<% if (esEditable) { %>
+					<input name="resolucionConcurrencia" type="text" size="10" 
+					 value="<%= (null==convenio.getCodigoConcurrencia())?"":convenio.getCodigoConcurrencia() %>"
+					 onBlur="">
+				<% } else { %>
+					<%= (null==convenio.getCodigoConcurrencia())?"":convenio.getCodigoConcurrencia() %>
+				<% } %>
+			</td>
 		</tr>	
 		<tr class="fila-detalle-par">
-			<td><strong>Moneda</strong></td><td><%= convenio.getMoneda() %></td>
-			<td><strong>Convenio hace referencia a FONASA?</strong></td><td><%= "" + convenio.getReferenciaFonasa() %></td>
+			<td><strong>Moneda</strong></td><td>Peso</td>
+			<td><strong>Convenio hace referencia a FONASA?</strong></td>
+			<td>
+			<% if (esEditable) { %>
+				<select name="referenciaFonasa">
+					<option value="S" <%= ("S".equals(convenio.getReferenciaFonasa()))?"selected":"" %>>Sí</option>
+					<option value="N" <%= ("N".equals(convenio.getReferenciaFonasa()))?"selected":"" %>>No</option>
+				</select>
+			<% } else { %>
+				<%= "" + convenio.getReferenciaFonasa() %>
+			<% } %>
+			</td>
 		</tr>
 		<tr class="fila-detalle-impar">
-			<td><strong>Nivel de Referencia FONASA</strong></td><td><%= convenio.getNivelReferenciaFonasa() %></td>
-			<td><strong>Factor de Referencia FONASA</strong></td><td><%= convenio.getFactorRefFonasa() %></td>
+			<td><strong>Nivel de Referencia FONASA</strong></td>
+			<td>
+			<% if (esEditable) { %>
+				<select name="nivelReferenciaFonasa">
+					<option value="1" <%= (1 == convenio.getNivelReferenciaFonasa())?"selected":"" %>>1</option>
+					<option value="2" <%= (2 == convenio.getNivelReferenciaFonasa())?"selected":"" %>>2</option>
+					<option value="3" <%= (3 == convenio.getNivelReferenciaFonasa())?"selected":"" %>>3</option>
+				</select>
+			<% } else { %>
+				<%= convenio.getNivelReferenciaFonasa() %>
+			<% } %>
+			</td>
+			<td><strong>Factor de Referencia FONASA</strong></td>
+			<td>
+			<% if (esEditable) { %>
+				<input type="text" size=""8" name="factorReferenciaFonasa" value="<%= convenio.getFactorRefFonasa() %>"
+				 onBlur="">
+			<% } else { %>
+				<%= convenio.getFactorRefFonasa() %>
+			<% } %>
+			</td>
 		</tr>	
 		<tr class="encabezados-tabla">
 			<td colspan="4" style="text-align:right">
@@ -205,7 +260,7 @@
 				 onClick="validarDatosConvenio()">
 <% } %>
 			
-				<input type="button" class="submit" value="Exportar listado en formato Excel"
+				<input type="button" class="submit" value="Exportar listado de valores en formato Excel"
 				 onClick="document.formulario1.accion.value='detalleExcel';document.formulario1.submit()">
 				 
 			</td>
