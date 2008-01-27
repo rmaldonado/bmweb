@@ -172,6 +172,69 @@ public class ConveniosDao implements IConveniosDao {
 		
 	}
 
+	/**
+	 * Autorizar un convenio
+	 */
+	public void autorizarConvenio(Map params, UsuarioWeb uw) throws Exception {
+		
+		try {
+			
+			JdbcTemplate template = new JdbcTemplate(dataSource);			
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			
+			/**
+			 * cv_codigo            serial        = Identificador del convenio
+			 * cv_glosa             char(45)      = Glosa descriptiva
+			 * pb_codigo            integer       = Codigo del Prestador 
+			 * af_codigo            integer       = Codigo del arancel Fonasa asociado
+			 * cv_fecini            date          = Fecha Inicio del convenio
+			 * cv_fecter            date          = Fecha de Termino del Convenio
+			 * dom_tipcon           smallint      = Dominio de tipo de convenio
+			 * cv_nrores            char(10)      = Numero de Resolucion de concurrencia  (Aportes)
+			 * cv_fecres            date          = Fecha de la Resolucion de concurrencia 
+			 * dom_moneda           smallint      = Dominio de la moneda en que se expresa el convenio ( Siempre es $ chileno) 
+			 * cv_reffon            char(1)       = Indicador convenio hace referencia a Fonasa (S)i/(N)o 
+			 * cv_refniv            smallint      = Nivel de referencia Fonasa (Nivel 1, 2 o 3) 
+			 * cv_reffac            decimal(5,2)  = Factor de referencia Fonasa
+			 * dom_estcvn           smallint      = CAMPO NUEVO, indica estado del convenio
+			 *                                      debemos analizar que estados ponerles( Vigente, en Proceso, etc..)
+			 */
+			
+			String query = "" +
+					" update bm_convenio set " +
+					" cv_glosa = ? , af_codigo = ?, cv_fecini = ?,  cv_fecter = ?, " +
+					" dom_tipcon = ?, cv_nrores = ?, cv_fecres = ?, dom_moneda = 1, " +
+					" cv_reffon = ?, cv_refniv = ?, cv_reffac = ?, dom_estcvn = 0 " +
+					" where cv_codigo = ?";
+
+			String glosa = (String) params.get("glosa");
+			// Integer pbCodigo = new Integer((String)params.get("pb_codigo"));
+			Integer afCodigo = new Integer((String)params.get("codigoArancelFonasa"));			
+			Date fecIni = sdf.parse((String) params.get("fechaInicio"));
+			Date fecTer = sdf.parse((String) params.get("fechaTermino"));
+			String domTipcon = (String) params.get("tipoConvenio");
+			String cvNroRes = (String) params.get("resolucionConcurrencia");
+			Date cvFecRes = sdf.parse((String) params.get("fechaResolucion"));
+			String cvRefFon = (String) params.get("referenciaFonasa");
+			Integer cvRefNiv = new Integer((String) params.get("nivelReferenciaFonasa"));
+			Float cvRefFac = new Float((String) params.get("factorReferenciaFonasa"));
+			
+			Integer cvCodigo = new Integer((String)params.get("id"));
+			
+			QueryLogger.log(uw, query);
+			
+			template.update(query, new Object[]{
+					glosa, afCodigo, fecIni, fecTer, domTipcon,
+					cvNroRes, cvFecRes, cvRefFon, cvRefNiv, cvRefFac,
+					cvCodigo
+			});
+			
+		} catch (Exception e) {
+			throw new Exception("Error: No se pudo autorizar correctamente el convenio.");
+		}
+		
+	}
+
 	class ValconMappingQuery extends MappingSqlQuery {
 		
 		public ValconMappingQuery(DataSource ds, Map params, UsuarioWeb uw){

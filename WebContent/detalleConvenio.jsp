@@ -73,6 +73,11 @@
 	  fechaTermino = sdf.format(convenio.getFechaTermino());
   }
   
+  String fechaResolucion = "";
+  if (null != convenio.getFechaConcurrencia()) {
+	  fechaResolucion = sdf.format(convenio.getFechaConcurrencia());
+  }
+  
   Map estadosConvenio = new HashMap();
   estadosConvenio.put(new Integer(0), "Convenio vigente");
   estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_NUEVO), "Nuevo convenio");
@@ -103,7 +108,17 @@
 			Convenio #<%= convenio.getCodigo() %>: "<%= convenio.getGlosa() %>",
 			Estado <%= estadosConvenio.get(new Integer(convenio.getEstadoConvenio())) %>
 			</td>
-		</tr>		
+		</tr>
+				
+		<% if (esEditable) { %>
+		<tr class="fila-detalle-impar">
+			<td><strong>Glosa</strong></td>
+			<td colspan="3" align="left">
+			<input type="text" size="40" name="glosa">
+			</td>
+		</tr>
+		<% } %>
+		
 		<tr class="fila-detalle-impar">
 			<td><strong>Código Prestador</strong></td><td><%= convenio.getCodigoPrestador() %></td>
 			<td><strong>Código Arancel Fonasa</strong></td>
@@ -187,7 +202,7 @@
 			<td>
 			
 			<% if (esEditable) { %>
-			    <select>
+			    <select name="tipoConvenio">
 				<% 
 				for(int i=0; i<tiposConvenio.size(); i++){ 
 						CiudadDTO tipoConvenio = (CiudadDTO) tiposConvenio.get(i);
@@ -214,7 +229,43 @@
 					<%= (null==convenio.getCodigoConcurrencia())?"":convenio.getCodigoConcurrencia() %>
 				<% } %>
 			</td>
-		</tr>	
+		</tr>
+		
+		<tr class="fila-detalle-impar">
+			<td><strong>Fecha de Resolución</strong></td>
+			<td colspan="3">
+			
+			<% if (esEditable) { %>
+			<!-- calendario -->
+			
+				<span id="span-fecha-resolucion"><%= ("".equals(fechaTermino))?"Convenio nuevo":fechaTermino %></span>
+				<input type="hidden" id="fechaResolucion" name="fechaResolucion" size="10" class="input" value="<%= fechaResolucion %>">
+				
+				<img src="img/calendar.gif" id="f_trigger_c3"
+				     style="cursor: pointer; border: 1px solid green;"
+				     title="Seleccion de fecha"
+				     onmouseover="this.style.background='green';"
+				     onmouseout="this.style.background=''" />
+				<script type="text/javascript">
+				    Calendar.setup({
+				        displayArea    :    "span-fecha-resolucion",
+				        inputField     :    "fechaResolucion",
+				        daFormat       :    "%d/%m/%Y",
+				        ifFormat       :    "%d/%m/%Y",
+				        button         :    "f_trigger_c3",
+				        align          :    "Tl",
+				        weekNumbers    :    false,
+				        singleClick    :    true
+				    });
+				</script>
+			
+			<% } else { %>
+				<%= ("".equals(fechaTermino))?"Convenio nuevo":fechaResolucion %>
+			<% } %>
+			
+			</td>
+		</tr>
+			
 		<tr class="fila-detalle-par">
 			<td><strong>Moneda</strong></td><td>Peso</td>
 			<td><strong>Convenio hace referencia a FONASA?</strong></td>

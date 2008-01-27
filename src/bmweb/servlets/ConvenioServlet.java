@@ -61,6 +61,12 @@ public class ConvenioServlet extends ServletSeguro {
 				redirigir(request, response, "crearConvenio.jsp");
 				return;
 			}
+			
+			if ("autorizarConvenio".equals(params.get("accion"))){
+				autorizarConvenio(request, response);
+				return;
+			}
+			
 
 			if ("detalle".equals(params.get("accion"))){
 				detalle(request, response);
@@ -87,6 +93,25 @@ public class ConvenioServlet extends ServletSeguro {
 		}
 		
 
+	}
+	
+	/**
+	 * Guardar un convenio nuevo como el mas reciente 
+	 */
+	public void autorizarConvenio(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		UsuarioWeb uw = getUsuarioWeb(request);		
+		Map params = ParamsUtil.fixParams(request.getParameterMap());
+		
+		conveniosDao.autorizarConvenio(params, uw);
+		
+		// Todo ok?
+		mensaje("El convenio ha sido validado correctamente", request, response);
+
+		// Sigo mirando el detalle
+		detalle(request, response);
+
+		
 	}
 
 	/**
