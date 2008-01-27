@@ -54,6 +54,14 @@
 
   // coloco el titulo de la pagina
   request.setAttribute("titulo", "Administración de Convenios");
+  
+  Map estadosConvenio = new HashMap();
+  estadosConvenio.put(new Integer(0), "Convenio vigente");
+  estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_NUEVO), "Nuevo convenio");
+  estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_MODIFICADO), "Convenio Modificado");
+  estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_ELIMINADO), "Convenio Eliminado");
+  estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_RECHAZADO), "Convenio Rechazado");
+
 %>
 <jsp:include page="cabecera.jsp" flush="true"/>
 
@@ -141,7 +149,8 @@
 			<td>Nombre del Convenio</td>
 			<td>Inicio</td>
 			<td>Término</td>
-			<td colspan="2"></td>
+			<td>Estado</td>
+			<td></td>
 		</tr>
 	
 <%
@@ -169,8 +178,8 @@
 			<td><%= c.getGlosa() %></td>
 			<td><%= fechaInicio %></td>
 			<td><%= fechaTermino %></td>
+			<td><%= estadosConvenio.get(new Integer(c.getEstadoConvenio())) %></td>
 			<td><a href="Convenios?accion=detalleExcel&id=<%= c.getCodigo() %>">Exportar como Excel</a></td>
-			<td>.</td>
 		</tr>
 		
 <%

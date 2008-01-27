@@ -15,4 +15,6 @@ public interface IConveniosDao {
 
 	public void autorizarConvenio(Map params, UsuarioWeb uw) throws Exception;
 
+	public void rechazarConvenio(Map params, UsuarioWeb uw) throws Exception;
+
 }

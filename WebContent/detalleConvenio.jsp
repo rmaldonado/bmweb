@@ -83,6 +83,14 @@
   estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_NUEVO), "Nuevo convenio");
   estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_MODIFICADO), "Convenio Modificado");
   estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_ELIMINADO), "Convenio Eliminado");
+  estadosConvenio.put(new Integer(ConvenioDTO.CONVENIO_RECHAZADO), "Convenio Rechazado");
+  
+  Map estadosValcon = new HashMap();
+  estadosValcon.put(new Integer(0), " ");
+  estadosValcon.put(new Integer(ValconDTO.ESTADO_NUEVO), "Nuevo convenio");
+  estadosValcon.put(new Integer(ValconDTO.ESTADO_MODIFICADO), "Convenio Modificado");
+  estadosValcon.put(new Integer(ValconDTO.ESTADO_ELIMINADO), "Convenio Eliminado");
+  estadosValcon.put(new Integer(ValconDTO.ESTADO_RECHAZADO), "Convenio Rechazado");
   
 %>
 <jsp:include page="cabecera.jsp" flush="true"/>
@@ -114,7 +122,7 @@
 		<tr class="fila-detalle-impar">
 			<td><strong>Glosa</strong></td>
 			<td colspan="3" align="left">
-			<input type="text" size="40" name="glosa">
+			<input type="text" size="40" name="glosa" value="<%= (""+convenio.getGlosa()).trim() %>">
 			</td>
 		</tr>
 		<% } %>
@@ -125,7 +133,7 @@
 			<td>
 			<% if (esEditable) { %>
 				<input type="text" size="8" name="codigoArancelFonasa"
-				 value="<%= convenio.getCodigoArancelFonasa() %>" onBlur="">
+				 value="<%= convenio.getCodigoArancelFonasa() %>" onBlur="CampoEsNumeroEnRango(this, 101001, 9999999)">
 			<% } else { %>
 				<%= convenio.getCodigoArancelFonasa() %>
 			<% } %>
@@ -224,7 +232,7 @@
 				<% if (esEditable) { %>
 					<input name="resolucionConcurrencia" type="text" size="10" 
 					 value="<%= (null==convenio.getCodigoConcurrencia())?"":convenio.getCodigoConcurrencia() %>"
-					 onBlur="">
+					 onBlur="CampoEsNumero(this)">
 				<% } else { %>
 					<%= (null==convenio.getCodigoConcurrencia())?"":convenio.getCodigoConcurrencia() %>
 				<% } %>
@@ -297,7 +305,7 @@
 			<td>
 			<% if (esEditable) { %>
 				<input type="text" size=""8" name="factorReferenciaFonasa" value="<%= convenio.getFactorRefFonasa() %>"
-				 onBlur="">
+				 onBlur="CampoEsNumero(this)">
 			<% } else { %>
 				<%= convenio.getFactorRefFonasa() %>
 			<% } %>
@@ -327,6 +335,11 @@
 		<input type="hidden" name="id" value="<%= convenio.getCodigo() %>">
 		<input type="hidden" name="accion" value="detalle">
 
+		<% if (esEditable) { %>		
+		<input type="hidden" name="convenioRechazado" value="">
+		<input type="hidden" name="prestacionRechazada" value="">
+		<% } %>
+
 	<table id="listado">
 		<tr class="encabezados-tabla">
 			<td>C&oacute;digo Prestación</td>
@@ -352,9 +365,13 @@
 			<td><%= valcon.getCodigoPrestacion() %></td>
 			<td><%= valcon.getValorCovenido() %></td>
 			<td><%= valcon.getValorLista() %></td>
-			<td><%= estadosConvenio.get(new Integer(valcon.getEstado())) %></td>
-			<td>.</td>
-			<td>.</td>
+			<td><%= estadosValcon.get(new Integer(valcon.getEstado())) %></td>
+			<td>
+			<% if (esEditable) { %>
+			    <a href="javascript:rechazarConvenio(<%= convenio.getCodigo() %>, <%= valcon.getCodigoPrestacion() %>)">Rechazar convenio</a>
+			<% } %>
+			</td>
+			<td>&nbsp;</td>
 		</tr>
 		
 <%
@@ -395,16 +412,66 @@
 			</td>
 		</tr>
 	
-	</form>	
 	</table>	
+	</form>	
 </div>
 
 
 <script language="javascript">
+
   function validarDatosConvenio(){
-    document.formulario1.accion.value = "autorizarConvenio";
-    document.formulario1.submit();
+  
+    if ("" == document.formulario1.glosa.value ) {
+		alert("Error: Debe especificar un valor para la glosa");
+		return;
+    }
+  
+    if ("" == document.formulario1.codigoArancelFonasa.value ) {
+		alert("Error: Debe especificar un valor para el código de arancel FONASA");
+		return;
+    }
+  
+    if ("" == document.formulario1.fechaInicio.value ) {
+		alert("Error: Debe especificar una Fecha de Inicio del convenio");
+		return;
+    }
+  
+    if ("" == document.formulario1.fechaTermino.value ) {
+		alert("Error: Debe especificar una Fecha de Termino del convenio");
+		return;
+    }
+  
+    if ("" == document.formulario1.resolucionConcurrencia.value ) {
+		alert("Error: Debe especificar una Resolución de concurrencia");
+		return;
+    }
+  
+    if ("" == document.formulario1.fechaResolucion.value ) {
+		alert("Error: Debe especificar una Resolución de concurrencia");
+		return;
+    }
+    
+    if ("" == document.formulario1.factorReferenciaFonasa.value ) {
+		alert("Error: Debe especificar una Resolución de concurrencia");
+		return;
+    }
+    
+  
+    if (confirm("¿Está seguro de que desea autorizar este convenio?")){
+	    document.formulario1.accion.value = "autorizarConvenio";
+	    document.formulario1.submit();
+    }  
   }
+  
+  function rechazarConvenio(convenio, prestacion) {
+		if (confirm("¿Está seguro de que rechaza este valor y convenio?")){
+			document.formulario.convenioRechazado.value = convenio;
+			document.formulario.prestacionRechazada.value = prestacion;
+			document.formulario.accion.value = "rechazarConvenio";
+			document.formulario.submit();
+		}
+  }
+  
 </script>
 
 <jsp:include page="pie.jsp" flush="true"/>

@@ -162,6 +162,10 @@ public class ConveniosDao implements IConveniosDao {
 					});
 			}
 			
+			// Dejo el convenio como nuevo
+			template.update("update bm_convenio set dom_estcvn = ? where cv_codigo = ? ", 
+					new Object[]{ new Integer(ConvenioDTO.CONVENIO_NUEVO), cvCodigo });
+			
 			return cvCodigo.intValue();
 			
 		} catch (Exception e) {
@@ -231,6 +235,36 @@ public class ConveniosDao implements IConveniosDao {
 			
 		} catch (Exception e) {
 			throw new Exception("Error: No se pudo autorizar correctamente el convenio.");
+		}
+		
+	}
+	
+	/**
+	 * Pongo en estado RECHAZADO un valcon y su convenio correspondiente
+	 */
+	public void rechazarConvenio(Map params, UsuarioWeb uw) throws Exception {
+
+		try {
+
+			JdbcTemplate template = new JdbcTemplate(dataSource);
+			
+			Integer cvCodigo = new Integer((String)params.get("convenioRechazado"));
+			Integer prCodigo = new Integer((String)params.get("prestacionRechazada"));
+			
+			// Rechazo el valcon
+			template.update("" +
+					"update bm_valcon set dom_estvlc = ? where cv_codigo = ? and pr_codigo = ?" +
+					"", new Object[] { new Integer(ValconDTO.ESTADO_RECHAZADO), cvCodigo, prCodigo } );
+			
+			// Rechazo el convenio asociado
+			template.update("" +
+					"update bm_convenio set dom_estcvn = ? where cv_codigo = ? " +
+					"", new Object[] { new Integer(ConvenioDTO.CONVENIO_RECHAZADO), cvCodigo } );
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("No se pudo rechazar correctamente el convenio.");
 		}
 		
 	}

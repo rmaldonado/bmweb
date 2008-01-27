@@ -56,6 +56,12 @@ public class ConvenioServlet extends ServletSeguro {
 
 			Map params = ParamsUtil.fixParams(request.getParameterMap());
 			
+			// Rechazo un precio de un nuevo convenio y rechazo el convenio completo
+			if ("rechazarConvenio".equals(params.get("accion"))){
+				rechazarConvenio(request, response);
+				return;
+			}
+			
 			// La primera vez que voy a crear un convenio no he subido archivos
 			if ("crear".equals(params.get("accion"))){
 				redirigir(request, response, "crearConvenio.jsp");
@@ -92,6 +98,19 @@ public class ConvenioServlet extends ServletSeguro {
 			
 		}
 		
+
+	}
+	
+	/**
+	 * Un administrador rechaza un valcon y el convenio correspondiente
+	 */
+	
+	public void rechazarConvenio(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		UsuarioWeb uw = getUsuarioWeb(request);		
+		Map params = ParamsUtil.fixParams(request.getParameterMap());
+		conveniosDao.rechazarConvenio(params, uw);
+		detalle(request, response);
 
 	}
 	
