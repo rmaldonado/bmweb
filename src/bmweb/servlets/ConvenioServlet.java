@@ -26,6 +26,7 @@ import bmweb.util.Constantes;
 import bmweb.util.CsvParser;
 import bmweb.util.ParamsUtil;
 import bmweb.util.UsuarioWeb;
+import bmweb.dao.IPrestadoresDao;
 
 public class ConvenioServlet extends ServletSeguro {
 
@@ -33,12 +34,14 @@ public class ConvenioServlet extends ServletSeguro {
 	
 	private ICiudadDao ciudadDao;
 	private IConveniosDao conveniosDao;
+	private IPrestadoresDao prestadoresDao;
 	
 	public void init() throws ServletException {
 		super.init();
 		appCtx = DBServlet.getApplicationContext();
 		ciudadDao = (ICiudadDao) appCtx.getBean("ciudadDao");
 		conveniosDao = (IConveniosDao) appCtx.getBean("conveniosDao");
+		prestadoresDao = (IPrestadoresDao) appCtx.getBean("prestadoresDao");
 	}
 	
 	protected String getNombrePermiso() { return "convenios"; }
@@ -178,24 +181,29 @@ public class ConvenioServlet extends ServletSeguro {
 			Map datosLeidos = new HashMap();
 
 			int idConvenio = 0;
+			 
 			// DESCARTO LA PRIMERA FILA (CON LOS NOMBES DE LAS COLUMNAS)
 			for (int i=1; i<datosArchivo.size(); i++){
 				String[] campos = (String []) datosArchivo.get(i);
 				
 				ValconDTO valcon = new ValconDTO();
-				
+				String codPrestacion="";
+				codPrestacion=campos[1];
 				valcon.setIdConvenio(Integer.parseInt(campos[0]));
 				valcon.setCodigoPrestacion(Integer.parseInt(campos[1]));
 				valcon.setValorCovenido(new Float(campos[2]).longValue());
 				valcon.setValorLista(new Float(campos[3]).longValue());
-				
+			 	
 				// Por omision, marco todos los valores como NUEVOS, luego el proceso
 				// los deja en NUEVO, MODIFICADO o ELIMINADO
 				// valcon.setEstado(Integer.parseInt(campos[4]));
-				valcon.setEstado(ValconDTO.ESTADO_NUEVO);
-				
+				if (!campos[4].equals("3") ) valcon.setEstado(ValconDTO.ESTADO_NUEVO);
+				if (campos[4].equals("3") ) valcon.setEstado(ValconDTO.ESTADO_ELIMINADO);
 				// resultado.add(valcon);
-				datosLeidos.put(new Integer(valcon.getCodigoPrestacion()), valcon);
+				
+                if (!prestadoresDao.ExistePrestacion(codPrestacion)) valcon.setEstado(ValconDTO.ESTADO_PRESTACIONINVALIDA);
+				
+                datosLeidos.put(new Integer(valcon.getCodigoPrestacion()), valcon);
 				
 				// conservo el idConvenio
 				idConvenio = valcon.getIdConvenio();
@@ -221,13 +229,17 @@ public class ConvenioServlet extends ServletSeguro {
 				  
 					ValconDTO valconArchivo = (ValconDTO) datosLeidos.get(new Integer(codigoPrestacion));
 					
-					if (valconArchivo.getValorCovenido() == 0){
+					if (valconArchivo.getValorCovenido() == 0  ){
 						valcon.setEstado(ValconDTO.ESTADO_ELIMINADO);
 						datosLeidos.put(new Integer(codigoPrestacion), valcon);						
 					} else {
+						
 						// Finalmente, veo si (precioNuevo - precioActual) <> 0 ==> modificado
 						if (valconArchivo.getValorCovenido() - valcon.getValorCovenido() != 0){
-							valconArchivo.setEstado(ValconDTO.ESTADO_MODIFICADO);
+							
+							if (valconArchivo.getEstado()!= 3 & codigoPrestacion != 7677777 & codigoPrestacion != 7777777 & codigoPrestacion !=8788888 & codigoPrestacion !=8888888) //llatin
+							    valconArchivo.setEstado(ValconDTO.ESTADO_MODIFICADO);
+							
 							datosLeidos.put(new Integer(codigoPrestacion), valconArchivo);
 						}
 					}
@@ -299,9 +311,10 @@ public class ConvenioServlet extends ServletSeguro {
 		List listaValcon = conveniosDao.getValcon(paramsValcon, uw);
 		
 		request.setAttribute("resultado", listaValcon);
-		
+		String nombrePlanilla = "convenios"+id+".xls";
 	    response.setContentType("application/vnd.ms-excel");
-	    response.setHeader("Content-Disposition", "attachment; filename=\"convenios_" + id + ".xls\"");
+	  //  response.setHeader("Content-Disposition", "attachment; filename=\"convenios_" + id + ".xls\"");
+	    response.setHeader("Content-Disposition", "attachment; filename="+nombrePlanilla);
 
 	    redirigir(request, response, "detalleConveniosExcel.jsp");
 	}

@@ -35,6 +35,7 @@ public interface IPrestadoresDao {
 	
 	public abstract boolean prestadorEsPagoDirecto(String rutPrestador);
 	public abstract boolean EsCirugia(String codigoPrestacion);
+	public abstract boolean ExistePrestacion(String codigoPrestacion);
 	public abstract boolean prestadorEsPagoEnAgencia(String rutPrestador);
 	
 	public abstract boolean prestadorEsArancelDiferenciado(int rutPrestador);

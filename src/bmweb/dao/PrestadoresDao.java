@@ -1129,7 +1129,7 @@ public class PrestadoresDao implements IPrestadoresDao {
         else return false;
 
        }
-       
+        
        public boolean EsCirugia(String codigoPrestacion){
         JdbcTemplate t = new JdbcTemplate(dataSource);
         String query = "select count(*) from KEYWORD_DET where key_sist = 'BENMED' and key_word='CIRUJ' and key_id = "+ codigoPrestacion;
@@ -1138,6 +1138,16 @@ public class PrestadoresDao implements IPrestadoresDao {
         if (1 == t.queryForInt(query)) return true;
         else return false;
 
+       }
+
+       public boolean ExistePrestacion(String codigoPrestacion){
+       	UsuarioWeb q= new UsuarioWeb("luis");
+        JdbcTemplate t = new JdbcTemplate(dataSource);
+        String query = "select count(*) from bm_prestacion where pr_codigo = "+ codigoPrestacion;
+        QueryLogger.log(q,query);	   
+        // Si la query encuentra la prestacion
+        if (0 == t.queryForInt(query)) return false;
+        else return true;
        }
        
        public boolean prestadorEsArancelDiferenciado(int rutPrestador){

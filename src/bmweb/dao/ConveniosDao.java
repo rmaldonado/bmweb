@@ -124,7 +124,9 @@ public class ConveniosDao implements IConveniosDao {
 						new Integer(ConvenioDTO.CONVENIO_NUEVO)
 						});
 
-			} else {
+			} 
+			
+		//	else {
 
 				// Recupero el cv_codigo del nuevo convenio (existente o recien creado)
 				int cv_codigo = template.queryForInt("" +
@@ -135,11 +137,11 @@ public class ConveniosDao implements IConveniosDao {
 				
 				cvCodigo = new Integer(cv_codigo);
 
-				// Borro la Ãºltima versiÃ³n de los valores asociados al convenio antes
+				// Borro la última versión de los valores asociados al convenio antes
 				// de insertar la lista de nuevos valores
 				
 				template.update("delete bm_valcon where cv_codigo = ?", new Object[]{ cvCodigo });
-			}
+		//	}
 			
 			// Inserto en bm_valcon toda la lista de convenios
 			
@@ -169,7 +171,7 @@ public class ConveniosDao implements IConveniosDao {
 			return cvCodigo.intValue();
 			
 		} catch (Exception e) {
-			throw new Exception("No se pudieron guardar los valores del convenio, intente nuevamente mÃ¡s tarde");
+			throw new Exception("No se pudieron guardar los valores del convenio, intente nuevamente más tarde");
 		}
 		
 
@@ -373,7 +375,7 @@ public class ConveniosDao implements IConveniosDao {
 				} catch (Exception e){ }
 			}
 
-			// Filtro del convenio mÃ¡s reciente por prestador de beneficios
+			// Filtro del convenio más reciente por prestador de beneficios
 			// por omision o opTipoConvenio == "recientes"
 			if (!params.containsKey("tipoConvenios")
 				|| ( params.containsKey("tipoConvenios")
@@ -387,7 +389,7 @@ public class ConveniosDao implements IConveniosDao {
 			if ("modificados".equals((String)params.get("tipoConvenios"))){ listaWhere.add("dom_estcvn = " + ConvenioDTO.CONVENIO_MODIFICADO); }
 			if ("eliminados".equals((String)params.get("tipoConvenios"))){ listaWhere.add("dom_estcvn = " + ConvenioDTO.CONVENIO_ELIMINADO); }
 
-			query = query + QueryUtil.getWhere(listaWhere) + " order by cv_codigo asc";
+			query = query + QueryUtil.getWhere(listaWhere) + " order by cv_codigo desc";
 			
 			QueryLogger.log(uw, query);
 			setSql(query);
