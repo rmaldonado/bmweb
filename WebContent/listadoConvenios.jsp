@@ -53,7 +53,7 @@
   if (request.getParameter("tipoConvenios") != null) { tipoConvenios = request.getParameter("tipoConvenios"); }
 
   // coloco el titulo de la pagina
-  request.setAttribute("titulo", "Administración de Convenios");
+  request.setAttribute("titulo", "Administraci?n de Convenios");
   
   Map estadosConvenio = new HashMap();
   estadosConvenio.put(new Integer(0), "Convenio vigente");
@@ -67,7 +67,7 @@
 
 <div>
 
-	<h1>Administración de Convenios</h1>
+	<h1>Administraci?n de Convenios</h1>
 
 	<table class="tabla-borde-delgado" id="filtro-min" style="<%= (mostrarFiltros)? "display:none":"" %>">
 		<tr class="encabezados-tabla">
@@ -128,10 +128,10 @@
 			<td>Tipo de Convenios</td>
 			<td style="text-align:left">
 				<select name="tipoConvenios" onChange="mostrarId()">
-				<option value="vigentes" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>Sólo Vigentes</option>
-				<option value="nuevos" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>Sólo Nuevos</option>
-				<option value="modificados" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>Sólo Modificados</option>
-				<option value="eliminados" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>Sólo Eliminados</option>
+				<option value="vigentes" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>S?lo Vigentes</option>
+				<option value="nuevos" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>S?lo Nuevos</option>
+				<option value="modificados" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>S?lo Modificados</option>
+				<option value="eliminados" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>S?lo Eliminados</option>
 				<option value="todos" <%= "todos".equals(tipoConvenios)?"selected":"" %>>Mostrar todos</option>
 				</select>
 			</td>
@@ -148,7 +148,7 @@
 			<td>C&oacute;digo Prestador</td>
 			<td>Nombre del Convenio</td>
 			<td>Inicio</td>
-			<td>Término</td>
+			<td>T?rmino</td>
 			<td>Estado</td>
 			<td></td>
 		</tr>
@@ -299,7 +299,7 @@
 	  	
 	  }
 
-	  // En esta pÃ¡gina, si viene la cookie "update", simplemente se consume la cookie
+	  // En esta página, si viene la cookie "update", simplemente se consume la cookie
 	  // Si no se encuentra la cookie "update", se fuerza un refresco de la pagina
 	  // if (!GetCookie('update')){ document.formulario.submit(); } else { DeleteCookie('update'); }
 

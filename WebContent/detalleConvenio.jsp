@@ -87,11 +87,11 @@
   
   Map estadosValcon = new HashMap();
   estadosValcon.put(new Integer(0), " ");
-  estadosValcon.put(new Integer(ValconDTO.ESTADO_NUEVO), "Nuevo convenio");
-  estadosValcon.put(new Integer(ValconDTO.ESTADO_MODIFICADO), "Convenio Modificado");
-  estadosValcon.put(new Integer(ValconDTO.ESTADO_ELIMINADO), "Convenio Eliminado");
-  estadosValcon.put(new Integer(ValconDTO.ESTADO_RECHAZADO), "Convenio Rechazado");
-  
+  estadosValcon.put(new Integer(ValconDTO.ESTADO_NUEVO), "Nueva Prestacion");
+  estadosValcon.put(new Integer(ValconDTO.ESTADO_MODIFICADO), "Prestacion Modificada");
+  estadosValcon.put(new Integer(ValconDTO.ESTADO_ELIMINADO), "Prestacion Eliminada");
+  estadosValcon.put(new Integer(ValconDTO.ESTADO_RECHAZADO), "Prestacion Rechazado");
+  estadosValcon.put(new Integer(ValconDTO.ESTADO_PRESTACIONINVALIDA), "Codigo Prestacion No Existe");
 %>
 <jsp:include page="cabecera.jsp" flush="true"/>
 
