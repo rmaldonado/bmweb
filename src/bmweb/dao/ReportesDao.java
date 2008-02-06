@@ -1,3 +1,4 @@
+
 /*
  * Creado en 24-08-2005 por denis
  *
@@ -220,6 +221,7 @@ public class ReportesDao implements IReportesDao {
 				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e "+tablaKWD
 				+" where b.bo_serial = a.bo_serial "
 				+tipbon
+				+"  and a.dom_estliq in ('00','05','07','99','CI')"
 				+"  and c.pr_codigo = a.pr_codigo "
 				+andpresta;
 			//Por Ciudad
@@ -237,6 +239,7 @@ public class ReportesDao implements IReportesDao {
 				 +" bm_preben f, keyword_det k "+tablaKWD
 				 +" where b.bo_serial = a.bo_serial "
 				 +tipbon
+			  	 +"  and a.dom_estliq in ('00','05','07','99','CI')"
 				 +" and c.pr_codigo = a.pr_codigo "
 				 +andpresta
 				 +" and key_sist='BENMED' and key_word ='CIUDAD' "
@@ -258,6 +261,7 @@ public class ReportesDao implements IReportesDao {
 				+" bm_preben f, keyword_det k "+tablaKWD
 				+" where b.bo_serial = a.bo_serial "
 				+tipbon
+				+"  and a.dom_estliq in ('00','05','07','99','CI')"
 				+"  and c.pr_codigo = a.pr_codigo "
 				+andpresta
 				+"  and key_sist='BENMED' and key_word ='REGION' "
@@ -276,14 +280,16 @@ public class ReportesDao implements IReportesDao {
 				+" sexo, "
 				+" count(b.bo_serial) subtotal, sum(a.vc_valor) subvalor "
 				+" from bm_bonite a, bm_bono b, bm_prestacion c, rolbene d, beneficiario e, "
-				+" bm_habilitado f, keyword_det k "+tablaKWD
+				+" bm_preben f, keyword_det k, keyword_det l "
 				+" where b.bo_serial = a.bo_serial "
 				+tipbon
+				+"  and a.dom_estliq in ('00','05','07','99','CI')"
 				+" and c.pr_codigo = a.pr_codigo "
 				+andpresta
-			    +" and key_sist='BENMED' and key_word ='JURISD' "
-				+" and f.ha_codigo = b.ha_codigo and k.key_id = f.ha_jurisd "
-				+" and f.ha_jurisd = " + params.get("dom_jurisdiccion") + " ";
+			    +" and k.key_sist='BENMED' and k.key_word ='JURISD' "
+				+" and k.key_id = l.key_descr and f.pb_rut = b.pb_rut  "
+				+" and f.dom_region = l.key_id and l.key_sist='BENMED' and l.key_word='JURREG'"
+				+" and k.key_id = " + params.get("dom_jurisdiccion") + " ";
 			}
 		    //Por Agencia
 			if ("A".equals((String)params.get("CJRA")))
@@ -300,6 +306,7 @@ public class ReportesDao implements IReportesDao {
 				+" bm_habilitado f, keyword_det k "+tablaKWD
 				+" where b.bo_serial = a.bo_serial "
 				+tipbon
+				+"  and a.dom_estliq in ('00','05','07','99','CI')"
 				+"  and c.pr_codigo = a.pr_codigo "
 				+andpresta
                 +"  and key_sist='BENMED' and key_word ='AGENCIA' " 
