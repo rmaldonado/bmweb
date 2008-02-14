@@ -18,6 +18,7 @@ public class ValconDTO implements Serializable, Comparable {
 	public static int ESTADO_MODIFICADO = 2;
 	public static int ESTADO_ELIMINADO = 3;
 	public static int ESTADO_RECHAZADO = 4;
+	public static int ESTADO_PRESTACIONINVALIDA = 5;
 	
 	private int idConvenio;
 	private int codigoPrestacion;
