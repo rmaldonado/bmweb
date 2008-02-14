@@ -54,6 +54,14 @@
     <servlet>
 	    <servlet-name>LoginServlet</servlet-name>
 	    <servlet-class>bmweb.servlets.LoginServlet</servlet-class>
+	    
+	    <init-param>
+	    	<!-- lista separada por comas de las direcciones IP de las maquinas -->
+	    	<!-- desde las que se puede entrar a la aplicacion                  -->
+			<param-name>direccionesAutorizadas</param-name>
+			<param-value>127.0.0.1,llatin,dipreca.cl,172.16.1.13,172.16.2.110</param-value>
+		</init-param>
+	    
 	</servlet>
 
     <servlet>
