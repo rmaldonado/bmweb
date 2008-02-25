@@ -1,7 +1,9 @@
 package bmweb.servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -42,7 +44,7 @@ public class LoginServlet extends HttpServlet {
 	private ICiudadDao ciudadDao;
 	private IPrestadoresDao prestadoresDao;
 
-	private String direccionesAutorizadas = null;
+	private String[] direccionesValidas;
 
 	private int _codigoSantiago = -100;
 
@@ -50,18 +52,22 @@ public class LoginServlet extends HttpServlet {
 		super.init();
 		appCtx = DBServlet.getApplicationContext();
 		permisosDao = (IPermisosDao) appCtx.getBean("permisosDao");
-		beneficiariosDao = (IBeneficiariosDao) appCtx
-				.getBean("beneficiariosDao");
+		beneficiariosDao = (IBeneficiariosDao) appCtx.getBean("beneficiariosDao");
 		habilitadoDao = (IHabilitadoDao) appCtx.getBean("habilitadoDao");
 		ciudadDao = (ICiudadDao) appCtx.getBean("ciudadDao");
 		prestadoresDao = (IPrestadoresDao) appCtx.getBean("prestadoresDao");
 
 		try {
-			// ojo, agregar una coma al final
-			direccionesAutorizadas = getInitParameter("direccionesAutorizadas")
-					+ ",";
+			StringTokenizer tok = new StringTokenizer(getInitParameter("direccionesAutorizadas"), ",");
+			List listaDirecciones = new ArrayList();
+			while (tok.hasMoreTokens()){ listaDirecciones.add(tok.nextToken()); }
+			direccionesValidas = new String[listaDirecciones.size()];
+			for (int i=0; i<listaDirecciones.size();i++){
+				direccionesValidas[i] = (String) listaDirecciones.get(i);
+			}
+			
 		} catch (Exception e) {
-			direccionesAutorizadas = "127.0.0.1,"; // ojo, va con coma al final
+			direccionesValidas = new String[]{"127.0.0.1"};
 			e.printStackTrace();
 		}
 
@@ -86,8 +92,7 @@ public class LoginServlet extends HttpServlet {
 			String rutUsuario = usuario.substring(0, usuario.length() - 2);
 			String nivelUsuario = usuario.substring(usuario.length() - 2);
 
-			UsuarioWeb usuarioWeb = permisosDao.getUsuarioWeb(rutUsuario,
-					nivelUsuario);
+			UsuarioWeb usuarioWeb = permisosDao.getUsuarioWeb(rutUsuario, nivelUsuario);
 
 			// TODO Habilitar tabla con usuarios y passwords para uso interno
 			// Usuario y password para 'admin'
@@ -104,23 +109,19 @@ public class LoginServlet extends HttpServlet {
 			// String[]{"llatin","127.0.0.1","dipreca.cl","172.16.1.13","172.16.2.110"
 			// };
 
-			String referer = "," + request.getHeader("Referer") + ",";
+			String referer = request.getHeader("Referer");
 			boolean vieneDireccionValida = false;
 			// si el referer es null, no permito que pase
 			if (referer == null) {
 				usuarioWeb = null;
 			} else {
 
-				// Si la lista de direcciones validas contiene al referer
-				if (direccionesAutorizadas.indexOf(referer) > -1) {
-					vieneDireccionValida = true;
-				}
-				/*
-				 * for (int i=0; i<direccionesValidas.length; i++){ if
-				 * (referer.indexOf(direccionesValidas[i]) > -1){
-				 * vieneDireccionValida = true; break; } }
-				 */
-
+				 for (int i=0; i<direccionesValidas.length; i++){ 
+					 if (referer.indexOf(direccionesValidas[i]) > -1){
+						 vieneDireccionValida = true;
+						 break;
+					 }
+				 }
 			}
 
 			// Si no viene de una direccion autorizada, no lo dejo pasar
@@ -145,21 +146,16 @@ public class LoginServlet extends HttpServlet {
 				if ("00,01".indexOf(nivelUsuario) > -1) {
 
 					// Completo los datos personales
-					BeneficiarioDTO ben = beneficiariosDao.leeBeneficiario(
-							Integer.parseInt(rutUsuario), usuarioWeb);
-					usuarioWeb.setNombreCompleto(ben.getNombre() + " "
-							+ ben.getPat() + " " + ben.getMat());
+					BeneficiarioDTO ben = beneficiariosDao.leeBeneficiario(Integer.parseInt(rutUsuario), usuarioWeb);
+					usuarioWeb.setNombreCompleto(ben.getNombre() + " " + ben.getPat() + " " + ben.getMat());
 
 					// Recupero el CMC para restringir los bonos que puede
 					// obtener
-					RolbeneDTO rolbene = beneficiariosDao.leeRolbenePorRut(
-							Integer.parseInt(rutUsuario), usuarioWeb);
-					String CMC = TextUtil.formarCMC(rolbene.getRepart(),
-							rolbene.getImpo(), rolbene.getCorrel());
+					RolbeneDTO rolbene = beneficiariosDao.leeRolbenePorRut(Integer.parseInt(rutUsuario), usuarioWeb);
+					String CMC = TextUtil.formarCMC(rolbene.getRepart(), rolbene.getImpo(), rolbene.getCorrel());
 					usuarioWeb.setCMC(CMC);
 
-					// Nungun imponente se puede sacar bonos en Santiago --
-					// 2006.03.31
+					// Nungun imponente se puede sacar bonos en Santiago -- 2006.03.31
 					usuarioWeb.setPuedeHacerBonosSantiago(false);
 				}
 
@@ -168,17 +164,13 @@ public class LoginServlet extends HttpServlet {
 
 					UsuarioWeb uwTemp = new UsuarioWeb(rutUsuario);
 					uwTemp.setNombreUsuario(rutUsuario);
-					HabilitadoDTO h = habilitadoDao.getHabilitadoPorCodigo(
-							Integer.parseInt(rutUsuario), uwTemp);
+					HabilitadoDTO h = habilitadoDao.getHabilitadoPorCodigo(Integer.parseInt(rutUsuario), uwTemp);
 
 					// Si el habilitado no esta activo, no puede entrar a la
 					// aplicacion - 2006.04.21
 					if (h.getActivo().equals("N")) {
-						response
-								.addCookie(new Cookie("mensaje",
-										"Error: Usuario deshabilitado. No ha ingresado al sistema."));
-						RequestDispatcher rd = request
-								.getRequestDispatcher("index.jsp");
+						response.addCookie(new Cookie("mensaje", "Error: Usuario deshabilitado. No ha ingresado al sistema."));
+						RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
 						rd.forward(request, response);
 						return;
 					}
@@ -202,42 +194,33 @@ public class LoginServlet extends HttpServlet {
 					UsuarioWeb uwTemp = new UsuarioWeb(rutUsuario);
 					uwTemp.setNombreUsuario(rutUsuario);
 
-					PrestadorDTO p = prestadoresDao.prestadorPorRutAux(
-							rutUsuario, uwTemp);
+					PrestadorDTO p = prestadoresDao.prestadorPorRutAux(rutUsuario, uwTemp);
 					usuarioWeb.setNombreCompleto(p.getRazonSocial());
 					usuarioWeb.setPuedeHacerBonosSantiago(false); // 2006.03.31
 				}
 
 				HttpSession sesion = request.getSession(true);
-				sesion
-						.setAttribute(UsuarioWeb.ATRIBUTO_USUARIO_WEB,
-								usuarioWeb);
+				sesion.setAttribute(UsuarioWeb.ATRIBUTO_USUARIO_WEB, usuarioWeb);
 
 				// Redirijo a una página que me lleva al menu de inicio de la
 				// aplicacion, para usuarios validos
-				RequestDispatcher rd = request
-						.getRequestDispatcher("irInicio.jsp");
+				RequestDispatcher rd = request.getRequestDispatcher("irInicio.jsp");
 				rd.forward(request, response);
 
 			} else {
 
 				// Anulo la sesion si hay un error de login
-				request.getSession().removeAttribute(
-						UsuarioWeb.ATRIBUTO_USUARIO_WEB);
+				request.getSession().removeAttribute(UsuarioWeb.ATRIBUTO_USUARIO_WEB);
 				request.getSession().invalidate();
 
 				response.setCharacterEncoding("ISO-8859-1");
-				response
-						.addCookie(new Cookie("mensaje",
-								"Error: Usuario o Contrasena incorrectos. No ha ingresado al sistema."));
-				RequestDispatcher rd = request
-						.getRequestDispatcher("index.jsp");
+				response.addCookie(new Cookie("mensaje", "Error: Usuario o Contrasena incorrectos. No ha ingresado al sistema."));
+				RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
 				rd.forward(request, response);
 
 			}
 		} catch (Exception ex) {
-			response.addCookie(new Cookie("mensaje",
-					"Error: No ha ingresado al sistema."));
+			response.addCookie(new Cookie("mensaje", "Error: No ha ingresado al sistema."));
 			RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
 			rd.forward(request, response);
 		}
@@ -245,8 +228,9 @@ public class LoginServlet extends HttpServlet {
 
 	private int getCodigoSantiago() {
 
-		if (_codigoSantiago > -1)
+		if (_codigoSantiago > -1) {
 			return _codigoSantiago;
+		}
 
 		List listaCiudades = ciudadDao.lista();
 
