@@ -46,6 +46,7 @@ public class ConveniosDao implements IConveniosDao {
 		 "valorCovenido", "vc_valor",
 		 "valorLista", "vc_lispre",
 		 "estado", "dom_estvlc",
+		 "valorFonasa", "vf_valor",
 	};
 
 	private DataSource dataSource;
@@ -292,16 +293,28 @@ public class ConveniosDao implements IConveniosDao {
 
 			ArrayList listaWhere = new ArrayList();
 			
-			String query = "select first " + (inicio+maxResults) + " * from bm_valcon ";
-			
+			//String query = "select first " + (inicio+maxResults) + " * from bm_valcon ";
+			  String query = "select b.*,a.vf_valor from bm_valfon a, bm_valcon b ";
+			  Integer id = new Integer((String)params.get("id"));
 			if (params.containsKey("id")){
-				Integer id = new Integer((String)params.get("id"));
-				try { listaWhere.add("cv_codigo = " + id); } 
+				//Integer id = new Integer((String)params.get("id"));
+				//try { listaWhere.add("cv_codigo = " + id); }
+				try { listaWhere.add("b.cv_codigo = " + id); }
 				catch (Exception ex){  }
 			}
-
-			query = query + QueryUtil.getWhere(listaWhere) + " order by cv_codigo, pr_codigo asc";
-			
+            listaWhere.add("a.pr_codigo=b.pr_codigo");
+            listaWhere.add("a.af_codigo in ( select max(af_codigo) from bm_valfon)");
+            listaWhere.add("a.nf_nivel= 1");
+			//query = query + QueryUtil.getWhere(listaWhere) + " order by cv_codigo, pr_codigo asc";
+            query = query + QueryUtil.getWhere(listaWhere);
+            query = query +" union all ";
+            query = query +"select b.*,0 from bm_valcon b "
+			              +"where cv_codigo= "+ id
+						  +"and pr_codigo not in "
+						  +"(select pr_codigo from bm_valfon where af_codigo in "
+						  +"(select max(af_codigo) from bm_valfon))"
+						  +" order by 1,2 ";
+            
 			QueryLogger.log(uw, query);
 			setSql(query);
 			compile();
