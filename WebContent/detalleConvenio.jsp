@@ -362,9 +362,9 @@
 		    String mensajeValorConvenido = "";
 		    
 		    // El texto va a decir "Valor no existía" o "+10%" o "-15%"
-		    if ((0 == valcon.getValorCovenido()) && (valcon.getValorFonasa() != 0)) {
+		    if ((valcon.getValorCovenido() == 0) || (valcon.getValorFonasa() == 0)) {
 		      mensajeValorConvenido = "Valor no existía";
-		    } else {
+		    } else {		    	
 		    	float variacionValor = ((100 * (valcon.getValorCovenido()-valcon.getValorFonasa())))/valcon.getValorFonasa();
 		    	if (variacionValor > 0) { mensajeValorConvenido = "+"; }
 		    	
