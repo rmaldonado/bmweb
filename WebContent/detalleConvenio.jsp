@@ -346,6 +346,7 @@
 			<td>Valor Convenido</td>
 			<td>Valor Lista</td>
 			<td>Estado</td>
+			<td>%Fonasa Nivel Uno</td>
 			<td colspan="2"></td>
 		</tr>
 	
@@ -358,6 +359,17 @@
 		    String clase= (numFila%2 == 0)? "fila-detalle-par":"fila-detalle-impar";
 		    numFila++;
 		    
+		    String mensajeValorConvenido = "";
+		    
+		    // El texto va a decir "Valor no existía" o "+10%" o "-15%"
+		    if ((0 == valcon.getValorCovenido()) && (valcon.getValorFonasa() != 0)) {
+		      mensajeValorConvenido = "Valor no existía";
+		    } else {
+		    	float variacionValor = ((100 * (valcon.getValorCovenido()-valcon.getValorFonasa())))/valcon.getValorFonasa();
+		    	if (variacionValor > 0) { mensajeValorConvenido = "+"; }
+		    	
+		    	mensajeValorConvenido = mensajeValorConvenido + ((int)variacionValor) + "%";
+		    }
 		    
 %>
 
@@ -366,6 +378,7 @@
 			<td><%= valcon.getValorCovenido() %></td>
 			<td><%= valcon.getValorLista() %></td>
 			<td><%= estadosValcon.get(new Integer(valcon.getEstado())) %></td>
+            <td><%= mensajeValorConvenido %></td>
 			<td>
 			<% if (esEditable) { %>
 			    <a href="javascript:rechazarConvenio(<%= convenio.getCodigo() %>, <%= valcon.getCodigoPrestacion() %>)">Rechazar convenio</a>

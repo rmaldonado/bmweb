@@ -18,14 +18,15 @@ public class ValconDTO implements Serializable, Comparable {
 	public static int ESTADO_MODIFICADO = 2;
 	public static int ESTADO_ELIMINADO = 3;
 	public static int ESTADO_RECHAZADO = 4;
-	public static int ESTADO_PRESTACIONINVALIDA = 5;
-	
+	public static int ESTADO_PRESTACIONINVALIDA = 0;
+
 	private int idConvenio;
 	private int codigoPrestacion;
 	private long valorCovenido;
 	private long valorLista;
-	private int estado;
-	
+	private int estado; 
+//llr    
+	private long valorFonasa;	
 	public ValconDTO(){ }
 	
 	public int compareTo(Object o) {
@@ -36,6 +37,7 @@ public class ValconDTO implements Serializable, Comparable {
 			return -1;
 		}
 	}
+	
 	
 	public int getIdConvenio() {
 		return idConvenio;
@@ -83,7 +85,20 @@ public class ValconDTO implements Serializable, Comparable {
 	public void setEstado(Short estado) {
 		this.estado = estado.intValue();
 	}
-	
+//llr
+	public float getValorFonasa() {
+		return valorFonasa;
+	}
+	public void setValorFonasa(long valorFonasa) {
+		this.valorFonasa = valorFonasa;
+	}
+	public void setValorFonasa(BigDecimal valorFonasa) {
+		this.valorFonasa = valorFonasa.longValue();
+	}
+
+	public void setValorFonasa(Integer valorFonasa) {
+		this.valorFonasa = valorFonasa.longValue();
+	}
 	
 	
 }
