@@ -46,14 +46,17 @@
   String opcodigo = "";  
   if (request.getParameter("opcodigo") != null) { opcodigo = request.getParameter("opcodigo"); }
 
-  String ide = "";  
-  if (request.getParameter("id") != null) { ide = request.getParameter("id"); }
+  String ide = "";
+  if (request.getParameter("ide") != null) { ide = request.getParameter("ide"); }
+
+  String id = "";
+  if (request.getParameter("id") != null) { id = request.getParameter("id"); }
 
   String tipoConvenios = "";  
   if (request.getParameter("tipoConvenios") != null) { tipoConvenios = request.getParameter("tipoConvenios"); }
 
   // coloco el titulo de la pagina
-  request.setAttribute("titulo", "Administraci?n de Convenios");
+  request.setAttribute("titulo", "Administraci&oacute;n de Convenios");
   
   Map estadosConvenio = new HashMap();
   estadosConvenio.put(new Integer(0), "Convenio vigente");
@@ -67,7 +70,7 @@
 
 <div>
 
-	<h1>Administraci?n de Convenios</h1>
+	<h1>Administraci&oacute;n de Convenios</h1>
 
 	<table class="tabla-borde-delgado" id="filtro-min" style="<%= (mostrarFiltros)? "display:none":"" %>">
 		<tr class="encabezados-tabla">
@@ -100,7 +103,7 @@
 
 
 		<tr class="fila-detalle-par">
-			<td>Codigo de Prestador</td>
+			<td>C&oacute;digo de Prestador</td>
 			<td style="text-align:left">
 			<%
 			String estiloDivId = "display:none";
@@ -115,7 +118,7 @@
 
 				<!-- filtro rut prestador -->
 				<span id="div-Id" style="<%= estiloDivId %>">
-				<input type="text" name="id" size="12" value="<%= ide %>" onBlur="if(!CampoEsNumeroEnRango(this, 1, 9999999)){document.formulario.ide.selectedIndex=0;mostrarId();}">				
+				<input type="text" name="id" size="12" value="<%= id %>" onBlur="if(!CampoEsNumeroEnRango(this, 1, 9999999)){document.formulario.ide.selectedIndex=0;mostrarId();}">				
 				</span>
 			</td>
 			
@@ -128,10 +131,10 @@
 			<td>Tipo de Convenios</td>
 			<td style="text-align:left">
 				<select name="tipoConvenios" onChange="mostrarId()">
-				<option value="vigentes" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>S?lo Vigentes</option>
-				<option value="nuevos" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>S?lo Nuevos</option>
-				<option value="modificados" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>S?lo Modificados</option>
-				<option value="eliminados" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>S?lo Eliminados</option>
+				<option value="vigentes" <%= "vigentes".equals(tipoConvenios)?"selected":"" %>>S&oacute;lo Vigentes</option>
+				<option value="nuevos" <%= "nuevos".equals(tipoConvenios)?"selected":"" %>>S&oacute;lo Nuevos</option>
+				<option value="modificados" <%= "modificados".equals(tipoConvenios)?"selected":"" %>>S&oacute;lo Modificados</option>
+				<option value="eliminados" <%= "eliminados".equals(tipoConvenios)?"selected":"" %>>S&oacute;lo Eliminados</option>
 				<option value="todos" <%= "todos".equals(tipoConvenios)?"selected":"" %>>Mostrar todos</option>
 				</select>
 			</td>
@@ -148,7 +151,7 @@
 			<td>C&oacute;digo Prestador</td>
 			<td>Nombre del Convenio</td>
 			<td>Inicio</td>
-			<td>T?rmino</td>
+			<td>T&eacute;rmino</td>
 			<td>Estado</td>
 			<td></td>
 		</tr>

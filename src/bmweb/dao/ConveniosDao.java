@@ -295,8 +295,9 @@ public class ConveniosDao implements IConveniosDao {
 			
 			//String query = "select first " + (inicio+maxResults) + " * from bm_valcon ";
 			  String query = "select b.*,a.vf_valor from bm_valfon a, bm_valcon b ";
-			  Integer id = new Integer((String)params.get("id"));
-			if (params.containsKey("id")){
+			  Integer id = new Integer((String)params.get("id")); // codigo de prestador
+			  String ide = (String) params.get("ide"); // usar filtro por Codigo de Prestador?
+			if (params.containsKey("id") && "si".equals(ide)){
 				//Integer id = new Integer((String)params.get("id"));
 				//try { listaWhere.add("cv_codigo = " + id); }
 				try { listaWhere.add("b.cv_codigo = " + id); }
@@ -373,7 +374,8 @@ public class ConveniosDao implements IConveniosDao {
 
 			*/
 
-			if (params.containsKey("id")){
+			String ide = (String) params.get("ide");
+			if (params.containsKey("id") && "si".equals(ide)){
 				Integer id = new Integer((String)params.get("id"));
 				try { listaWhere.add("cv_codigo = " + id); } 
 				catch (Exception ex){  }
