@@ -167,6 +167,7 @@
 	
 	function quitarBono(serial, bono){
 	 	if (confirm('Confirme que desea quitar el bono web #' + bono + " de esta factura")){
+			document.formQuitar.serialBono.value = serial;
 			document.formQuitar.folioBono.value = bono;
 			document.formQuitar.submit();
 	 	}
@@ -203,11 +204,12 @@
 			Folio de Bono Web: 
 
 			<!-- input type="text" size="8" name="folioBono" -->
+			<!-- fila[0]: bo_folio, fila[1]:bo_serial -->
 			<select name="folioBono" multiple size="8">
 			<% for (int i=0; listaBonosSinFacturar != null && i < listaBonosSinFacturar.size(); i++) { 
 				String[] fila = (String[]) listaBonosSinFacturar.get(i);
 			%>
-			<option value="<%= fila[0] %>"><%= fila[0] %></option>
+			<option value="<%= fila[1] %>"><%= fila[0] %></option>
 			<% } %>
 			</select>
 
@@ -258,6 +260,7 @@
 	  <input type="hidden" name="factura" value="<%= request.getParameter("factura") %>">
 	  <input type="hidden" name="accion" value="quitarBono">
 	  <input type="hidden" name="folioBono" value="">
+	  <input type="hidden" name="serialBono" value="">
 	</form>
 
 	

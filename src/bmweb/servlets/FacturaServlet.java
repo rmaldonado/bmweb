@@ -267,7 +267,8 @@ public class FacturaServlet extends ServletSeguro {
 	private void agregarBono(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			UsuarioWeb usuarioWeb = getUsuarioWeb(request);
-			String[] foliosBono = request.getParameterValues("folioBono");
+			// String[] foliosBono = request.getParameterValues("folioBono");
+			String[] serialesBono = request.getParameterValues("serialesBono");
 
 			Map params = ParamsUtil.fixParams(request.getParameterMap());
 
@@ -286,14 +287,15 @@ public class FacturaServlet extends ServletSeguro {
 			}
 			
 			int errores = 0;
-			for (int i=0; foliosBono != null && i<foliosBono.length; i++){
+			for (int i=0; serialesBono != null && i<serialesBono.length; i++){
 				
 				//Integer folioBono = new Integer((String)params.get("folioBono"));
-				Integer folioBono = new Integer(foliosBono[i]);
+				Integer serialBono = new Integer(serialesBono[i]);
 
 				documentoPagoDTO = facturaManager.buscarPorNumero(usuarioWeb, numFactura.intValue());
 				
-				BonoDTO bono = bonoDao.bonoWebPorFolio(folioBono.intValue(), usuarioWeb);
+				// BonoDTO bono = bonoDao.bonoWebPorFolio(folioBono.intValue(), usuarioWeb);
+				BonoDTO bono = bonoDao.bonoWebPorSerial(serialBono.intValue(), usuarioWeb);
 				int valorTotal = bonoDao.getValorTotalBono( bono.getId().intValue(),bono.getRutPrestador(), usuarioWeb);
 				bono.setValorTotal(valorTotal);
 
@@ -354,8 +356,9 @@ public class FacturaServlet extends ServletSeguro {
 			Map params = ParamsUtil.fixParams(request.getParameterMap());
 
 			Integer numFactura = new Integer((String)params.get("factura"));
-			Integer folioBono = new Integer((String)params.get("folioBono"));
-			BonoDTO bono = bonoDao.bonoWebPorFolio(folioBono.intValue(), usuarioWeb);
+			// Integer folioBono = new Integer((String)params.get("folioBono"));
+			Integer serialBono = new Integer((String)params.get("serialBono"));
+			BonoDTO bono = bonoDao.bonoWebPorSerial(serialBono.intValue(), usuarioWeb);
 
 			DocumentoPagoDTO documentoPagoDTO;
 			try {
