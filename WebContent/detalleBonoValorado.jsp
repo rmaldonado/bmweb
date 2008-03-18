@@ -152,10 +152,11 @@ if (request.getAttribute("pagoDirecto") != null){
 
 	</table>
 
-	<form name="formulario" action="BonoValoradoPDF.pdf" target="_blank"><input type="hidden" name="folio" value=""></form>	
+	<form name="formulario" action="BonoValoradoPDF.pdf" target="_blank"><input type="hidden" name="id_bono" value=""></form>	
 
     <!-- input type="button" class="button" onClick="document.location='BonoValorado'" value="Crear un nuevo Bono Valorado" -->
-    <input type="button" class="button" onClick="pdf(<%= bono.getFolio() %>)" value="Imprimir Bono">
+    <!--llrinput type="button" class="button" onClick="pdf(<%= bono.getFolio() %>)" value="Imprimir Bono" -->
+    <input type="button" class="button" onClick="pdf(<%= bono.getId() %>)" value="Imprimir Bono">
 
 	<p>
 	<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="_blank"><img src="img/get_adobe_reader.gif" border="0"></a><br>
@@ -168,17 +169,16 @@ if (request.getAttribute("pagoDirecto") != null){
 	
 	  function pdf (idFolio ){
 	    //alert("No implementado");
-	    document.formulario.folio.value = idFolio;
+	    document.formulario.id_bono.value = idFolio;
 	    document.formulario.submit();
 	  }
 
 
 
-	  // En esta p√°gina, si viene la cookie "update", simplemente se consume la cookie
+	  // En esta p·gina, si viene la cookie "update", simplemente se consume la cookie
 	  // Si no se encuentra la cookie "update", se fuerza un refresco de la pagina
 	  if (!GetCookie('update')){ document.formulario.submit(); } else { DeleteCookie('update'); }
 
 	</script>
 
 <jsp:include page="pie.jsp" flush="true"/>
-

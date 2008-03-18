@@ -99,15 +99,17 @@ public class BonoValoradoPDFServlet extends ServletSeguro {
 		try {
 
 			int folio = -1;
-			
+			int id_bono = -1;
 			int total = 0;
 			int totalCargoDipreca = 0;
 			int totalCargoSeguro = 0;
 			int totalCopago = 0;
 
-			
-			folio = Integer.parseInt( (String)params.get("folio") );
-			BonoDTO bono = bonoDao.bonoWebPorFolio( folio, usuarioWeb );
+// Aqui hay que hacer la busqueda del bono pero por el bo_serial //
+			id_bono = Integer.parseInt( (String)params.get("id_bono") );
+			BonoDTO bono = bonoDao.bonoWebPorSerial(id_bono, usuarioWeb);
+			//folio = Integer.parseInt( (String)params.get("folio") );
+			//BonoDTO bono = bonoDao.bonoWebPorFolio( folio, usuarioWeb );
 
 			// si el usuario es de nivel "22" y no es el emisor del bono, no
 			// puede imprimir

@@ -346,7 +346,7 @@
 			<td>Valor Convenido</td>
 			<td>Valor Lista</td>
 			<td>Estado</td>
-			<td>%Fonasa Nivel Uno</td>
+			<td>Fonasa Nivel Uno</td>
 			<td colspan="2"></td>
 		</tr>
 	
@@ -363,7 +363,7 @@
 		    
 		    // El texto va a decir "Valor no existía" o "+10%" o "-15%"
 		    if ((valcon.getValorCovenido() == 0) || (valcon.getValorFonasa() == 0)) {
-		      mensajeValorConvenido = "Valor no existía";
+		      mensajeValorConvenido = "Prestacion no en Fonasa";
 		    } else {		    	
 		    	float variacionValor = ((100 * (valcon.getValorCovenido()-valcon.getValorFonasa())))/valcon.getValorFonasa();
 		    	if (variacionValor > 0) { mensajeValorConvenido = "+"; }
@@ -378,6 +378,7 @@
 			<td><%= valcon.getValorCovenido() %></td>
 			<td><%= valcon.getValorLista() %></td>
 			<td><%= estadosValcon.get(new Integer(valcon.getEstado())) %></td>
+       <!--     <td><%= ((valcon.getValorCovenido()*100)/valcon.getValorFonasa()) %></td> -->
             <td><%= mensajeValorConvenido %></td>
 			<td>
 			<% if (esEditable) { %>

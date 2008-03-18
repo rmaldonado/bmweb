@@ -59,6 +59,9 @@
 
   String folio = "";
   if (request.getParameter("folio") != null) { folio = request.getParameter("folio"); }
+
+ // String id_bono = "";
+ // if (request.getParameter("id_bono") != null) { id_bono = request.getParameter("id_bono"); }
   
   String opfecha = "";
   if (request.getParameter("opfecha") != null) { opfecha = request.getParameter("opfecha"); }
@@ -368,15 +371,15 @@ if (!"listadoSoloFiltro".equals(request.getAttribute("listadoSoloFiltro"))){
 		    try { fechaEmision = sdf.format( b.getFechaEmision() ); } catch (Exception ex){ }
 %>
 		<tr class="<%=clase%>">
-			<td><a href="BonoValorado?accion=detalle&folio=<%= b.getFolio() %>" title="Ver detalle"><%= b.getFolio() %></a></td>
+			<td><a href="BonoValorado?accion=detalle&id_bono=<%= b.getId() %>" title="Ver detalle"><%= b.getFolio() %></a></td> 
 			<td><%= fechaEmision %></td>
 			<td><%= tipoBono %></td>
 			<td><%= b.getCarneBeneficiario() %></td>
 			<td><%= b.getCodigoHabilitado() %></td>
 
-			<td><a href="BonoValorado?accion=detalle&folio=<%= b.getFolio() %>">Ver Detalle</a></td>
-			<td><a href="BonoValoradoPDF.pdf?folio=<%= b.getFolio() %>" target="_blank">Ver Archivo PDF</a></td>
-			<td><a href="javascript:anular(<%= b.getFolio() %>)">Anular Bono</a></td>
+			<td><a href="BonoValorado?accion=detalle&id_bono=<%= b.getId() %>">Ver Detalle</a></td>
+			<td><a href="BonoValoradoPDF.pdf?id_bono=<%= b.getId() %>" target="_blank">Ver Archivo PDF</a></td>
+			<td><a href="javascript:anular(<%= b.getId() %>,<%= b.getFolio() %>)">Anular Bono</a></td>
 			<td><!-- a href="javascript:eliminar(<%= b.getFolio() %>, '<%= b.getFolio() %>')" title="Eliminar Registro">Eliminar</a--> </td>
 		</tr>
 		
@@ -434,9 +437,9 @@ if (!"listadoSoloFiltro".equals(request.getAttribute("listadoSoloFiltro"))){
 	
 
 	<script language="javascript">
-	  function anular(folio){
+	  function anular(idbono,folio){
 	    if (confirm("Confirme que desea anular el siguiente bono: ''" + folio + "'' ")){
-	       document.location = "BonoValorado?accion=anular&folio=" + folio;
+	       document.location = "BonoValorado?accion=anular&id_bono=" + idbono;
 	    }
 	  }
 	  
@@ -525,11 +528,10 @@ if (!"listadoSoloFiltro".equals(request.getAttribute("listadoSoloFiltro"))){
 	    }
 	  }
 
-	  // En esta p√°gina, si viene la cookie "update", simplemente se consume la cookie
+	  // En esta p·gina, si viene la cookie "update", simplemente se consume la cookie
 	  // Si no se encuentra la cookie "update", se fuerza un refresco de la pagina
 	  if (!GetCookie('update')){ document.formulario.submit(); } else { DeleteCookie('update'); }
 
 	</script>
 
 <jsp:include page="pie.jsp" flush="true"/>
-

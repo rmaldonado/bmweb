@@ -627,9 +627,15 @@ public class BonoValoradoServlet extends ServletSeguro {
 			Map params = ParamsUtil.fixParams(request.getParameterMap());
 
 			int numeroFolio = -1;
+			int id_bono = -1;
 			try { numeroFolio = Integer.parseInt((String)params.get("folio")); } catch (Exception e) { }
 			try { numeroFolio = Integer.parseInt((String)request.getAttribute("folio")); } catch (Exception e) { }
-			BonoDTO bono = bonoDao.bonoWebPorFolio( numeroFolio, usuarioWeb );
+			//BonoDTO bono = bonoDao.bonoWebPorFolio( numeroFolio, usuarioWeb );
+			try { id_bono = Integer.parseInt((String)params.get("id_bono")); } catch (Exception e) { }
+			try { id_bono = Integer.parseInt((String)request.getAttribute("id_bono")); } catch (Exception e) { }
+			BonoDTO bono = bonoDao.bonoWebPorSerial(id_bono, usuarioWeb);
+			
+
 			List datosDetalle = bonoDao.getDetalleBonoValoradoWeb(bono.getId().intValue(), usuarioWeb); // El detalle de las prestaciones del bono
 
 			HabilitadoDTO habilitado = habilitadoDao.getHabilitadoPorCodigo( bono.getCodigoHabilitado().intValue(), usuarioWeb );

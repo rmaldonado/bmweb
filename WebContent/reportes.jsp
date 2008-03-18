@@ -778,7 +778,7 @@
 	
     <!-- Estadistica Valorativa -->
 <% if ("entre".equals(opfecha)){ %><h1>Estadistica Valorativa Fecha entre <%= fechaDesde %> y <%= fechaHasta %></h1><br><% }
-       else { %><h1>Estadistica Cuantitativa Fecha entre <%= sdf.format(new Date()) %> y <%=sdf.format(new Date()) %></h1><br><% } %>
+       else { %><h1>Estadistica Valorativa Fecha entre <%= sdf.format(new Date()) %> y <%=sdf.format(new Date()) %></h1><br><% } %>
    
 	<table id="listado" <% if (salidaExcel){ %>border="1"<% } %>>
 
@@ -962,12 +962,16 @@ try {
 		    filaValoresTotales.put("total", new Long( ((Long)filaValoresTotales.get("total")).longValue() + totalEspecialidadL) );
 
 		    // Uso BigDecimal por problemas de overflow
+		    
 		    BigDecimal porcentajeBD = new BigDecimal(totalEspecialidadL);
-		    porcentajeBD = porcentajeBD.multiply(new BigDecimal(1000)); 
-		    porcentajeBD = porcentajeBD.divide(new BigDecimal(granValor), BigDecimal.ROUND_FLOOR); 
+            porcentajeBD = porcentajeBD.multiply(new BigDecimal(1000));
+            porcentajeBD = porcentajeBD.divide(new BigDecimal(granValor), BigDecimal.ROUND_FLOOR); 
+		    
 
 			double porcentajeL = porcentajeBD.doubleValue();
 			porcentajeL = porcentajeL/10.0;
+		//	System.out.println(porcentajeL);
+		//	System.out.println("totalEspecialidadL:"+totalEspecialidadL);
 
 %>			
 			<!-- total especialidad -->
@@ -1213,4 +1217,3 @@ CONS.ESPEC.TRAUMATOLOGIA        2            02         M     1
 </body></html>
 
 <% } %>
-
