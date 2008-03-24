@@ -53,7 +53,14 @@ public class ConvenioServlet extends ServletSeguro {
 		try {
 			
 			if (FileUpload.isMultipartContent(request)){
-				procesarArchivoValores(request, response);
+				
+				try {
+					// Cualquier excepcion al procesar el archivo se notificará como problema en el archivo
+					procesarArchivoValores(request, response);					
+				} catch (Exception e) {
+					throw new Exception("No se pudo procesar el archivo. Revise que sea una archivo en formato CSV.");
+				}
+				
 				return;
 			}
 
