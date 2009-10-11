@@ -21,9 +21,10 @@
 
 	<!-- denis + linux + informix -->
 	<!-- property name="url"><value>jdbc:informix-sqli://127.0.0.1:1546/testDB:informixserver=server1;user=informix;password=informix</value></property -->
+	<property name="url"><value>jdbc:informix-sqli://192.168.0.101:9088/informix:informixserver=informix;user=informix;password=informix</value></property>
  
 	<!-- dipreca + windows + informix -->
-	<property name="url"><value>jdbc:informix-sqli://172.16.1.10:1546/benmed:informixserver=llr_ip;user=infochi;password=x22er21</value></property>
+	<!-- <property name="url"><value>jdbc:informix-sqli://172.16.1.10:1546/benmed:informixserver=llr_ip;user=infochi;password=x22er21</value></property> -->
 	
 	<!-- solo para HSQLDB, no molestan a informix -->
 	<property name="username"><value>sa</value></property>

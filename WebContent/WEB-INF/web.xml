@@ -77,11 +77,66 @@
     <servlet>
 	    <servlet-name>BonoPDFServlet</servlet-name>
 	    <servlet-class>bmweb.servlets.BonoPDFServlet</servlet-class>
+	    
+		<!-- INICIO - Configuracion del WS de firma digital -->
+		<init-param>
+			<param-name>firma.digital.usar</param-name>
+			<param-value>1</param-value><!-- 1 para habilitar, cualquier otro valor para deshabilitar -->
+		</init-param>
+		
+		<init-param>
+			<param-name>firma.digital.url</param-name>
+			<param-value>http://200.111.181.86/WsvI/WSIntercambiaDoc.asmx</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>firma.digital.usuario</param-name>
+			<param-value>test01</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>firma.digital.password</param-name>
+			<param-value>alquitran</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>firma.digital.configuracion</param-name>
+			<param-value>BONO-ELECTRONICO</param-value>
+		</init-param>
+		<!-- FIN - Configuracion del WS de firma digital -->	    
 	</servlet>
 	
 	<servlet>
 		<servlet-name>BonoValoradoPDFServlet</servlet-name>
 		<servlet-class>bmweb.servlets.BonoValoradoPDFServlet</servlet-class>
+		
+		<!-- INICIO - Configuracion del WS de firma digital -->
+		<init-param>
+			<param-name>firma.digital.usar</param-name>
+			<param-value>1</param-value><!-- 1 para habilitar, cualquier otro valor para deshabilitar -->
+		</init-param>
+		
+		<init-param>
+			<param-name>firma.digital.url</param-name>
+			<param-value>http://200.111.181.86/WsvI/WSIntercambiaDoc.asmx</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>firma.digital.usuario</param-name>
+			<param-value>test01</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>firma.digital.password</param-name>
+			<param-value>alquitran</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>firma.digital.configuracion</param-name>
+			<param-value>BONO-ELECTRONICO</param-value>
+		</init-param>
+		<!-- FIN - Configuracion del WS de firma digital -->
+		
 	</servlet>
 	
 	<servlet>

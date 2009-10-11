@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,9 +20,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.fop.apps.Driver;
 import org.springframework.context.ApplicationContext;
 import org.xml.sax.InputSource;
+
+import cl.e_sign.www.DocumentoParametro;
+import cl.e_sign.www.EncabezadoRequest;
+import cl.e_sign.www.EncabezadoResponse;
+import cl.e_sign.www.WSIntercambiaDocSoapStub;
 
 import bmweb.dao.IBeneficiariosDao;
 import bmweb.dao.IBonoDao;
@@ -302,9 +309,54 @@ public class BonoPDFServlet extends ServletSeguro {
 	            driver.run();
 	
 	            byte[] content = out.toByteArray();
-	            response.setContentLength(content.length);
-	            response.getOutputStream().write(content);
-	            response.getOutputStream().flush();
+	            
+	            if ("1".equals(getInitParameter("firma.digital.usar"))){
+	            	
+		            try {	            	
+			            // Denis 20091011 - Firma digital usando web service de e-sign.cl
+			            String origenBase64 = bmweb.util.Base64.encodeBytes(content);
+			            
+			    		URL url = new URL( getInitParameter("firma.digital.url") );
+			    		WSIntercambiaDocSoapStub service = new WSIntercambiaDocSoapStub(url, null);
+			    		
+			    		EncabezadoRequest encabezado = new EncabezadoRequest();
+			    		encabezado.setUser( getInitParameter("firma.digital.usuario") );
+			    		encabezado.setPassword( getInitParameter("firma.digital.password") );
+			    		encabezado.setTipoIntercambio("pdf");
+			    		encabezado.setNombreConfiguracion( getInitParameter("firma.digital.configuracion") );
+			    		encabezado.setFormatoDocumento("b64");
+			    				            
+			    		DocumentoParametro parametro = new DocumentoParametro();
+			    		parametro.setNombreDocumento("BonoValorado.pdf");
+			    		parametro.setDocumento(origenBase64);
+
+			    		EncabezadoResponse respuestaWS = service.intercambiaDoc(encabezado, parametro);
+			    		
+			    		String documentoFirmado = respuestaWS.getDocumento();
+			    		byte[] salidaWS = bmweb.util.Base64.decode(documentoFirmado);
+			    		
+			            response.setContentLength(salidaWS.length);
+			            response.getOutputStream().write(salidaWS);
+			            response.getOutputStream().flush();		    		
+			            
+		            } catch (Exception ex) {
+		            	
+		            	ex.printStackTrace();
+
+		            	// Si hay algun error, envío la version sin firmar
+			            response.setContentLength(content.length);
+			            response.getOutputStream().write(content);
+			            response.getOutputStream().flush();	            	
+		            }
+		            
+	            } else {
+	            	// version sin firma digital
+		            response.setContentLength(content.length);
+		            response.getOutputStream().write(content);
+		            response.getOutputStream().flush();	            	
+	            }
+	            
+	            
 	
 			} catch (Exception e) {
 				e.printStackTrace();
